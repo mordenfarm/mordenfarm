@@ -13,26 +13,25 @@
     <!-- Inside the <head> tag of your index.html -->
 
 <script>
+  <script>
   const firebaseConfig = {
-    apiKey: "{{- .Env.FIREBASE_API_KEY -}}",
-    authDomain: "{{- .Env.FIREBASE_AUTH_DOMAIN -}}",
-    projectId: "{{- .Env.FIREBASE_PROJECT_ID -}}",
-    storageBucket: "{{- .Env.FIREBASE_STORAGE_BUCKET -}}",
-    messagingSenderId: "{{- .Env.FIREBASE_MESSAGING_SENDER_ID -}}",
-    appId: "{{- .Env.FIREBASE_APP_ID -}}",
-    measurementId: "{{- .Env.FIREBASE_MEASUREMENT_ID -}}"
+    apiKey: "FIREBASE_API_KEY",
+    authDomain: "FIREBASE_AUTH_DOMAIN",
+    projectId: "FIREBASE_PROJECT_ID",
+    storageBucket: "FIREBASE_STORAGE_BUCKET",
+    messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+    appId: "FIREBASE_APP_ID",
+    measurementId: "FIREBASE_MEASUREMENT_ID"
   };
 
-  // This check is important, leave it in!
-  if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("{{-")) {
-      const errorMessage = "FATAL ERROR: Firebase environment variables were not replaced by Netlify. Please check your Netlify build settings and ensure environment variables are set correctly.";
-      console.error(errorMessage);
-      document.body.innerHTML = `<div style="padding: 2rem; text-align: center; color: white; font-family: sans-serif;">
-                                    <h1>Configuration Error</h1>
-                                    <p>The application could not be loaded due to a misconfiguration. Please check the console for details.</p>
-                                </div>`;
-      throw new Error(errorMessage);
-  }
+  // Replace placeholders with actual env vars
+  Object.keys(firebaseConfig).forEach(key => {
+    const value = firebaseConfig[key];
+    const envValue = window.ENV?.[value];
+    if (envValue) {
+      firebaseConfig[key] = envValue;
+    }
+  });
 </script>
 
 <!-- The rest of your head content... -->
