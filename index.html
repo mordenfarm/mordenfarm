@@ -419,6 +419,119 @@
             100% { transform: scale(0); opacity: 0; }
         }
         .pop-out-in { animation: popOutIn 0.4s ease forwards; }
+
+        /* --- Logout Modal Styles --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-backdrop);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            text-align: center;
+            box-shadow: var(--shadow-hover);
+            animation: fadeIn 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+        }
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .modal-content p {
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .modal-buttons .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn-danger {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #cc0000;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        .btn-secondary:hover {
+            background-color: #444;
+        }
+
+        /* --- Loader Styles --- */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 4000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+        }
+        .loader {
+          width: 100%;
+        }
+        .trace-bg {
+          stroke: #333;
+          stroke-width: 1.8;
+          fill: none;
+        }
+        .trace-flow {
+          stroke-width: 1.8;
+          fill: none;
+          stroke-dasharray: 40 400;
+          stroke-dashoffset: 438;
+          filter: drop-shadow(0 0 6px currentColor);
+          animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite;
+        }
+        .yellow { stroke: #ffea00; color: #ffea00; }
+        .blue { stroke: #00ccff; color: #00ccff; }
+        .green { stroke: #00ff15; color: #00ff15; }
+        .purple { stroke: #9900ff; color: #9900ff; }
+        .red { stroke: #ff3300; color: #ff3300; }
+        @keyframes flow {
+          to { stroke-dashoffset: 0; }
+        }
+        .chip-body { rx: 20; ry: 20; }
+        .chip-text { font-weight: bold; letter-spacing: 1px; }
+        .chip-pin {
+          stroke: #444;
+          stroke-width: 0.5;
+          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
+        }
     </style>
 </head>
 <body>
@@ -582,6 +695,85 @@
         </div>
     </div>
     
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutConfirmationModal" style="display: none;">
+        <div class="modal-content">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-buttons">
+                <button id="confirmLogoutBtn" class="btn btn-danger">Confirm</button>
+                <button id="cancelLogoutBtn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="loader-overlay" id="loaderOverlay" style="display: none;">
+        <div class="main-container">
+            <div class="loader">
+                <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2d2d2d"></stop>
+                            <stop offset="100%" stop-color="#0f0f0f"></stop>
+                        </linearGradient>
+                        <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#eeeeee"></stop>
+                            <stop offset="100%" stop-color="#888888"></stop>
+                        </linearGradient>
+                        <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
+                            <stop offset="0%" stop-color="#bbbbbb"></stop>
+                            <stop offset="50%" stop-color="#888888"></stop>
+                            <stop offset="100%" stop-color="#555555"></stop>
+                        </linearGradient>
+                    </defs>
+                    <g id="traces">
+                        <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
+                        <path d="M100 100 H200 V210 H326" class="trace-flow purple"></path>
+                        <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
+                        <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                        <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
+                        <path d="M60 260 H150 V250 H326" class="trace-flow yellow"></path>
+                        <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
+                        <path d="M100 350 H200 V270 H326" class="trace-flow green"></path>
+                        <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
+                        <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                        <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
+                        <path d="M740 160 H580 V230 H474" class="trace-flow green"></path>
+                        <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
+                        <path d="M720 250 H590 V250 H474" class="trace-flow red"></path>
+                        <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
+                        <path d="M680 340 H570 V270 H474" class="trace-flow yellow"></path>
+                    </g>
+                    <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
+                    <g>
+                        <rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                    </g>
+                    <g>
+                        <rect x="470" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="470" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="470" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                        <rect x="470" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
+                    </g>
+                    <text x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient)" text-anchor="middle" alignment-baseline="middle">
+                        Loading
+                    </text>
+                    <circle cx="100" cy="100" r="5" fill="black"></circle>
+                    <circle cx="80" cy="180" r="5" fill="black"></circle>
+                    <circle cx="60" cy="260" r="5" fill="black"></circle>
+                    <circle cx="100" cy="350" r="5" fill="black"></circle>
+                    <circle cx="700" cy="90" r="5" fill="black"></circle>
+                    <circle cx="740" cy="160" r="5" fill="black"></circle>
+                    <circle cx="720" cy="250" r="5" fill="black"></circle>
+                    <circle cx="680" cy="340" r="5" fill="black"></circle>
+                </svg>
+            </div>
+        </div>
+    </div>
+
     <footer class="footer">
         <p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p>
     </footer>
@@ -637,7 +829,11 @@
                 ecocashForm: document.getElementById('ecocash-form'),
                 payButton: document.getElementById('pay-button'),
                 mobileNumberInput: document.getElementById('mobile-number'),
-                paymentStatusDiv: document.getElementById('payment-status')
+                paymentStatusDiv: document.getElementById('payment-status'),
+                logoutConfirmationModal: document.getElementById('logoutConfirmationModal'),
+                confirmLogoutBtn: document.getElementById('confirmLogoutBtn'),
+                cancelLogoutBtn: document.getElementById('cancelLogoutBtn'),
+                loaderOverlay: document.getElementById('loaderOverlay')
             };
 
             // --- INITIALIZATION ---
@@ -681,6 +877,8 @@
                 elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
                 elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
                 elements.ecocashForm.addEventListener('submit', handleEcocashPayment);
+                elements.confirmLogoutBtn.addEventListener('click', executeLogout);
+                elements.cancelLogoutBtn.addEventListener('click', () => elements.logoutConfirmationModal.style.display = 'none');
                 
                 document.querySelectorAll('a[href^="#"]').forEach(link => {
                     if (link.id !== 'coursesDropdownToggle') {
@@ -935,11 +1133,19 @@
                 }
             }
 
-            async function handleLogout() {
-                if(confirm("Are you sure you want to log out?")){
+            function handleLogout() {
+                elements.logoutConfirmationModal.style.display = 'flex';
+            }
+
+            function executeLogout() {
+                elements.logoutConfirmationModal.style.display = 'none';
+                elements.loaderOverlay.style.display = 'flex';
+
+                setTimeout(async () => {
                     await firebase.signOut(firebase.auth);
+                    elements.loaderOverlay.style.display = 'none';
                     showView('#home-section');
-                }
+                }, 3000);
             }
 
             function openAuthModal() { elements.authModal.classList.add('active'); }
