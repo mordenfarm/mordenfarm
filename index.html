@@ -3,361 +3,1210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MODERN FARMER - Full Course Catalog (Live Workflow)</title>
+    <title>MODERN FARMER - Full Course Catalog</title>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        window.firebase = { initializeApp, getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile, getFirestore, doc, setDoc, getDoc, updateDoc };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- YouTube Theme Colors --- */
+        /* --- Modern CSS Variables --- */
         :root {
-            --yt-red: #ff0000;
-            --yt-dark: #282828;
-            --yt-darker: #181818;
-            --yt-text: #ffffff;
-            --yt-light-text: #aaaaaa;
-            --yt-green: #00cc66; /* Added for payment success */
+            --primary-color: #ff0000;
+            --secondary-color: #00cc66;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #8a8a8a;
+            --border-color: #333333;
+            --border-accent: #ff0000;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(255, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --blur-backdrop: blur(10px);
+        }
+        /* --- Global & Body Styling --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
-        /* --- Global & Body Styling --- */
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Inter', 'Roboto', sans-serif;
             line-height: 1.6;
-            margin: 0;
-            padding-top: 55px;
-            background-color: var(--yt-dark);
-            color: var(--yt-text);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding-top: 70px;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #cc0000;
         }
 
-        /* --- Header/Navigation Styling --- */
+        /* --- Modern Header/Navigation --- */
         .header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 55px;
-            background-color: var(--yt-darker);
+            height: 70px;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: var(--blur-backdrop);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+            padding: 0 2rem;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
         }
-
+        
         .logo {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--yt-text);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
             text-decoration: none;
             display: flex;
             align-items: center;
-        }
-
-        .logo-icon {
-            color: var(--yt-red);
-            font-size: 1.8em;
-            margin-right: 5px;
-        }
-
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-menu li {
-            position: relative;
-            margin-left: 20px;
-        }
-
-        .nav-menu a {
-            color: var(--yt-text);
-            text-decoration: none;
-            padding: 5px 10px;
-            display: block;
-            font-size: 0.9em;
-            transition: color 0.2s;
-        }
-
-        .nav-menu a:hover {
-            color: var(--yt-red);
-        }
-
-        .search-bar {
-            display: flex;
-            flex-grow: 1;
-            justify-content: center;
-            max-width: 500px;
-            margin: 0 20px;
-        }
-
-        .search-bar input {
-            width: 80%;
-            padding: 8px 15px;
-            border: 1px solid #444;
-            background-color: #121212;
-            color: var(--yt-text);
-            border-radius: 2px 0 0 2px;
-            font-size: 1em;
-        }
-
-        .search-bar button {
-            background-color: #3d3d3d;
-            color: var(--yt-text);
-            border: 1px solid #444;
-            border-left: none;
-            padding: 8px 15px;
-            border-radius: 0 2px 2px 0;
-            cursor: pointer;
+            gap: 0.5rem;
+            transition: var(--transition);
         }
         
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo-icon {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            transition: var(--transition);
+        }
+        
+        .logo:hover .logo-icon {
+            transform: rotate(90deg);
+        }
+        
+        /* Desktop Navigation */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .nav-menu li {
+            position: relative;
+        }
+        
+        .nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-menu a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-menu a:hover::before {
+            left: 100%;
+        }
+        
+        .nav-menu a:hover {
+            color: var(--primary-color);
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        /* Mobile Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 0.5rem;
+            gap: 0.25rem;
+            transition: var(--transition);
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text-primary);
+            border-radius: 2px;
+            transition: var(--transition);
+            transform-origin: center;
+        }
+        
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+        
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+            transform: scale(0);
+        }
+        
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+        
+        /* Search Interface */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .search-icon {
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            transition: var(--transition);
+            font-size: 1.2rem;
+            border: none;
+        }
+        
+        .search-icon:hover {
+            background: rgba(255, 0, 0, 0.2);
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .search-bar {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.98);
+            backdrop-filter: var(--blur-backdrop);
+            padding: 1.5rem;
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        
+        .search-bar.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .search-input-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+        }
+        
+        .search-results.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .search-result-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: var(--transition);
+            animation: slideInUp 0.3s ease;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(255, 0, 0, 0.1);
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .no-results {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            margin-top: 0.5rem;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        .search-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: var(--blur-backdrop);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .search-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        /* User Profile Interface */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        .user-profile:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+            font-size: 0.9rem;
+            background: linear-gradient(135deg, var(--primary-color), #cc0000);
+            transition: var(--transition);
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .user-name {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .login-text {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Login/Signup Modal */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-backdrop);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+        
+        .auth-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .auth-container {
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow-hover);
+            transform: scale(0.9) translateY(20px);
+            transition: var(--transition);
+        }
+        
+        .auth-modal.active .auth-container {
+            transform: scale(1) translateY(0);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .auth-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .form-input {
+            padding: 0.875rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+        
+        .form-button {
+            padding: 0.875rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .form-button:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .form-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .google-button {
+            background: white;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .google-button:hover {
+            background: #f5f5f5;
+        }
+        
+        .auth-divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: var(--text-secondary);
+        }
+        
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border-color);
+            z-index: -1;
+        }
+        
+        .auth-divider span {
+            background: var(--bg-card);
+            padding: 0 1rem;
+        }
+        
+        .auth-switch {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .auth-switch-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-switch-link:hover {
+            text-decoration: underline;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .close-button:hover {
+            color: var(--text-primary);
+        }
         /* --- Dropdown Menu Styling --- */
         .dropdown {
             position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: var(--yt-darker);
-            min-width: 200px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.8);
-            z-index: 1001;
-            border: 1px solid var(--yt-red);
-            top: 100%;
-            left: 0;
-        }
-
-        /* Hover effect added here */
-        .dropdown:hover .dropdown-content { 
-            display: block;
-        }
-
-        .dropdown-content a {
-            color: var(--yt-text);
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            font-size: 0.9em;
         }
         
-        /* The .show class is added/removed by JS to toggle visibility on click/touch */
-        .dropdown-content.show { 
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--bg-card);
+            min-width: 220px;
+            box-shadow: var(--shadow-hover);
+            border-radius: var(--border-radius);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+            z-index: 1001;
+            overflow: hidden;
+        }
+        
+        .dropdown:hover .dropdown-content,
+        .dropdown-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-content a {
             display: block;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: var(--transition);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 400;
         }
-
+        
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+        
         .dropdown-content a:hover {
-            background-color: #3a3a3a;
-            color: var(--yt-red);
+            background: rgba(255, 0, 0, 0.1);
+            color: var(--primary-color);
+            transform: translateX(5px);
         }
 
-        /* --- Main Content Layout --- */
+        /* --- Mobile Responsive Design --- */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 1rem;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: rgba(18, 18, 18, 0.98);
+                backdrop-filter: var(--blur-backdrop);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 2rem;
+                transform: translateX(-100%);
+                transition: var(--transition);
+                gap: 0;
+            }
+            
+            .nav-menu.active {
+                transform: translateX(0);
+            }
+            
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+                margin: 0;
+                padding: 0.5rem 0;
+            }
+            
+            .nav-menu a {
+                display: block;
+                padding: 1rem 2rem;
+                width: 100%;
+                font-size: 1.1rem;
+                border-radius: 0;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .search-container {
+                order: -1;
+            }
+            
+            .dropdown-content {
+                position: static;
+                box-shadow: none;
+                background: var(--bg-darker);
+                margin-top: 0;
+                border-radius: 0;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                transition: max-height 0.3s ease;
+            }
+            
+            .dropdown-content.show {
+                max-height: 400px;
+            }
+            
+            .dropdown-content a {
+                padding: 0.75rem 2.5rem;
+                font-size: 1rem;
+                border-left: 3px solid transparent;
+            }
+            
+            .dropdown-content a:hover {
+                border-left-color: var(--primary-color);
+                transform: none;
+            }
+            
+            .container {
+                width: 95%;
+                padding: 1rem;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .auth-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding-top: 60px;
+            }
+            
+            .header {
+                height: 60px;
+                padding: 0 0.75rem;
+            }
+            
+            .logo {
+                font-size: 1rem;
+            }
+            
+            .nav-menu {
+                top: 60px;
+                height: calc(100vh - 60px);
+            }
+            
+            .search-icon {
+                padding: 0.5rem;
+                font-size: 1rem;
+            }
+        }
+        /* --- Modern Main Content Layout --- */
         .container {
             width: 90%;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--yt-dark);
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* --- Animations --- */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(10deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05) rotate(-5deg);
+            }
+            70% {
+                transform: scale(0.95) rotate(2deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease;
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.8s ease;
         }
 
-        /* --- Course Cards (Homepage) --- */
+        /* --- Modern Course Cards --- */
         .course-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
         }
-
+        
         .course-card {
-            background-color: var(--yt-darker);
-            border-radius: 5px;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
             overflow: hidden;
             text-decoration: none;
-            color: var(--yt-text);
-            transition: transform 0.2s, box-shadow 0.2s;
+            color: var(--text-primary);
+            transition: var(--transition);
             cursor: pointer;
-        }
-
-        .card-thumbnail {
-            width: 100%;
-            height: 180px;
-            background-color: #444;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3em;
-            color: var(--yt-red);
+            border: 1px solid var(--border-color);
             position: relative;
         }
         
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .course-card:hover::before {
+            opacity: 1;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary-color);
+        }
+        
+        .card-thumbnail {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-thumbnail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .course-card:hover .card-thumbnail::before {
+            opacity: 1;
+        }
+        
         .card-info {
-            padding: 15px;
+            padding: 1.5rem;
         }
-
+        
         .card-info h2 {
-            font-size: 1.2em;
-            margin-top: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.4;
         }
-
+        
         .card-info p {
-            color: var(--yt-light-text);
-            font-size: 0.9em;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin: 0;
         }
 
-        /* --- Login/Payment Box Style --- */
+        /* --- Modern Form Styles --- */
         .login-box, .payment-box {
-            max-width: 400px;
-            margin: 60px auto;
-            padding: 30px;
-            background-color: var(--yt-darker);
-            border: 1px solid #3d3d3d;
-            border-top: 5px solid var(--yt-red);
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 450px;
+            margin: 4rem auto;
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
             text-align: center;
+            animation: fadeIn 0.6s ease;
         }
-
+        
         .login-box h2, .payment-box h2 {
-            color: var(--yt-red);
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 2rem;
         }
-
+        
         .login-box input[type="text"],
         .login-box input[type="password"],
         .payment-box input[type="text"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #444;
-            background-color: #121212;
-            color: var(--yt-text);
-            border-radius: 3px;
+            padding: 0.875rem;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--border-color);
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            border-radius: 8px;
             box-sizing: border-box;
-            text-align: center;
+            transition: var(--transition);
+            font-size: 0.9rem;
         }
-
+        
+        .login-box input:focus,
+        .payment-box input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+        
         .login-box button, .payment-box button {
             width: 100%;
-            padding: 12px;
-            background-color: var(--yt-red);
-            color: var(--yt-text);
+            padding: 0.875rem;
+            background: var(--primary-color);
+            color: white;
             border: none;
-            border-radius: 3px;
-            font-size: 1em;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: var(--transition);
+        }
+        
+        .login-box button:hover, .payment-box button:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
         
         .payment-box button#pay-button {
-            background-color: var(--yt-green);
+            background: var(--secondary-color);
         }
-
+        
         .payment-box button#pay-button:hover {
-            background-color: #00994d;
+            background: #00994d;
         }
 
-        /* --- Single Course Page Layout --- */
+        /* --- Course Page Styles --- */
         .course-page, #payment-section, #login-section {
-            max-width: 900px;
-            margin: 20px auto;
-            padding: 30px;
-            background-color: var(--yt-darker);
-            border-radius: 5px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-            display: none; /* Hidden by default */
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 2.5rem;
+            background: var(--bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: none;
+            animation: fadeIn 0.6s ease;
         }
         
         .course-page h2 {
-            color: var(--yt-red);
-            font-size: 2em;
-            border-bottom: 2px solid #3d3d3d;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 2.25rem;
+            font-weight: 700;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
         }
-
+        
         .video-placeholder {
             width: 100%;
             height: 400px;
-            background-color: #121212;
+            background: var(--bg-darker);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 3em;
-            color: var(--yt-red);
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #444;
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
         }
-
+        
         .course-details {
             display: grid;
             grid-template-columns: 2fr 1fr;
-            gap: 30px;
+            gap: 3rem;
         }
-
-        /* This is the default color for ENROLL NOW (unsubscribed) */
+        
         .sidebar .enroll-btn {
-            padding: 12px;
+            display: block;
+            padding: 1rem;
             text-align: center;
             text-decoration: none;
-            color: var(--yt-text);
-            background-color: var(--yt-green); /* Default: Green for call to action */
-            border-radius: 3px;
-            font-size: 1em;
-            font-weight: bold;
-            display: block;
-            transition: background-color 0.2s;
+            color: white;
+            background: var(--secondary-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-bottom: 1.5rem;
+        }
+        
+        .sidebar .enroll-btn:hover {
+            background: #00994d;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
         }
         
         .main-content h3 {
-            color: var(--yt-text);
-            font-size: 1.4em;
-            border-left: 3px solid var(--yt-red);
-            padding-left: 10px;
-            margin-top: 30px;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin: 2rem 0 1rem 0;
         }
-
+        
         .main-content ul {
             list-style: none;
             padding: 0;
         }
-
+        
         .main-content ul li {
-            background-color: #3d3d3d;
-            margin-bottom: 10px;
-            padding: 10px 15px;
-            border-radius: 3px;
-            border-left: 5px solid var(--yt-red);
+            background: var(--bg-darker);
+            margin-bottom: 1rem;
+            padding: 1.25rem;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+            transition: var(--transition);
+        }
+        
+        .main-content ul li:hover {
+            transform: translateX(5px);
+            background: rgba(255, 0, 0, 0.05);
         }
 
-        /* --- Footer --- */
+        /* --- Modern Footer --- */
         .footer {
-            background-color: var(--yt-darker);
-            color: var(--yt-light-text);
+            background: var(--bg-darker);
+            color: var(--text-secondary);
             text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            border-top: 1px solid #3d3d3d;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .back-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+        
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            color: var(--text-primary);
+            font-size: 2rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1rem;
+            margin: 3rem 0 2rem 0;
+        }
+        
+        /* Testimonials */
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            color: var(--text-primary);
+            font-style: italic;
+            box-shadow: var(--shadow);
+        }
+        
+        /* Contact Section */
+        .contact-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .contact-list li {
+            margin: 1rem 0;
+        }
+        
+        .contact-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .contact-list a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile responsive adjustments for course pages */
+        @media (max-width: 768px) {
+            .course-details {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .video-placeholder {
+                height: 250px;
+                font-size: 2.5rem;
+            }
+            
+            .course-page h2 {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Search Backdrop -->
+    <div class="search-backdrop" id="searchBackdrop"></div>
+    
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-container">
+            <button class="close-button" id="closeAuthModal">&times;</button>
+            <div class="auth-header">
+                <h2 class="auth-title" id="authTitle">Welcome Back</h2>
+                <p class="auth-subtitle" id="authSubtitle">Sign in to access your courses</p>
+            </div>
+            <form class="auth-form" id="authForm">
+                <div class="form-group" id="usernameGroup" style="display: none;">
+                    <label class="form-label" for="authUsername">Username</label>
+                    <input class="form-input" type="text" id="authUsername" placeholder="Enter your username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="authEmail">Email</label>
+                    <input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="authPassword">Password</label>
+                    <input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required>
+                </div>
+                <button class="form-button" type="submit" id="authSubmitBtn">Sign In</button>
+                <div class="auth-divider"><span>or</span></div>
+                <button class="form-button google-button" type="button" id="googleSignInBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+            </form>
+            <div class="auth-switch">
+                <span id="authSwitchText">Don't have an account?</span>
+                <a href="#" class="auth-switch-link" id="authSwitchLink">Sign up</a>
+            </div>
+        </div>
+    </div>
 
     <header class="header">
         <a href="#home-section" class="logo">
             <span class="logo-icon">&#9654;</span>
-            MODERN FARMER
+            <span>MODERN FARMER</span>
         </a>
         
-        <div class="search-bar">
-            <input type="text" placeholder="Search Courses, Lessons, Topics...">
-            <button>&#128269;</button>
+        <!-- Search Container -->
+        <div class="search-container">
+            <button class="search-icon" id="searchToggle">
+                &#128269;
+            </button>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-bar" id="searchBar">
+            <div class="search-input-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search courses, lessons, topics...">
+                <div class="search-results" id="searchResults"></div>
+                <div class="no-results" id="noResults" style="display: none;">
+                    <h3>🔍 No Results Found</h3>
+                    <p>Try searching for something else</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
         <nav>
-            <ul class="nav-menu">
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="#home-section">HOME</a></li>
                 <li class="dropdown">
-                    <a href="#course-overview">COURSES &#9662;</a>
+                    <a href="#course-overview" id="coursesDropdownToggle">COURSES &#9662;</a>
                     <div class="dropdown-content" id="coursesDropdown">
                         <a href="#broiler-course-page" class="course-link" data-target="broiler-course-page">Broiler Chicken</a>
                         <a href="#roadrunner-course-page" class="course-link" data-target="roadrunner-course-page">Road Runner Chicken</a>
@@ -370,9 +1219,20 @@
                 </li>
                 <li><a href="#testimonials-section">TESTIMONIALS</a></li>
                 <li><a href="#contact-section">CONTACT US</a></li>
-                <li id="login-nav-item"><a href="#login-section" style="color: var(--yt-red);">LOG IN</a></li>
-                <li id="dashboard-nav-item" style="display: none;"><a href="#home-section" style="color: var(--yt-green);">DASHBOARD</a></li>
-                <li id="logout-nav-item" style="display: none;"><a href="#" id="logout-button" style="color: var(--yt-light-text);">LOG OUT</a></li>
+                <li id="login-nav-item">
+                    <div class="user-profile" id="userProfile">
+                        <div class="user-avatar" id="userAvatar">
+                            👤
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Guest</div>
+                            <div class="login-text">Login</div>
+                        </div>
+                    </div>
+                </li>
+                <li id="logout-nav-item" style="display: none;">
+                    <a href="#" id="logout-button">LOG OUT</a>
+                </li>
             </ul>
         </nav>
     </header>
@@ -381,76 +1241,78 @@
         <div id="home-view">
             <h1>Your Agricultural Success Starts Here</h1>
             
-            <h2 id="course-overview" style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">Featured Courses</h2>
+            <h2 id="course-overview" class="section-header">Featured Courses</h2>
             
             <div class="course-grid">
-                
-                <a href="#broiler-course-page" class="course-card course-link" id="broiler-course" data-target="broiler-course-page">
+                <a href="#broiler-course-page" class="course-card course-link fade-in" id="broiler-course" data-target="broiler-course-page">
                     <div class="card-thumbnail" style="background-color: #7b0000;">🐔</div>
-                    <div class="card-info"><h2>Broiler Chicken Rearing</h2><p>7-Week Profit Cycle. Mastering FCR and Biosecurity.</p></div>
+                    <div class="card-info">
+                        <h2>Broiler Chicken Rearing</h2>
+                        <p>7-Week Profit Cycle. Mastering FCR and Biosecurity.</p>
+                    </div>
                 </a>
                 
-                <a href="#roadrunner-course-page" class="course-card course-link" data-target="roadrunner-course-page">
+                <a href="#roadrunner-course-page" class="course-card course-link fade-in" data-target="roadrunner-course-page">
                     <div class="card-thumbnail" style="background-color: #2e5c00;">🏃</div>
-                    <div class="card-info"><h2>Road Runner Chicken Rearing</h2><p>Indigenous Poultry Management for Premium Markets.</p></div>
+                    <div class="card-info">
+                        <h2>Road Runner Chicken Rearing</h2>
+                        <p>Indigenous Poultry Management for Premium Markets.</p>
+                    </div>
                 </a>
                 
-                <a href="#mushroom-course-page" class="course-card course-link" data-target="mushroom-course-page">
+                <a href="#mushroom-course-page" class="course-card course-link fade-in" data-target="mushroom-course-page">
                     <div class="card-thumbnail" style="background-color: #004d40;">🍄</div>
-                    <div class="card-info"><h2>Mushroom Farming</h2><p>Substrate preparation, sterile spawning, and climate control.</p></div>
+                    <div class="card-info">
+                        <h2>Mushroom Farming</h2>
+                        <p>Substrate preparation, sterile spawning, and climate control.</p>
+                    </div>
                 </a>
-                <a href="#fish-course-page" class="course-card course-link" data-target="fish-course-page">
+                
+                <a href="#fish-course-page" class="course-card course-link fade-in" data-target="fish-course-page">
                     <div class="card-thumbnail" style="background-color: #003366;">🐟</div>
-                    <div class="card-info"><h2>Fish Farming (Tilapia/Catfish)</h2><p>Aquaculture basics: Mastering Dissolved Oxygen (DO) and water quality.</p></div>
+                    <div class="card-info">
+                        <h2>Fish Farming (Tilapia/Catfish)</h2>
+                        <p>Aquaculture basics: Mastering Dissolved Oxygen (DO) and water quality.</p>
+                    </div>
                 </a>
-                <a href="#maize-course-page" class="course-card course-link" data-target="maize-course-page">
+                
+                <a href="#maize-course-page" class="course-card course-link fade-in" data-target="maize-course-page">
                     <div class="card-thumbnail" style="background-color: #664d00;">🌽</div>
-                    <div class="card-info"><h2>Maize Farming</h2><p>Fertilizer timing, drought mitigation, and maximizing yield per hectare.</p></div>
+                    <div class="card-info">
+                        <h2>Maize Farming</h2>
+                        <p>Fertilizer timing, drought mitigation, and maximizing yield per hectare.</p>
+                    </div>
                 </a>
-                <a href="#sorghum-course-page" class="course-card course-link" data-target="sorghum-course-page">
+                
+                <a href="#sorghum-course-page" class="course-card course-link fade-in" data-target="sorghum-course-page">
                     <div class="card-thumbnail" style="background-color: #4b0082;">🌾</div>
-                    <div class="card-info"><h2>Sorghum Farming</h2><p>Drought-resistant grain management and pest control strategies.</p></div>
+                    <div class="card-info">
+                        <h2>Sorghum Farming</h2>
+                        <p>Drought-resistant grain management and pest control strategies.</p>
+                    </div>
                 </a>
-                <a href="#tobacco-course-page" class="course-card course-link" data-target="tobacco-course-page">
+                
+                <a href="#tobacco-course-page" class="course-card course-link fade-in" data-target="tobacco-course-page">
                     <div class="card-thumbnail" style="background-color: #1a0000;">🌿</div>
-                    <div class="card-info"><h2>Tobacco Farming</h2><p>High-value crop: Curing techniques, topping, and sucker control.</p></div>
+                    <div class="card-info">
+                        <h2>Tobacco Farming</h2>
+                        <p>High-value crop: Curing techniques, topping, and sucker control.</p>
+                    </div>
                 </a>
-
             </div>
 
-            <section id="testimonials-section" style="margin-top: 60px;">
-                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">TESTIMONIALS</h2>
-                <div style="background-color: #3d3d3d; border-color: var(--yt-red); padding: 15px; border-radius: 5px; color: var(--yt-text);">
-                    "The Maize Farming course helped me increase my yield by 30% this season! Highly recommend." - *Satisfied Farmer*
+            <section id="testimonials-section" style="margin-top: 4rem;">
+                <h2 class="section-header">TESTIMONIALS</h2>
+                <div class="testimonial-card">
+                    "The Maize Farming course helped me increase my yield by 30% this season! Highly recommend." - <strong>Satisfied Farmer</strong>
                 </div>
             </section>
             
-            <section id="contact-section" style="margin-top: 60px;">
-                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">CONTACT US</h2>
-                <ul style="list-style: none; padding: 0;">
-                    <li><a href="#" style="color: var(--yt-red); text-decoration: none;">Send a message to our Support Team</a></li>
+            <section id="contact-section" style="margin-top: 4rem;">
+                <h2 class="section-header">CONTACT US</h2>
+                <ul class="contact-list">
+                    <li><a href="#">Send a message to our Support Team</a></li>
                 </ul>
-            </section>
-
-            <section id="login-section" style="margin-top: 60px;">
-                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px; text-align: center;">LOG IN or SUBSCRIBE</h2>
-                
-                <div class="login-box">
-                    <h2>Access Your Courses</h2>
-                    <form action="#" method="post">
-                        <label for="username">Email or Username</label>
-                        <input type="text" id="username" name="username" required>
-                        
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
-                        
-                        <button type="submit">LOG IN (Membership required)</button>
-                    </form>
-                    
-                    <span class="signup-link">
-                        New Farmer? <a href="#payment-section">Subscribe Now</a>
-                    </span>
-                </div>
             </section>
         </div>
     </div>
@@ -474,12 +1336,12 @@
         </div>
     </section>
     <div id="broiler-course-page" class="course-page">
-        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <a href="#home-section" class="back-link">&#9664; Back to All Courses</a>
         <h2>Broiler Chicken Rearing: The 7-Week Profit Model 🐔</h2>
         <div class="video-placeholder">[ Placeholder for Broiler Introduction Video ]</div>
         <div class="course-details">
             <div class="main-content">
-                <p style="color: var(--yt-light-text);">This intensive course teaches you how to manage the **Feed Conversion Ratio (FCR)** and minimize mortality to achieve maximum profit in the quick 7-week broiler cycle. Suitable for beginners and farmers looking to scale up.</p>
+                <p style="color: var(--text-secondary);">This intensive course teaches you how to manage the **Feed Conversion Ratio (FCR)** and minimize mortality to achieve maximum profit in the quick 7-week broiler cycle. Suitable for beginners and farmers looking to scale up.</p>
                 <h3>Course Modules:</h3>
                 <ul>
                     <li>**Module 1: The Business Foundation** - Planning, Housing Design (Deep Litter), and Market Analysis.</li>
@@ -491,7 +1353,7 @@
             </div>
             <div class="sidebar">
                 <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a> 
-                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 5 Modules (Self-paced)<br>**Access:** Annual Subscription<br>**Prerequisites:** None</p>
+                <p style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 1rem; color: var(--text-secondary);">**Course Duration:** 5 Modules (Self-paced)<br>**Access:** Annual Subscription<br>**Prerequisites:** None</p>
             </div>
         </div>
     </div>
@@ -639,168 +1501,544 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const mainContent = document.getElementById('main-content-area');
-            const coursePages = document.querySelectorAll('.course-page');
-            const paymentSection = document.getElementById('payment-section');
-            const coursesDropdown = document.getElementById('coursesDropdown');
-            const loginNavItem = document.getElementById('login-nav-item');
-            const dashboardNavItem = document.getElementById('dashboard-nav-item');
-            const logoutNavItem = document.getElementById('logout-nav-item'); 
-            const logoutButton = document.getElementById('logout-button');     
-            const loginSection = document.getElementById('login-section');
-            const ecocashForm = document.getElementById('ecocash-form');
-            const payButton = document.getElementById('pay-button');
-            const mobileNumberInput = document.getElementById('mobile-number');
-            const paymentStatusDiv = document.getElementById('payment-status');
-            
-            // --- Reliable Hex Colors (for JavaScript use) ---
-            const YT_RED = '#ff0000';
-            const YT_GREEN = '#00cc66'; 
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: process.env.FIREBASE_API_KEY,
+            authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+            appId: process.env.FIREBASE_APP_ID
+        };
 
-            // 🌟 INITIAL STATE: FALSE (UNSUBSCRIBED) 🌟
-            let isSubscribed = false; 
-
-            function updateNavState() {
-                if (isSubscribed) {
-                    loginNavItem.style.display = 'none';
-                    dashboardNavItem.style.display = 'list-item';
-                    logoutNavItem.style.display = 'list-item'; // Show LOG OUT
-                } else {
-                    loginNavItem.style.display = 'list-item';
-                    dashboardNavItem.style.display = 'none';
-                    logoutNavItem.style.display = 'none'; // Hide LOG OUT
-                }
+        // Initialize Firebase
+        let app, auth, db, googleProvider;
+        
+        async function initializeFirebase() {
+            try {
+                app = firebase.initializeApp(firebaseConfig);
+                auth = firebase.getAuth(app);
+                db = firebase.getFirestore(app);
+                googleProvider = new firebase.GoogleAuthProvider();
+                console.log('Firebase initialized successfully');
+            } catch (error) {
+                console.warn('Firebase initialization failed:', error);
+                // Fallback to local storage for demo
+                console.log('Using local storage fallback');
             }
+        }
+
+        // Global variables
+        let currentUser = null;
+        let isSubscribed = false;
+        let currentAuthMode = 'signin'; // 'signin' or 'signup'
+
+        // Course data for search
+        const courses = [
+            { title: 'Broiler Chicken Rearing', description: '7-Week Profit Cycle. Mastering FCR and Biosecurity.', target: 'broiler-course-page', emoji: '🐔' },
+            { title: 'Road Runner Chicken Rearing', description: 'Indigenous Poultry Management for Premium Markets.', target: 'roadrunner-course-page', emoji: '🏃' },
+            { title: 'Mushroom Farming', description: 'Substrate preparation, sterile spawning, and climate control.', target: 'mushroom-course-page', emoji: '🍄' },
+            { title: 'Fish Farming (Tilapia/Catfish)', description: 'Aquaculture basics: Mastering Dissolved Oxygen (DO) and water quality.', target: 'fish-course-page', emoji: '🐟' },
+            { title: 'Maize Farming', description: 'Fertilizer timing, drought mitigation, and maximizing yield per hectare.', target: 'maize-course-page', emoji: '🌽' },
+            { title: 'Sorghum Farming', description: 'Drought-resistant grain management and pest control strategies.', target: 'sorghum-course-page', emoji: '🌾' },
+            { title: 'Tobacco Farming', description: 'High-value crop: Curing techniques, topping, and sucker control.', target: 'tobacco-course-page', emoji: '🌿' }
+        ];
+
+        // DOM Elements
+        const elements = {
+            hamburger: document.getElementById('hamburger'),
+            navMenu: document.getElementById('navMenu'),
+            searchToggle: document.getElementById('searchToggle'),
+            searchBar: document.getElementById('searchBar'),
+            searchInput: document.getElementById('searchInput'),
+            searchResults: document.getElementById('searchResults'),
+            noResults: document.getElementById('noResults'),
+            searchBackdrop: document.getElementById('searchBackdrop'),
+            coursesDropdown: document.getElementById('coursesDropdown'),
+            coursesDropdownToggle: document.getElementById('coursesDropdownToggle'),
+            authModal: document.getElementById('authModal'),
+            authForm: document.getElementById('authForm'),
+            userProfile: document.getElementById('userProfile'),
+            userAvatar: document.getElementById('userAvatar'),
+            userName: document.getElementById('userName'),
+            closeAuthModal: document.getElementById('closeAuthModal'),
+            authTitle: document.getElementById('authTitle'),
+            authSubtitle: document.getElementById('authSubtitle'),
+            authSubmitBtn: document.getElementById('authSubmitBtn'),
+            authSwitchText: document.getElementById('authSwitchText'),
+            authSwitchLink: document.getElementById('authSwitchLink'),
+            googleSignInBtn: document.getElementById('googleSignInBtn'),
+            usernameGroup: document.getElementById('usernameGroup'),
+            logoutButton: document.getElementById('logout-button'),
+            mainContent: document.getElementById('main-content-area'),
+            coursePages: document.querySelectorAll('.course-page'),
+            paymentSection: document.getElementById('payment-section')
+        };
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initializeFirebase();
+            initializeEventListeners();
+            loadUserState();
+            showView('#home-section');
             
-            function showView(targetId) {
-                // Reset scroll position
-                window.scrollTo({ top: 0, behavior: 'auto' });
-
-                // 1. Hide all dynamic sections
-                coursePages.forEach(page => page.style.display = 'none');
-                paymentSection.style.display = 'none';
-                loginSection.style.display = 'none';
-                mainContent.style.display = 'block';
-
-                const targetElement = document.querySelector(targetId);
-                const targetIsCoursePage = targetElement && targetElement.classList.contains('course-page');
-                
-                // 2. Dynamic Course Page Content (Enrollment Button State)
-                if (targetIsCoursePage && targetElement) {
-                    const enrollBtn = targetElement.querySelector('.enroll-btn');
-                    if (enrollBtn) {
-                        if (isSubscribed) {
-                            // Subscribed State: Course is unlocked
-                            enrollBtn.textContent = 'You are Enrolled! (View Dashboard)';
-                            enrollBtn.href = '#home-section'; 
-                            enrollBtn.style.backgroundColor = YT_RED; 
-                        } else {
-                            // Unsubscribed State: Call to action to enroll
-                            enrollBtn.textContent = 'ENROLL NOW - Start Learning!';
-                            enrollBtn.href = '#payment-section';
-                            enrollBtn.style.backgroundColor = YT_GREEN; 
-                        }
+            // Check authentication state
+            if (auth) {
+                firebase.onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        handleUserSignIn(user);
+                    } else {
+                        handleUserSignOut();
                     }
-                }
-                
-                // 3. Handle specific page views (Course, Payment, Login)
-                if (targetIsCoursePage || targetId === '#payment-section' || targetId === '#login-section') {
-                    mainContent.style.display = 'none';
-                    if (targetElement) {
-                        targetElement.style.display = 'block';
-                    }
-                } else if (targetElement && targetId !== '#home-section') {
-                    // 4. Handle smooth scroll for internal sections on the main page
-                     setTimeout(() => {
-                        window.scrollTo({
-                            top: targetElement.offsetTop - 70,
-                            behavior: 'smooth'
-                        });
-                    }, 50);
-                }
+                });
             }
+        }); 
+
+        // Initialize Event Listeners
+        function initializeEventListeners() {
+            // Mobile hamburger menu
+            elements.hamburger?.addEventListener('click', toggleMobileMenu);
             
-            // --- MASTER CLICK HANDLER FOR ALL # LINKS ---
+            // Search functionality
+            elements.searchToggle?.addEventListener('click', toggleSearch);
+            elements.searchInput?.addEventListener('input', handleSearch);
+            elements.searchBackdrop?.addEventListener('click', closeSearch);
+            
+            // Courses dropdown
+            elements.coursesDropdownToggle?.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleCoursesDropdown();
+            });
+            
+            // Auth modal
+            elements.userProfile?.addEventListener('click', openAuthModal);
+            elements.closeAuthModal?.addEventListener('click', closeAuthModal);
+            elements.authModal?.addEventListener('click', (e) => {
+                if (e.target === elements.authModal) closeAuthModal();
+            });
+            
+            // Auth form
+            elements.authForm?.addEventListener('submit', handleAuthSubmit);
+            elements.googleSignInBtn?.addEventListener('click', handleGoogleSignIn);
+            elements.authSwitchLink?.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchAuthMode();
+            });
+            
+            // Logout
+            elements.logoutButton?.addEventListener('click', (e) => {
+                e.preventDefault();
+                handleLogout();
+            });
+            
+            // Navigation links
             document.querySelectorAll('a[href^="#"]').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    const targetId = this.getAttribute('href');
-                    let targetViewId = targetId;
-
-                    // 1. Handle Dropdown Toggle (The "COURSES" link) - Keeps click functionality for mobile/touch
-                    if (this.closest('.dropdown') && targetId === '#course-overview') {
-                        e.preventDefault();
-                        coursesDropdown.classList.toggle('show');
-                        return;
-                    }
-                    
-                    // 2. Prevent default link behavior for all navigational clicks
-                    e.preventDefault(); 
-                    coursesDropdown.classList.remove('show'); // Hide dropdown when any other link is clicked
-
-                    // 3. Subscription Check for Course Access
-                    if (this.classList.contains('course-link') && !isSubscribed) {
-                        alert('Subscription Required: Please enroll to access this course.');
-                        targetViewId = '#payment-section';
-                    } else if (this.classList.contains('course-link') && this.getAttribute('data-target')) {
-                        // If subscribed, proceed to the specific course page
-                        targetViewId = '#' + this.getAttribute('data-target');
-                    }
-                    
-                    showView(targetViewId);
+                link.addEventListener('click', handleNavigation);
+            });
+            
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.dropdown')) {
+                    elements.coursesDropdown?.classList.remove('show');
+                }
+                if (!e.target.closest('.search-container') && !e.target.closest('.search-bar')) {
+                    closeSearch();
+                }
+            });
+        }
+        
+        // Mobile Menu Functions
+        function toggleMobileMenu() {
+            elements.hamburger?.classList.toggle('active');
+            elements.navMenu?.classList.toggle('active');
+        }
+        
+        function closeMobileMenu() {
+            elements.hamburger?.classList.remove('active');
+            elements.navMenu?.classList.remove('active');
+        }
+        
+        // Search Functions
+        function toggleSearch() {
+            const isActive = elements.searchBar?.classList.contains('active');
+            if (isActive) {
+                closeSearch();
+            } else {
+                openSearch();
+            }
+        }
+        
+        function openSearch() {
+            elements.searchBar?.classList.add('active');
+            elements.searchBackdrop?.classList.add('active');
+            elements.searchInput?.focus();
+        }
+        
+        function closeSearch() {
+            elements.searchBar?.classList.remove('active');
+            elements.searchBackdrop?.classList.remove('active');
+            elements.searchResults?.classList.remove('active');
+            elements.noResults.style.display = 'none';
+            if (elements.searchInput) elements.searchInput.value = '';
+        }
+        
+        function handleSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length === 0) {
+                elements.searchResults?.classList.remove('active');
+                elements.noResults.style.display = 'none';
+                return;
+            }
+            
+            const filteredCourses = courses.filter(course => 
+                course.title.toLowerCase().includes(query) || 
+                course.description.toLowerCase().includes(query)
+            );
+            
+            if (filteredCourses.length > 0) {
+                displaySearchResults(filteredCourses);
+                elements.noResults.style.display = 'none';
+            } else {
+                elements.searchResults?.classList.remove('active');
+                elements.noResults.style.display = 'block';
+                elements.noResults.classList.add('bounce-in');
+            }
+        }
+        
+        function displaySearchResults(results) {
+            if (!elements.searchResults) return;
+            
+            elements.searchResults.innerHTML = results.map((course, index) => `
+                <div class="search-result-item" data-target="${course.target}" style="animation-delay: ${index * 0.1}s">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2rem;">${course.emoji}</div>
+                        <div>
+                            <h4 style="margin: 0; font-size: 1rem; font-weight: 600;">${course.title}</h4>
+                            <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: var(--text-secondary);">${course.description}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            elements.searchResults.classList.add('active');
+            
+            // Add click handlers to search results
+            elements.searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const target = item.getAttribute('data-target');
+                    closeSearch();
+                    showView('#' + target);
                 });
             });
-
-            // --- Ecocash Payment Simulation ---
-            ecocashForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                payButton.disabled = true;
-                paymentStatusDiv.style.color = 'yellow';
-                paymentStatusDiv.textContent = `Initiating transaction for $49.99 to ${mobileNumberInput.value}... Check your phone for a PIN prompt.`;
-
-                // Simulate Ecocash Push PIN Prompt
-                setTimeout(() => {
-                    // Entering any value in the prompt simulates a successful PIN entry
-                    const ecocashPin = prompt(`Ecocash Payment Confirmation: Enter your PIN to approve $49.99 payment from ${mobileNumberInput.value}. (Enter anything to simulate success)`);
-                    
-                    if (ecocashPin) {
-                        // Simulated Success
-                        isSubscribed = true;
-                        paymentStatusDiv.style.color = YT_GREEN;
-                        paymentStatusDiv.textContent = `Payment Successful! Your Annual Subscription is Active.`;
-
-                        // Grant Access and Update UI
-                        updateNavState();
-
-                        // Redirect to course overview after a short delay
-                        setTimeout(() => {
-                            alert('Welcome! You now have full access to all courses.');
-                            showView('#home-section');
-                        }, 1500);
-
-                    } else {
-                        // Simulated Failure (User cancelled or empty PIN)
-                        paymentStatusDiv.style.color = YT_RED;
-                        paymentStatusDiv.textContent = 'Payment Cancelled or Failed. Please try again.';
-                    }
-                    payButton.disabled = false;
-                }, 1000);
-            });
+        }
+        // Courses Dropdown
+        function toggleCoursesDropdown() {
+            elements.coursesDropdown?.classList.toggle('show');
+        }
+        
+        // Navigation Functions
+        function handleNavigation(e) {
+            const targetId = e.target.getAttribute('href');
             
-            // --- LOGOUT FUNCTIONALITY ---
-            logoutButton.addEventListener('click', function(e) {
+            // Handle dropdown toggle
+            if (e.target.closest('.dropdown') && targetId === '#course-overview') {
                 e.preventDefault();
-                isSubscribed = false; // Reset subscription status
-                updateNavState();     // Update navigation (shows 'LOG IN', hides 'DASHBOARD'/'LOG OUT')
-                showView('#home-section'); // Go to home page
-                alert('You have successfully logged out.');
-            });
-
-            // Initialize: Set initial nav state and show home view
-            updateNavState();
-            showView('#home-section');
-        });
+                toggleCoursesDropdown();
+                return;
+            }
+            
+            e.preventDefault();
+            closeMobileMenu();
+            elements.coursesDropdown?.classList.remove('show');
+            
+            let viewId = targetId;
+            
+            // Check subscription for course access
+            if (e.target.classList.contains('course-link') && !isSubscribed && !currentUser) {
+                openAuthModal();
+                return;
+            } else if (e.target.classList.contains('course-link') && e.target.getAttribute('data-target')) {
+                viewId = '#' + e.target.getAttribute('data-target');
+            }
+            
+            showView(viewId);
+        }
+        
+        function showView(targetId) {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            
+            // Hide all dynamic sections
+            elements.coursePages?.forEach(page => page.style.display = 'none');
+            if (elements.paymentSection) elements.paymentSection.style.display = 'none';
+            if (elements.mainContent) elements.mainContent.style.display = 'block';
+            
+            const targetElement = document.querySelector(targetId);
+            const targetIsCoursePage = targetElement?.classList.contains('course-page');
+            
+            // Update course page enrollment buttons
+            if (targetIsCoursePage && targetElement) {
+                const enrollBtn = targetElement.querySelector('.enroll-btn');
+                if (enrollBtn) {
+                    if (isSubscribed || currentUser) {
+                        enrollBtn.textContent = 'Access Course Content';
+                        enrollBtn.href = '#home-section';
+                        enrollBtn.style.background = 'var(--primary-color)';
+                    } else {
+                        enrollBtn.textContent = 'ENROLL NOW - Start Learning!';
+                        enrollBtn.href = '#payment-section';
+                        enrollBtn.style.background = 'var(--secondary-color)';
+                    }
+                }
+            }
+            
+            // Show specific sections
+            if (targetIsCoursePage || targetId === '#payment-section') {
+                if (elements.mainContent) elements.mainContent.style.display = 'none';
+                if (targetElement) {
+                    targetElement.style.display = 'block';
+                    targetElement.classList.add('fade-in');
+                }
+            } else if (targetElement && targetId !== '#home-section') {
+                setTimeout(() => {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 50);
+            }
+        }
+        // Auth Modal Functions
+        function openAuthModal() {
+            elements.authModal?.classList.add('active');
+        }
+        
+        function closeAuthModal() {
+            elements.authModal?.classList.remove('active');
+            resetAuthForm();
+        }
+        
+        function switchAuthMode() {
+            currentAuthMode = currentAuthMode === 'signin' ? 'signup' : 'signin';
+            updateAuthModal();
+        }
+        
+        function updateAuthModal() {
+            if (currentAuthMode === 'signin') {
+                elements.authTitle.textContent = 'Welcome Back';
+                elements.authSubtitle.textContent = 'Sign in to access your courses';
+                elements.authSubmitBtn.textContent = 'Sign In';
+                elements.authSwitchText.textContent = "Don't have an account?";
+                elements.authSwitchLink.textContent = 'Sign up';
+                elements.usernameGroup.style.display = 'none';
+            } else {
+                elements.authTitle.textContent = 'Create Account';
+                elements.authSubtitle.textContent = 'Join thousands of successful farmers';
+                elements.authSubmitBtn.textContent = 'Create Account';
+                elements.authSwitchText.textContent = 'Already have an account?';
+                elements.authSwitchLink.textContent = 'Sign in';
+                elements.usernameGroup.style.display = 'block';
+            }
+        }
+        
+        function resetAuthForm() {
+            elements.authForm?.reset();
+            currentAuthMode = 'signin';
+            updateAuthModal();
+        }
+        
+        // Authentication Handlers
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const email = document.getElementById('authEmail').value;
+            const password = document.getElementById('authPassword').value;
+            const username = document.getElementById('authUsername').value;
+            
+            try {
+                if (currentAuthMode === 'signin') {
+                    await signInUser(email, password);
+                } else {
+                    await signUpUser(email, password, username);
+                }
+            } catch (error) {
+                console.error('Authentication error:', error);
+                alert('Authentication failed: ' + error.message);
+            }
+        }
+        
+        async function signInUser(email, password) {
+            if (auth) {
+                const userCredential = await firebase.signInWithEmailAndPassword(auth, email, password);
+                await handleUserSignIn(userCredential.user);
+            } else {
+                // Fallback for demo
+                const userData = { email, displayName: email.split('@')[0] };
+                await handleUserSignIn(userData);
+            }
+            closeAuthModal();
+        }
+        
+        async function signUpUser(email, password, username) {
+            if (auth && db) {
+                const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Update user profile
+                await firebase.updateProfile(user, { displayName: username });
+                
+                // Save additional user data to Firestore
+                await firebase.setDoc(firebase.doc(db, 'users', user.uid), {
+                    username,
+                    email,
+                    createdAt: new Date(),
+                    subscription: false
+                });
+                
+                await handleUserSignIn(user);
+            } else {
+                // Fallback for demo
+                const userData = { email, displayName: username };
+                await handleUserSignIn(userData);
+            }
+            closeAuthModal();
+        }
+        
+        async function handleGoogleSignIn() {
+            try {
+                if (auth && googleProvider) {
+                    const result = await firebase.signInWithPopup(auth, googleProvider);
+                    const user = result.user;
+                    
+                    // Check if user needs to set username
+                    const userDoc = await firebase.getDoc(firebase.doc(db, 'users', user.uid));
+                    if (!userDoc.exists()) {
+                        const username = prompt('Please choose a username:');
+                        if (username) {
+                            await firebase.setDoc(firebase.doc(db, 'users', user.uid), {
+                                username,
+                                email: user.email,
+                                createdAt: new Date(),
+                                subscription: false
+                            });
+                        }
+                    }
+                    
+                    await handleUserSignIn(user);
+                } else {
+                    // Fallback for demo
+                    const userData = { 
+                        email: 'demo@google.com', 
+                        displayName: 'Demo User',
+                        photoURL: 'https://via.placeholder.com/36/ff0000/ffffff?text=D'
+                    };
+                    await handleUserSignIn(userData);
+                }
+                closeAuthModal();
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                alert('Google sign-in failed: ' + error.message);
+            }
+        }
+        // User Management
+        async function handleUserSignIn(user) {
+            currentUser = user;
+            isSubscribed = true; // For demo purposes, assume all users are subscribed
+            
+            // Update UI
+            updateUserProfile(user);
+            saveUserState();
+            
+            console.log('User signed in:', user);
+        }
+        
+        function handleUserSignOut() {
+            currentUser = null;
+            isSubscribed = false;
+            
+            updateUserProfile(null);
+            clearUserState();
+            
+            console.log('User signed out');
+        }
+        
+        function updateUserProfile(user) {
+            if (!elements.userAvatar || !elements.userName) return;
+            
+            if (user) {
+                // User is logged in
+                const displayName = user.displayName || user.username || user.email?.split('@')[0] || 'User';
+                const firstLetter = displayName.charAt(0).toUpperCase();
+                
+                if (user.photoURL) {
+                    elements.userAvatar.innerHTML = `<img src="${user.photoURL}" alt="${displayName}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                } else {
+                    elements.userAvatar.textContent = firstLetter;
+                    elements.userAvatar.style.background = `hsl(${displayName.charCodeAt(0) * 10}, 60%, 50%)`;
+                }
+                
+                elements.userName.textContent = displayName;
+                elements.userName.nextElementSibling.textContent = 'Dashboard';
+                
+                // Show logout button
+                if (elements.logoutButton) {
+                    elements.logoutButton.parentElement.style.display = 'list-item';
+                }
+            } else {
+                // User is not logged in
+                elements.userAvatar.innerHTML = '👤';
+                elements.userAvatar.style.background = 'linear-gradient(135deg, var(--primary-color), #cc0000)';
+                elements.userName.textContent = 'Guest';
+                elements.userName.nextElementSibling.textContent = 'Login';
+                
+                // Hide logout button
+                if (elements.logoutButton) {
+                    elements.logoutButton.parentElement.style.display = 'none';
+                }
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                if (auth) {
+                    await firebase.signOut(auth);
+                } else {
+                    handleUserSignOut();
+                }
+                showView('#home-section');
+            } catch (error) {
+                console.error('Logout error:', error);
+            }
+        }
+        
+        // State Management
+        function saveUserState() {
+            if (currentUser) {
+                localStorage.setItem('modernFarmer_user', JSON.stringify({
+                    email: currentUser.email,
+                    displayName: currentUser.displayName || currentUser.username,
+                    photoURL: currentUser.photoURL,
+                    isSubscribed
+                }));
+            }
+        }
+        
+        function loadUserState() {
+            const savedUser = localStorage.getItem('modernFarmer_user');
+            if (savedUser) {
+                try {
+                    const userData = JSON.parse(savedUser);
+                    currentUser = userData;
+                    isSubscribed = userData.isSubscribed || false;
+                    updateUserProfile(userData);
+                } catch (error) {
+                    console.error('Error loading user state:', error);
+                    clearUserState();
+                }
+            }
+        }
+        
+        function clearUserState() {
+            localStorage.removeItem('modernFarmer_user');
+        
+        };
     </script>
-
 </body>
 </html>
