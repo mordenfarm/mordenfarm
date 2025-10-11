@@ -1,0 +1,10 @@
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+
+[build.environment]
+  # Your build will have access to these
+
+[[plugins]]
+  package = "@netlify/plugin-env-variables"
