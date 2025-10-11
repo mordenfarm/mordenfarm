@@ -10,30 +10,7 @@
     <!-- The values are read from the Environment Variables you set in the UI. -->
     <!-- This script and its values are injected by Netlify during build. -->
     <!-- The values are read from the Environment Variables you set in the UI. -->
-    <script>
-      const firebaseConfig = {
-        apiKey: "{{- .Env.FIREBASE_API_KEY -}}",
-        authDomain: "{{- .Env.FIREBASE_AUTH_DOMAIN -}}",
-        projectId: "{{- .Env.FIREBASE_PROJECT_ID -}}",
-        storageBucket: "{{- .Env.FIREBASE_STORAGE_BUCKET -}}",
-        messagingSenderId: "{{- .Env.FIREBASE_MESSAGING_SENDER_ID -}}",
-        appId: "{{- .Env.FIREBASE_APP_ID -}}",
-        measurementId: "{{- .Env.FIREBASE_MEASUREMENT_ID -}}"
-      };
-
-      // This new check will warn you if the variables are not being replaced.
-      if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("{{-")) {
-          const errorMessage = "FATAL ERROR: Firebase environment variables were not replaced by Netlify. Please check your Netlify build settings and ensure environment variables are set correctly.";
-          console.error(errorMessage);
-          // Optionally, display a message to the user on the page itself
-          document.body.innerHTML = `<div style="padding: 2rem; text-align: center; color: white; font-family: sans-serif;">
-                                        <h1>Configuration Error</h1>
-                                        <p>The application could not be loaded due to a misconfiguration. Please check the console for details.</p>
-                                    </div>`;
-          // Throw an error to stop further script execution
-          throw new Error(errorMessage);
-      }
-    </script>
+    
     
     <!-- Firebase SDKs -->
     <script type="module">
