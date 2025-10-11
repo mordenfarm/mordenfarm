@@ -6,11 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MODERN FARMER - Full Course Catalog</title>
     
-    <!-- 
-      IMPORTANT: The 'firebaseConfig' object will be injected here by Netlify's Snippet Injection.
-      See the README.md or instructions for how to set this up in your Netlify dashboard.
-    -->
-
+    <!-- This script and its values are injected by Netlify during build. -->
+    <!-- The values are read from the Environment Variables you set in the UI. -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "{{- .Env.FIREBASE_API_KEY -}}",
+        authDomain: "{{- .Env.FIREBASE_AUTH_DOMAIN -}}",
+        projectId: "{{- .Env.FIREBASE_PROJECT_ID -}}",
+        storageBucket: "{{- .Env.FIREBASE_STORAGE_BUCKET -}}",
+        messagingSenderId: "{{- .Env.FIREBASE_MESSAGING_SENDER_ID -}}",
+        appId: "{{- .Env.FIREBASE_APP_ID -}}",
+        measurementId: "{{- .Env.FIREBASE_MEASUREMENT_ID -}}"
+      };
+    </script>
+    
     <!-- Firebase SDKs -->
     <script type="module">
         // These imports make Firebase functions available globally under the 'firebase' namespace
@@ -18,30 +27,25 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-        // Check if the firebaseConfig object exists (it should be injected by Netlify)
-        if (typeof firebaseConfig === 'undefined') {
-            console.error("Firebase configuration is missing! Please ensure you have set up environment variables and snippet injection in Netlify.");
-            alert("Application is not configured correctly. Please contact support.");
-        } else {
-            // Initialize Firebase and attach to the window object for global access
-            try {
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                const db = getFirestore(app);
-                const googleProvider = new GoogleAuthProvider();
+        // Initialize Firebase and attach to the window object for global access
+        // The 'firebaseConfig' object is now defined in the script tag above this one
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const googleProvider = new GoogleAuthProvider();
 
-                window.firebase = {
-                    app, auth, db, googleProvider,
-                    signInWithEmailAndPassword, createUserWithEmailAndPassword,
-                    signInWithPopup, signOut, onAuthStateChanged, updateProfile,
-                    doc, setDoc, getDoc, updateDoc
-                };
-                console.log("Firebase initialized successfully.");
-            } catch (error) {
-                console.error("Firebase initialization failed.", error);
-                // In case of error, create a dummy firebase object to prevent script crashes
-                window.firebase = {};
-            }
+            window.firebase = {
+                app, auth, db, googleProvider,
+                signInWithEmailAndPassword, createUserWithEmailAndPassword,
+                signInWithPopup, signOut, onAuthStateChanged, updateProfile,
+                doc, setDoc, getDoc, updateDoc
+            };
+            console.log("Firebase initialized successfully.");
+        } catch (error) {
+            console.error("Firebase initialization failed. Please check your config.", error);
+            // In case of error, create a dummy firebase object to prevent script crashes
+            window.firebase = {};
         }
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -270,22 +274,27 @@
 
         @media (max-width: 768px) {
             .header { padding: 0 1rem; }
-            .logo { font-size: 1.2rem; }
+            .logo {
+                flex: 0 0 30%; /* Set logo width to 30% of the header */
+                font-size: 1rem; /* Adjust font size to fit */
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
             
             .header-center {
                 position: absolute; top: 100%; left: 0; width: 100%;
                 background: rgba(18, 18, 18, 0.98); backdrop-filter: var(--blur-backdrop);
                 padding: 1rem; transform: translateY(-200%); visibility: hidden;
                 transition: var(--transition);
+                box-shadow: var(--shadow);
             }
             .header-center.active { transform: translateY(0); visibility: visible; }
             
-            .search-input-wrapper { display: none; }
+            .search-input-wrapper { display: block; } /* Ensure it's visible inside the activated header-center */
             .search-icon-mobile { display: block; }
             
-            .header-right { order: 3; } /* Ensure hamburger and profile are on the right */
-            .logo { order: 1; }
-            .search-icon-mobile { order: 2; margin-left: auto; }
+            .header-right { margin-left: auto; } /* Push the right items to the end */
             
             .nav-menu {
                 position: fixed; top: 70px; left: 0; width: 100%;
@@ -318,7 +327,13 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
         }
         
-        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; padding: 2rem 0; }
+        .course-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 2rem; 
+            padding: 2rem 0;
+            justify-content: center; /* Ensures grid tracks are centered if space allows */
+        }
         .course-card {
             background: var(--bg-card); border-radius: var(--border-radius); overflow: hidden; text-decoration: none;
             color: var(--text-primary); transition: var(--transition); cursor: pointer; border: 1px solid var(--border-color);
@@ -612,7 +627,7 @@
             // --- INITIALIZATION ---
             function init() {
                 if (!window.firebase || !window.firebase.auth) {
-                    // The error is already logged in the module script, so we just stop execution.
+                    alert("Firebase is not configured. Please check your console and API keys.");
                     return;
                 }
                 populateCourseGrid();
@@ -639,7 +654,10 @@
                 elements.searchInput.addEventListener('input', handleSearchInput);
                 elements.searchInput.addEventListener('focus', () => handleSearchInput({ target: elements.searchInput }));
                 elements.searchBackdrop.addEventListener('click', closeSearch);
-                elements.coursesDropdownToggle.addEventListener('click', (e) => { e.preventDefault(); toggleCoursesDropdown(); });
+                elements.coursesDropdownToggle.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    toggleCoursesDropdown(); 
+                });
                 elements.userProfile.addEventListener('click', handleProfileClick);
                 elements.closeAuthModal.addEventListener('click', closeAuthModal);
                 elements.authModal.addEventListener('click', (e) => e.target === elements.authModal && closeAuthModal());
@@ -647,7 +665,14 @@
                 elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
                 elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
                 elements.ecocashForm.addEventListener('submit', handleEcocashPayment);
-                document.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', handleNavigation));
+                
+                // Attach navigation listener to all hash links EXCEPT the course dropdown toggle
+                document.querySelectorAll('a[href^="#"]').forEach(link => {
+                    if (link.id !== 'coursesDropdownToggle') {
+                        link.addEventListener('click', handleNavigation);
+                    }
+                });
+
                 document.addEventListener('click', (e) => {
                     if (!e.target.closest('.dropdown')) elements.coursesDropdown.classList.remove('show');
                     if (!e.target.closest('.search-container') && !e.target.closest('.search-icon-mobile')) closeSearch(true);
@@ -680,12 +705,6 @@
                 const link = e.currentTarget;
                 const targetId = link.getAttribute('href');
                 if (!targetId || targetId === '#') { e.preventDefault(); return; }
-
-                if (link.closest('.dropdown') && targetId === '#course-overview') {
-                    e.preventDefault();
-                    toggleCoursesDropdown();
-                    return;
-                }
                 
                 e.preventDefault();
                 closeMobileMenu();
@@ -772,7 +791,10 @@
                     elements.searchResults.querySelectorAll('.search-result-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const targetId = `#${item.getAttribute('data-target')}`;
-                            handleNavigation({ preventDefault: () => {}, currentTarget: document.querySelector(`a[href="${targetId}"]`) });
+                             // Re-create a synthetic link element to pass to handleNavigation
+                            const syntheticLink = document.createElement('a');
+                            syntheticLink.setAttribute('href', targetId);
+                            handleNavigation({ preventDefault: () => {}, currentTarget: syntheticLink });
                         });
                     });
                     elements.searchResults.classList.add('active');
@@ -794,6 +816,9 @@
                         elements.searchResults.classList.remove('active', 'pop-out-in');
                         elements.searchResults.innerHTML = '';
                     }, 400);
+                }
+                 if (window.innerWidth <= 768) {
+                    elements.headerCenter.classList.remove('active');
                 }
             }
 
