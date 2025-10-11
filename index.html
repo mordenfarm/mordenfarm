@@ -108,6 +108,20 @@
             border-radius: 0 2px 2px 0;
             cursor: pointer;
         }
+
+        .hamburger-menu {
+            display: none; /* Hidden by default */
+            cursor: pointer;
+            padding: 15px;
+        }
+
+        .hamburger-menu div {
+            width: 25px;
+            height: 3px;
+            background-color: var(--yt-text);
+            margin: 5px 0;
+            transition: 0.4s;
+        }
         
         /* --- Dropdown Menu Styling --- */
         .dropdown {
@@ -338,6 +352,48 @@
             margin-top: 40px;
             border-top: 1px solid #3d3d3d;
         }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 10px;
+            }
+            .search-bar {
+                display: none; /* Hide search bar in mobile header */
+            }
+            .nav-menu {
+                display: none; /* Hide desktop nav */
+                flex-direction: column;
+                position: absolute;
+                top: 55px;
+                left: 0;
+                width: 100%;
+                background-color: var(--yt-darker);
+                box-shadow: 0 3px 5px rgba(0,0,0,0.5);
+                border-top: 1px solid var(--yt-red);
+            }
+            .nav-menu.mobile-active {
+                display: flex; /* Show mobile nav */
+            }
+            .nav-menu li {
+                margin: 0;
+                width: 100%;
+                text-align: center;
+                border-bottom: 1px solid #444;
+            }
+            .nav-menu a {
+                padding: 15px;
+            }
+            .hamburger-menu {
+                display: block; /* Show hamburger icon */
+            }
+            .course-details {
+                grid-template-columns: 1fr; /* Stack course details on mobile */
+            }
+            .video-placeholder {
+                height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -349,12 +405,17 @@
         </a>
         
         <div class="search-bar">
-            <input type="text" placeholder="Search Courses, Lessons, Topics...">
+            <input type="text" id="searchInput" placeholder="Search Courses, Lessons, Topics...">
             <button>&#128269;</button>
         </div>
 
         <nav>
-            <ul class="nav-menu">
+            <div class="hamburger-menu" id="hamburger-icon">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <ul class="nav-menu" id="nav-menu-main">
                 <li><a href="#home-section">HOME</a></li>
                 <li class="dropdown">
                     <a href="#course-overview">COURSES &#9662;</a>
@@ -383,7 +444,7 @@
             
             <h2 id="course-overview" style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">Featured Courses</h2>
             
-            <div class="course-grid">
+            <div class="course-grid" id="course-grid-container">
                 
                 <a href="#broiler-course-page" class="course-card course-link" id="broiler-course" data-target="broiler-course-page">
                     <div class="card-thumbnail" style="background-color: #7b0000;">🐔</div>
@@ -416,6 +477,11 @@
                     <div class="card-info"><h2>Tobacco Farming</h2><p>High-value crop: Curing techniques, topping, and sucker control.</p></div>
                 </a>
 
+            </div>
+
+            <div id="no-results-message" style="display: none; text-align: center; margin-top: 30px; color: var(--yt-light-text);">
+                <h3>No courses found matching your search.</h3>
+                <p>Try searching for a different keyword.</p>
             </div>
 
             <section id="testimonials-section" style="margin-top: 60px;">
@@ -653,6 +719,8 @@
             const payButton = document.getElementById('pay-button');
             const mobileNumberInput = document.getElementById('mobile-number');
             const paymentStatusDiv = document.getElementById('payment-status');
+            const hamburgerIcon = document.getElementById('hamburger-icon');
+            const navMenu = document.getElementById('nav-menu-main');
             
             // --- Reliable Hex Colors (for JavaScript use) ---
             const YT_RED = '#ff0000';
@@ -794,6 +862,44 @@
                 updateNavState();     // Update navigation (shows 'LOG IN', hides 'DASHBOARD'/'LOG OUT')
                 showView('#home-section'); // Go to home page
                 alert('You have successfully logged out.');
+            });
+
+            // --- LIVE SEARCH FUNCTIONALITY ---
+            const searchInput = document.getElementById('searchInput');
+            const courseCards = document.querySelectorAll('.course-card');
+            const noResultsMessage = document.getElementById('no-results-message');
+
+            searchInput.addEventListener('keyup', () => {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+                let visibleCourses = 0;
+
+                courseCards.forEach(card => {
+                    const title = card.querySelector('h2').textContent.toLowerCase();
+                    const description = card.querySelector('p').textContent.toLowerCase();
+
+                    if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        visibleCourses++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                noResultsMessage.style.display = visibleCourses === 0 ? 'block' : 'none';
+            });
+
+            // --- HAMBURGER MENU TOGGLE ---
+            hamburgerIcon.addEventListener('click', () => {
+                navMenu.classList.toggle('mobile-active');
+            });
+
+            // --- CLOSE MOBILE MENU ON LINK CLICK ---
+            navMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    if (navMenu.classList.contains('mobile-active')) {
+                        navMenu.classList.remove('mobile-active');
+                    }
+                });
             });
 
             // Initialize: Set initial nav state and show home view
