@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODERN FARMER - Full Course Catalog (Live Workflow)</title>
+    <style>
+        /* --- YouTube Theme Colors --- */
+        :root {
+            --yt-red: #ff0000;
+            --yt-dark: #282828;
+            --yt-darker: #181818;
+            --yt-text: #ffffff;
+            --yt-light-text: #aaaaaa;
+            --yt-green: #00cc66; /* Added for payment success */
+        }
+        
+        /* --- Global & Body Styling --- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding-top: 55px;
+            background-color: var(--yt-dark);
+            color: var(--yt-text);
+        }
+
+        /* --- Header/Navigation Styling --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 55px;
+            background-color: var(--yt-darker);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--yt-text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            color: var(--yt-red);
+            font-size: 1.8em;
+            margin-right: 5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu li {
+            position: relative;
+            margin-left: 20px;
+        }
+
+        .nav-menu a {
+            color: var(--yt-text);
+            text-decoration: none;
+            padding: 5px 10px;
+            display: block;
+            font-size: 0.9em;
+            transition: color 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--yt-red);
+        }
+
+        .search-bar {
+            display: flex;
+            flex-grow: 1;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 20px;
+        }
+
+        .search-bar input {
+            width: 80%;
+            padding: 8px 15px;
+            border: 1px solid #444;
+            background-color: #121212;
+            color: var(--yt-text);
+            border-radius: 2px 0 0 2px;
+            font-size: 1em;
+        }
+
+        .search-bar button {
+            background-color: #3d3d3d;
+            color: var(--yt-text);
+            border: 1px solid #444;
+            border-left: none;
+            padding: 8px 15px;
+            border-radius: 0 2px 2px 0;
+            cursor: pointer;
+        }
+        
+        /* --- Dropdown Menu Styling --- */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: var(--yt-darker);
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.8);
+            z-index: 1001;
+            border: 1px solid var(--yt-red);
+            top: 100%;
+            left: 0;
+        }
+
+        /* Hover effect added here */
+        .dropdown:hover .dropdown-content { 
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: var(--yt-text);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9em;
+        }
+        
+        /* The .show class is added/removed by JS to toggle visibility on click/touch */
+        .dropdown-content.show { 
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #3a3a3a;
+            color: var(--yt-red);
+        }
+
+        /* --- Main Content Layout --- */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--yt-dark);
+        }
+
+        /* --- Course Cards (Homepage) --- */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .course-card {
+            background-color: var(--yt-darker);
+            border-radius: 5px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--yt-text);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card-thumbnail {
+            width: 100%;
+            height: 180px;
+            background-color: #444;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            color: var(--yt-red);
+            position: relative;
+        }
+        
+        .card-info {
+            padding: 15px;
+        }
+
+        .card-info h2 {
+            font-size: 1.2em;
+            margin-top: 0;
+        }
+
+        .card-info p {
+            color: var(--yt-light-text);
+            font-size: 0.9em;
+        }
+
+        /* --- Login/Payment Box Style --- */
+        .login-box, .payment-box {
+            max-width: 400px;
+            margin: 60px auto;
+            padding: 30px;
+            background-color: var(--yt-darker);
+            border: 1px solid #3d3d3d;
+            border-top: 5px solid var(--yt-red);
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .login-box h2, .payment-box h2 {
+            color: var(--yt-red);
+        }
+
+        .login-box input[type="text"],
+        .login-box input[type="password"],
+        .payment-box input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+            background-color: #121212;
+            color: var(--yt-text);
+            border-radius: 3px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .login-box button, .payment-box button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--yt-red);
+            color: var(--yt-text);
+            border: none;
+            border-radius: 3px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .payment-box button#pay-button {
+            background-color: var(--yt-green);
+        }
+
+        .payment-box button#pay-button:hover {
+            background-color: #00994d;
+        }
+
+        /* --- Single Course Page Layout --- */
+        .course-page, #payment-section, #login-section {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: var(--yt-darker);
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+            display: none; /* Hidden by default */
+        }
+        
+        .course-page h2 {
+            color: var(--yt-red);
+            font-size: 2em;
+            border-bottom: 2px solid #3d3d3d;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 400px;
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            color: var(--yt-red);
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #444;
+        }
+
+        .course-details {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* This is the default color for ENROLL NOW (unsubscribed) */
+        .sidebar .enroll-btn {
+            padding: 12px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--yt-text);
+            background-color: var(--yt-green); /* Default: Green for call to action */
+            border-radius: 3px;
+            font-size: 1em;
+            font-weight: bold;
+            display: block;
+            transition: background-color 0.2s;
+        }
+        
+        .main-content h3 {
+            color: var(--yt-text);
+            font-size: 1.4em;
+            border-left: 3px solid var(--yt-red);
+            padding-left: 10px;
+            margin-top: 30px;
+        }
+
+        .main-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .main-content ul li {
+            background-color: #3d3d3d;
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 3px;
+            border-left: 5px solid var(--yt-red);
+        }
+
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--yt-darker);
+            color: var(--yt-light-text);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid #3d3d3d;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="#home-section" class="logo">
+            <span class="logo-icon">&#9654;</span>
+            MODERN FARMER
+        </a>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="Search Courses, Lessons, Topics...">
+            <button>&#128269;</button>
+        </div>
+
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#home-section">HOME</a></li>
+                <li class="dropdown">
+                    <a href="#course-overview">COURSES &#9662;</a>
+                    <div class="dropdown-content" id="coursesDropdown">
+                        <a href="#broiler-course-page" class="course-link" data-target="broiler-course-page">Broiler Chicken</a>
+                        <a href="#roadrunner-course-page" class="course-link" data-target="roadrunner-course-page">Road Runner Chicken</a>
+                        <a href="#mushroom-course-page" class="course-link" data-target="mushroom-course-page">Mushroom Farming</a>
+                        <a href="#fish-course-page" class="course-link" data-target="fish-course-page">Fish Farming</a>
+                        <a href="#maize-course-page" class="course-link" data-target="maize-course-page">Maize Farming</a>
+                        <a href="#sorghum-course-page" class="course-link" data-target="sorghum-course-page">Sorghum Farming</a>
+                        <a href="#tobacco-course-page" class="course-link" data-target="tobacco-course-page">Tobacco Farming</a>
+                    </div>
+                </li>
+                <li><a href="#testimonials-section">TESTIMONIALS</a></li>
+                <li><a href="#contact-section">CONTACT US</a></li>
+                <li id="login-nav-item"><a href="#login-section" style="color: var(--yt-red);">LOG IN</a></li>
+                <li id="dashboard-nav-item" style="display: none;"><a href="#home-section" style="color: var(--yt-green);">DASHBOARD</a></li>
+                <li id="logout-nav-item" style="display: none;"><a href="#" id="logout-button" style="color: var(--yt-light-text);">LOG OUT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container" id="main-content-area">
+        <div id="home-view">
+            <h1>Your Agricultural Success Starts Here</h1>
+            
+            <h2 id="course-overview" style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">Featured Courses</h2>
+            
+            <div class="course-grid">
+                
+                <a href="#broiler-course-page" class="course-card course-link" id="broiler-course" data-target="broiler-course-page">
+                    <div class="card-thumbnail" style="background-color: #7b0000;">🐔</div>
+                    <div class="card-info"><h2>Broiler Chicken Rearing</h2><p>7-Week Profit Cycle. Mastering FCR and Biosecurity.</p></div>
+                </a>
+                
+                <a href="#roadrunner-course-page" class="course-card course-link" data-target="roadrunner-course-page">
+                    <div class="card-thumbnail" style="background-color: #2e5c00;">🏃</div>
+                    <div class="card-info"><h2>Road Runner Chicken Rearing</h2><p>Indigenous Poultry Management for Premium Markets.</p></div>
+                </a>
+                
+                <a href="#mushroom-course-page" class="course-card course-link" data-target="mushroom-course-page">
+                    <div class="card-thumbnail" style="background-color: #004d40;">🍄</div>
+                    <div class="card-info"><h2>Mushroom Farming</h2><p>Substrate preparation, sterile spawning, and climate control.</p></div>
+                </a>
+                <a href="#fish-course-page" class="course-card course-link" data-target="fish-course-page">
+                    <div class="card-thumbnail" style="background-color: #003366;">🐟</div>
+                    <div class="card-info"><h2>Fish Farming (Tilapia/Catfish)</h2><p>Aquaculture basics: Mastering Dissolved Oxygen (DO) and water quality.</p></div>
+                </a>
+                <a href="#maize-course-page" class="course-card course-link" data-target="maize-course-page">
+                    <div class="card-thumbnail" style="background-color: #664d00;">🌽</div>
+                    <div class="card-info"><h2>Maize Farming</h2><p>Fertilizer timing, drought mitigation, and maximizing yield per hectare.</p></div>
+                </a>
+                <a href="#sorghum-course-page" class="course-card course-link" data-target="sorghum-course-page">
+                    <div class="card-thumbnail" style="background-color: #4b0082;">🌾</div>
+                    <div class="card-info"><h2>Sorghum Farming</h2><p>Drought-resistant grain management and pest control strategies.</p></div>
+                </a>
+                <a href="#tobacco-course-page" class="course-card course-link" data-target="tobacco-course-page">
+                    <div class="card-thumbnail" style="background-color: #1a0000;">🌿</div>
+                    <div class="card-info"><h2>Tobacco Farming</h2><p>High-value crop: Curing techniques, topping, and sucker control.</p></div>
+                </a>
+
+            </div>
+
+            <section id="testimonials-section" style="margin-top: 60px;">
+                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">TESTIMONIALS</h2>
+                <div style="background-color: #3d3d3d; border-color: var(--yt-red); padding: 15px; border-radius: 5px; color: var(--yt-text);">
+                    "The Maize Farming course helped me increase my yield by 30% this season! Highly recommend." - *Satisfied Farmer*
+                </div>
+            </section>
+            
+            <section id="contact-section" style="margin-top: 60px;">
+                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px;">CONTACT US</h2>
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="#" style="color: var(--yt-red); text-decoration: none;">Send a message to our Support Team</a></li>
+                </ul>
+            </section>
+
+            <section id="login-section" style="margin-top: 60px;">
+                <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px; text-align: center;">LOG IN or SUBSCRIBE</h2>
+                
+                <div class="login-box">
+                    <h2>Access Your Courses</h2>
+                    <form action="#" method="post">
+                        <label for="username">Email or Username</label>
+                        <input type="text" id="username" name="username" required>
+                        
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                        
+                        <button type="submit">LOG IN (Membership required)</button>
+                    </form>
+                    
+                    <span class="signup-link">
+                        New Farmer? <a href="#payment-section">Subscribe Now</a>
+                    </span>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <section id="payment-section" style="margin-top: 60px;">
+        <h2 style="color: var(--yt-text); border-bottom: 2px solid var(--yt-red); padding-bottom: 10px; margin-top: 40px; text-align: center;">ANNUAL SUBSCRIPTION (Sign Up)</h2>
+        
+        <div class="payment-box">
+            <h2>Unlock All 7 Courses! 🔐</h2>
+            <p style="color: var(--yt-light-text);">Gain **1-Year Access** to all specialized training modules.</p>
+            <h1 style="color: var(--yt-green); font-size: 2.5em;">$49.99 / Year</h1>
+            <p style="font-size: 0.8em; margin-bottom: 30px;">Payment is processed securely using **Ecocash Mobile Money**.</p>
+            
+            <form id="ecocash-form">
+                <label for="mobile-number" style="display: block; text-align: left; margin-bottom: 5px;">Ecocash Mobile Number (e.g., +26377xxxxxxx)</label>
+                <input type="text" id="mobile-number" placeholder="+263 77xxxxxxx" required pattern="^\+2637[78][0-9]{7}$" title="Enter a valid Ecocash number starting with +26377 or +26378">
+                <button type="submit" id="pay-button">Proceed to Ecocash PIN</button>
+            </form>
+            
+            <div id="payment-status" style="margin-top: 20px; font-weight: bold;"></div>
+        </div>
+    </section>
+    <div id="broiler-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Broiler Chicken Rearing: The 7-Week Profit Model 🐔</h2>
+        <div class="video-placeholder">[ Placeholder for Broiler Introduction Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">This intensive course teaches you how to manage the **Feed Conversion Ratio (FCR)** and minimize mortality to achieve maximum profit in the quick 7-week broiler cycle. Suitable for beginners and farmers looking to scale up.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: The Business Foundation** - Planning, Housing Design (Deep Litter), and Market Analysis.</li>
+                    <li>**Module 2: Brooding Mastery (Day 1-14)** - Critical temperature management, chick placement, and reducing early mortality.</li>
+                    <li>**Module 3: Nutrition & FCR Optimization** - Detailed feeding schedules (Starter, Grower, Finisher) and achieving a low FCR score.</li>
+                    <li>**Module 4: Biosecurity and Disease Control** - Vaccination schedules (NCD, IBD), sanitation, and "All-In, All-Out" protocols.</li>
+                    <li>**Module 5: Harvest and Finance** - Calculating the Index of Performance (IP) and successful marketing strategies.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a> 
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 5 Modules (Self-paced)<br>**Access:** Annual Subscription<br>**Prerequisites:** None</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="roadrunner-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Road Runner Chicken Rearing: High-Value, Free-Range Poultry 🏃</h2>
+        <div class="video-placeholder" style="background-color: #2e5c00;">[ Placeholder for Road Runner Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">Focus on the slow-growing, robust indigenous chicken model. Learn to leverage their natural hardiness for low-input costs and tap into the premium market for traditional poultry.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Extensive vs. Semi-Intensive Systems** - Choosing the right setup for profitability.</li>
+                    <li>**Module 2: Housing and Predator Control** - Designing secure, low-cost night shelters and managing free-range risks.</li>
+                    <li>**Module 3: Feed Supplementation and Foraging** - Balancing foraging with feed to optimize growth without high costs.</li>
+                    <li>**Module 4: Natural Health and Vaccination** - Utilizing the birds' disease resistance and targeted vaccination protocols.</li>
+                    <li>**Module 5: Breeding and Flock Management** - Maintaining healthy breeding stock and managing multiple age groups.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 4 Modules<br>**Access:** Annual Subscription<br>**Focus:** Low-Input, Premium Price</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mushroom-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Mushroom Farming: High-Yield, Controlled Environment Crops 🍄</h2>
+        <div class="video-placeholder" style="background-color: #004d40;">[ Placeholder for Mushroom Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">Master the cultivation of **Oyster and Button mushrooms**. This course emphasizes sterile substrate preparation and critical climate control for maximizing yields and preventing devastating mold contamination.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Substrate Preparation and Sterilization** - Using sawdust, straw, and hay; the science of pasteurization.</li>
+                    <li>**Module 2: Spawning and Incubation** - Inoculating the substrate and managing the crucial colonization phase.</li>
+                    <li>**Module 3: Fruiting Chamber Environment** - Controlling **humidity (85-95%)** and temperature for peak production.</li>
+                    <li>**Module 4: Contamination Management** - Identifying and preventing common competitors (Green Mold, Cobweb Mold).</li>
+                    <li>**Module 5: Harvesting, Packing, and Marketing** - Techniques for maximizing shelf life and securing buyers.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 5 Modules<br>**Access:** Annual Subscription<br>**Focus:** Climate Control, Hygiene</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="fish-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Fish Farming (Aquaculture): Tilapia and Catfish Management 🐟</h2>
+        <div class="video-placeholder" style="background-color: #003366;">[ Placeholder for Fish Farming Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">Aquaculture is about **water quality, not fish feeding**. Learn to monitor key water parameters and manage pond systems (Tilapia) or tank systems (Catfish) to prevent mass mortality from low oxygen.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Pond/Tank Design and Preparation** - Lining, filtration, and water source management.</li>
+                    <li>**Module 2: Water Quality Mastery** - Monitoring **Dissolved Oxygen (DO)**, pH, and Ammonia levels.</li>
+                    <li>**Module 3: Stocking Density and Feeding** - Calculating capacity and implementing cost-effective feeding programs.</li>
+                    <li>**Module 4: Disease Prevention and Biosecurity** - Identifying common parasites and bacterial infections.</li>
+                    <li>**Module 5: Aeration and Harvest Strategies** - Mechanical aeration and harvesting/grading for market.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 6 Modules<br>**Access:** Annual Subscription<br>**Focus:** Water Science</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="maize-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Maize Farming: Yield Maximization and Fertilizer Timing 🌽 </h2>
+        <div class="video-placeholder" style="background-color: #664d00;">[ Placeholder for Maize Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">The essential guide to high-yield maize production. Focus on **timely fertilizer application** and managing water stress during the critical reproductive phases to maximize cob size and grain fill.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Soil Testing and Variety Selection** - Choosing the right hybrid for your climate and soil type.</li>
+                    <li>**Module 2: Planting and Basal Dressing** - Optimal spacing and application of Phosphate-rich fertilizer (Compound D/C).</li>
+                    <li>**Module 3: Top Dressing Strategy** - The timing and amount of Nitrogen (Urea/AN) for maximum growth (V4-V6).</li>
+                    <li>**Module 4: Water Stress Mitigation** - Managing irrigation/drought during the **Silking and Tasseling** stages.</li>
+                    <li>**Module 5: Pest and Disease Management** - Controlling Fall Armyworm, stalk borers, and rust.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 7 Modules<br>**Access:** Annual Subscription<br>**Focus:** Yield Density</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="sorghum-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Sorghum Farming: The Drought-Tolerant, Low-Risk Grain 🌾</h2>
+        <div class="video-placeholder" style="background-color: #4b0082;">[ Placeholder for Sorghum Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">Ideal for arid and semi-arid regions. Learn to grow Sorghum, which requires up to **30% less water than maize**, providing a reliable yield where other crops fail. Focus on specialized pest management.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Water Conservation and Dormancy** - Understanding Sorghum's unique drought recovery mechanism.</li>
+                    <li>**Module 2: Planting and Minimal Fertilizer** - Using minimal basal fertilizer and light nitrogen application.</li>
+                    <li>**Module 3: Pest Control (Shoot Fly)** - Early detection and control of the critical Sorghum Shoot Fly.</li>
+                    <li>**Module 4: Bird Control at Harvest** - Strategies to protect the ripening heads from **Quelea Birds**.</li>
+                    <li>**Module 5: Marketing and Value Chain** - Selling to stock feed manufacturers and brewing industries.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 5 Modules<br>**Access:** Annual Subscription<br>**Focus:** Arid Farming</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tobacco-course-page" class="course-page">
+        <a href="#home-section" class="back-link" style="color: var(--yt-red); text-decoration: none; font-size: 1em; display: block; margin-bottom: 20px;">&#9664; Back to All Courses</a>
+        <h2>Tobacco Farming: Quality Production and Curing Techniques 🌿</h2>
+        <div class="video-placeholder" style="background-color: #1a0000;">[ Placeholder for Tobacco Video ]</div>
+        <div class="course-details">
+            <div class="main-content">
+                <p style="color: var(--yt-light-text);">A high-value, high-labor crop demanding precision. Learn the intensive management techniques from seedbed to sale, focusing on the critical **curing process** that determines your final grade and profit.</p>
+                <h3>Course Modules:</h3>
+                <ul>
+                    <li>**Module 1: Seedbed Preparation and Transplanting** - Creating sterile seedbeds and managing the initial plant health.</li>
+                    <li>**Module 2: Topping and Suckering** - Removing the flower and side shoots to force energy into high-value leaves.</li>
+                    <li>**Module 3: Flue-Curing Mastery** - Detailed instruction on heat management to produce golden (Virginia) tobacco.</li>
+                    <li>**Module 4: Grading and Baling** - Separating leaves by quality, color, and size for maximum auction price.</li>
+                    <li>**Module 5: Contract Farming and Finance** - Working with merchants and managing cash flow in this high-risk sector.</li>
+                </ul>
+            </div>
+            <div class="sidebar">
+                <a href="#payment-section" class="enroll-btn">ENROLL NOW - Start Learning!</a>
+                <p style="text-align: center; border-top: 1px solid #444; padding-top: 10px;">**Course Duration:** 8 Modules<br>**Access:** Annual Subscription<br>**Focus:** Intensive Labor, Quality</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('main-content-area');
+            const coursePages = document.querySelectorAll('.course-page');
+            const paymentSection = document.getElementById('payment-section');
+            const coursesDropdown = document.getElementById('coursesDropdown');
+            const loginNavItem = document.getElementById('login-nav-item');
+            const dashboardNavItem = document.getElementById('dashboard-nav-item');
+            const logoutNavItem = document.getElementById('logout-nav-item'); 
+            const logoutButton = document.getElementById('logout-button');     
+            const loginSection = document.getElementById('login-section');
+            const ecocashForm = document.getElementById('ecocash-form');
+            const payButton = document.getElementById('pay-button');
+            const mobileNumberInput = document.getElementById('mobile-number');
+            const paymentStatusDiv = document.getElementById('payment-status');
+            
+            // --- Reliable Hex Colors (for JavaScript use) ---
+            const YT_RED = '#ff0000';
+            const YT_GREEN = '#00cc66'; 
+
+            // 🌟 INITIAL STATE: FALSE (UNSUBSCRIBED) 🌟
+            let isSubscribed = false; 
+
+            function updateNavState() {
+                if (isSubscribed) {
+                    loginNavItem.style.display = 'none';
+                    dashboardNavItem.style.display = 'list-item';
+                    logoutNavItem.style.display = 'list-item'; // Show LOG OUT
+                } else {
+                    loginNavItem.style.display = 'list-item';
+                    dashboardNavItem.style.display = 'none';
+                    logoutNavItem.style.display = 'none'; // Hide LOG OUT
+                }
+            }
+            
+            function showView(targetId) {
+                // Reset scroll position
+                window.scrollTo({ top: 0, behavior: 'auto' });
+
+                // 1. Hide all dynamic sections
+                coursePages.forEach(page => page.style.display = 'none');
+                paymentSection.style.display = 'none';
+                loginSection.style.display = 'none';
+                mainContent.style.display = 'block';
+
+                const targetElement = document.querySelector(targetId);
+                const targetIsCoursePage = targetElement && targetElement.classList.contains('course-page');
+                
+                // 2. Dynamic Course Page Content (Enrollment Button State)
+                if (targetIsCoursePage && targetElement) {
+                    const enrollBtn = targetElement.querySelector('.enroll-btn');
+                    if (enrollBtn) {
+                        if (isSubscribed) {
+                            // Subscribed State: Course is unlocked
+                            enrollBtn.textContent = 'You are Enrolled! (View Dashboard)';
+                            enrollBtn.href = '#home-section'; 
+                            enrollBtn.style.backgroundColor = YT_RED; 
+                        } else {
+                            // Unsubscribed State: Call to action to enroll
+                            enrollBtn.textContent = 'ENROLL NOW - Start Learning!';
+                            enrollBtn.href = '#payment-section';
+                            enrollBtn.style.backgroundColor = YT_GREEN; 
+                        }
+                    }
+                }
+                
+                // 3. Handle specific page views (Course, Payment, Login)
+                if (targetIsCoursePage || targetId === '#payment-section' || targetId === '#login-section') {
+                    mainContent.style.display = 'none';
+                    if (targetElement) {
+                        targetElement.style.display = 'block';
+                    }
+                } else if (targetElement && targetId !== '#home-section') {
+                    // 4. Handle smooth scroll for internal sections on the main page
+                     setTimeout(() => {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }, 50);
+                }
+            }
+            
+            // --- MASTER CLICK HANDLER FOR ALL # LINKS ---
+            document.querySelectorAll('a[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href');
+                    let targetViewId = targetId;
+
+                    // 1. Handle Dropdown Toggle (The "COURSES" link) - Keeps click functionality for mobile/touch
+                    if (this.closest('.dropdown') && targetId === '#course-overview') {
+                        e.preventDefault();
+                        coursesDropdown.classList.toggle('show');
+                        return;
+                    }
+                    
+                    // 2. Prevent default link behavior for all navigational clicks
+                    e.preventDefault(); 
+                    coursesDropdown.classList.remove('show'); // Hide dropdown when any other link is clicked
+
+                    // 3. Subscription Check for Course Access
+                    if (this.classList.contains('course-link') && !isSubscribed) {
+                        alert('Subscription Required: Please enroll to access this course.');
+                        targetViewId = '#payment-section';
+                    } else if (this.classList.contains('course-link') && this.getAttribute('data-target')) {
+                        // If subscribed, proceed to the specific course page
+                        targetViewId = '#' + this.getAttribute('data-target');
+                    }
+                    
+                    showView(targetViewId);
+                });
+            });
+
+            // --- Ecocash Payment Simulation ---
+            ecocashForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                payButton.disabled = true;
+                paymentStatusDiv.style.color = 'yellow';
+                paymentStatusDiv.textContent = `Initiating transaction for $49.99 to ${mobileNumberInput.value}... Check your phone for a PIN prompt.`;
+
+                // Simulate Ecocash Push PIN Prompt
+                setTimeout(() => {
+                    // Entering any value in the prompt simulates a successful PIN entry
+                    const ecocashPin = prompt(`Ecocash Payment Confirmation: Enter your PIN to approve $49.99 payment from ${mobileNumberInput.value}. (Enter anything to simulate success)`);
+                    
+                    if (ecocashPin) {
+                        // Simulated Success
+                        isSubscribed = true;
+                        paymentStatusDiv.style.color = YT_GREEN;
+                        paymentStatusDiv.textContent = `Payment Successful! Your Annual Subscription is Active.`;
+
+                        // Grant Access and Update UI
+                        updateNavState();
+
+                        // Redirect to course overview after a short delay
+                        setTimeout(() => {
+                            alert('Welcome! You now have full access to all courses.');
+                            showView('#home-section');
+                        }, 1500);
+
+                    } else {
+                        // Simulated Failure (User cancelled or empty PIN)
+                        paymentStatusDiv.style.color = YT_RED;
+                        paymentStatusDiv.textContent = 'Payment Cancelled or Failed. Please try again.';
+                    }
+                    payButton.disabled = false;
+                }, 1000);
+            });
+            
+            // --- LOGOUT FUNCTIONALITY ---
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                isSubscribed = false; // Reset subscription status
+                updateNavState();     // Update navigation (shows 'LOG IN', hides 'DASHBOARD'/'LOG OUT')
+                showView('#home-section'); // Go to home page
+                alert('You have successfully logged out.');
+            });
+
+            // Initialize: Set initial nav state and show home view
+            updateNavState();
+            showView('#home-section');
+        });
+    </script>
+
+</body>
+</html>
