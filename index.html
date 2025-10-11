@@ -361,10 +361,19 @@
         .card-info h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 0.75rem 0; }
         .card-info p { color: var(--text-secondary); font-size: 0.9rem; }
 
+        #payment-section {
+             display: none; /* Hidden by default */
+             animation: fadeIn 0.6s ease;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             min-height: 70vh;
+        }
+        
         .payment-box {
-            max-width: 450px; margin: 4rem auto; padding: 2.5rem; background: var(--bg-card);
+            max-width: 450px; width: 100%; margin: 2rem auto; padding: 2.5rem; background: var(--bg-card);
             border: 1px solid var(--border-color); border-radius: var(--border-radius);
-            box-shadow: var(--shadow); text-align: center; animation: fadeIn 0.6s ease;
+            box-shadow: var(--shadow); text-align: center;
         }
         .payment-box h2 { color: var(--primary-color); font-weight: 600; margin-bottom: 2rem; }
         .payment-box input[type="text"] {
@@ -377,8 +386,123 @@
         }
         .payment-box button:hover { background: #00994d; transform: translateY(-2px); box-shadow: var(--shadow); }
 
+        /* --- NEW ATTRACTIVE PRICING CARD STYLES --- */
+        .pricing-card-attractive {
+          overflow: hidden;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          padding: 1.5rem;
+          width: 20rem; /* Increased size */
+          height: auto;
+          background-color: var(--bg-card);
+          background-image: 
+              radial-gradient(
+                circle at 0% 0%,
+                rgba(255, 0, 0, 0.25) 15%,
+                rgba(0, 0, 0, 0) 75%
+              ),
+              radial-gradient(
+                circle at 100% 100%,
+                rgba(255, 0, 0, 0.15) 15%,
+                rgba(0, 0, 0, 0) 150%
+              ),
+              linear-gradient(
+                135deg,
+                rgba(30, 30, 30, 0) 0%,
+                var(--bg-card) 50%,
+                rgba(30, 30, 30, 0) 100%
+              );
+          border-radius: var(--border-radius);
+          border: 1px solid var(--border-color);
+          animation: fadeIn 0.8s ease;
+        }
+
+        .pricing-card-attractive::before {
+          content: "";
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+          width: 2.5rem;
+          height: 2.5rem;
+          background-color: var(--primary-color);
+          background-image: linear-gradient(
+            0deg,
+            var(--primary-color) 0%,
+            #ff4d4d 75%
+          );
+          border-radius: 9999px;
+          box-shadow: 0 1px 5px 3px rgba(255, 0, 0, 0.4), 0 0 30px 5px rgba(255, 0, 0, 0.3);
+        }
+
+        .pricing-card-attractive .title {
+          font-size: 1.25rem;
+          color: var(--text-primary);
+          font-weight: 700;
+        }
+
+        .pricing-card-attractive .pricing {
+          font-size: 2rem;
+          color: var(--text-primary);
+          font-weight: 700;
+        }
+
+        .pricing-card-attractive .pricing .pricing-time,
+        .pricing-card-attractive .sub-title {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+          font-weight: 500;
+        }
+
+        .pricing-card-attractive .list {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+          font-weight: 500;
+          list-style: none;
+          margin-top: 1rem;
+        }
+
+        .pricing-card-attractive .list .list-item .check {
+          margin-right: 0.5rem;
+          font-size: 1.1rem;
+          color: var(--primary-color);
+          font-weight: 900;
+        }
+
+        .pricing-card-attractive .button {
+          overflow: hidden;
+          cursor: pointer;
+          position: relative;
+          margin-top: 1rem;
+          padding: 0.75rem 1rem;
+          width: 100%;
+          height: fit-content;
+          background-color: var(--primary-color);
+          font-size: 0.9rem;
+          color: var(--text-primary);
+          border: none;
+          border-radius: 8px;
+          box-shadow: 0px 0px 2px 1px var(--primary-color);
+          transition: var(--transition);
+        }
+
+        .pricing-card-attractive .button .text-button {
+          position: relative;
+          z-index: 10;
+        }
+        
+        .pricing-card-attractive .button:hover {
+          box-shadow: var(--shadow-hover);
+          transform: translateY(-2px);
+          background-color: #cc0000;
+        }
+
         /* --- Course Page Styles --- */
-        .course-page, #payment-section {
+        .course-page {
             max-width: 1000px; margin: 2rem auto; padding: 2.5rem; background: var(--bg-card);
             border-radius: var(--border-radius); box-shadow: var(--shadow); display: none; animation: fadeIn 0.6s ease;
         }
@@ -413,125 +537,13 @@
             20%, 40%, 60%, 80% { transform: translateX(8px); }
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
         @keyframes popOutIn {
             0% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.1); opacity: 0.5; }
             100% { transform: scale(0); opacity: 0; }
         }
         .pop-out-in { animation: popOutIn 0.4s ease forwards; }
-
-        /* --- Logout Modal Styles --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: var(--blur-backdrop);
-            z-index: 3000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .modal-content {
-            background: var(--bg-card);
-            padding: 2.5rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            box-shadow: var(--shadow-hover);
-            animation: fadeIn 0.3s ease;
-            border-top: 4px solid var(--primary-color);
-        }
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-        .modal-content p {
-            margin-bottom: 2rem;
-            color: var(--text-secondary);
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
-        .modal-buttons .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .btn-danger {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #cc0000;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background-color: var(--border-color);
-            color: var(--text-primary);
-        }
-        .btn-secondary:hover {
-            background-color: #444;
-        }
-
-        /* --- Loader Styles --- */
-        .loader-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 4000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .main-container {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100%;
-          width: 100%;
-        }
-        .loader {
-          width: 100%;
-        }
-        .trace-bg {
-          stroke: #333;
-          stroke-width: 1.8;
-          fill: none;
-        }
-        .trace-flow {
-          stroke-width: 1.8;
-          fill: none;
-          stroke-dasharray: 40 400;
-          stroke-dashoffset: 438;
-          filter: drop-shadow(0 0 6px currentColor);
-          animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite;
-        }
-        .yellow { stroke: #ffea00; color: #ffea00; }
-        .blue { stroke: #00ccff; color: #00ccff; }
-        .green { stroke: #00ff15; color: #00ff15; }
-        .purple { stroke: #9900ff; color: #9900ff; }
-        .red { stroke: #ff3300; color: #ff3300; }
-        @keyframes flow {
-          to { stroke-dashoffset: 0; }
-        }
-        .chip-body { rx: 20; ry: 20; }
-        .chip-text { font-weight: bold; letter-spacing: 1px; }
-        .chip-pin {
-          stroke: #444;
-          stroke-width: 0.5;
-          filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.6));
-        }
     </style>
 </head>
 <body>
@@ -663,7 +675,27 @@
     </div>
     
     <section id="payment-section">
-        <div class="payment-box">
+        <!-- NEW ATTRACTIVE CARD -->
+        <div id="pricing-card-container">
+            <div class="pricing-card-attractive">
+                <span class="title">Full Access Pass</span>
+                <p class="pricing">$49.99 <span class="pricing-time">/ year</span></p>
+                <span class="sub-title">Everything you need to succeed:</span>
+                <ul class="list">
+                    <li class="list-item"><span class="check">✓</span> 1-Year Full Access</li>
+                    <li class="list-item"><span class="check">✓</span> All 7 Farming Modules</li>
+                    <li class="list-item"><span class="check">✓</span> Expert Guidance & Tips</li>
+                    <li class="list-item"><span class="check">✓</span> Community Access</li>
+                    <li class="list-item"><span class="check">✓</span> Future Course Updates</li>
+                </ul>
+                <button class="button">
+                    <span class="text-button">Unlock Your Potential</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ORIGINAL ECO-CASH FORM (Initially hidden) -->
+        <div class="payment-box" style="display: none;">
             <h2>Unlock All 7 Courses! &#128273;</h2>
             <p style="color: var(--text-secondary);">Gain <strong>1-Year Access</strong> to all specialized training modules.</p>
             <h1 style="color: var(--secondary-color); font-size: 2.5em; margin: 1rem 0;">$49.99 / Year</h1>
@@ -695,85 +727,6 @@
         </div>
     </div>
     
-    <!-- Logout Confirmation Modal -->
-    <div class="modal-overlay" id="logoutConfirmationModal" style="display: none;">
-        <div class="modal-content">
-            <h2>Confirm Logout</h2>
-            <p>Are you sure you want to log out?</p>
-            <div class="modal-buttons">
-                <button id="confirmLogoutBtn" class="btn btn-danger">Confirm</button>
-                <button id="cancelLogoutBtn" class="btn btn-secondary">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Loading Spinner -->
-    <div class="loader-overlay" id="loaderOverlay" style="display: none;">
-        <div class="main-container">
-            <div class="loader">
-                <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#2d2d2d"></stop>
-                            <stop offset="100%" stop-color="#0f0f0f"></stop>
-                        </linearGradient>
-                        <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#eeeeee"></stop>
-                            <stop offset="100%" stop-color="#888888"></stop>
-                        </linearGradient>
-                        <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
-                            <stop offset="0%" stop-color="#bbbbbb"></stop>
-                            <stop offset="50%" stop-color="#888888"></stop>
-                            <stop offset="100%" stop-color="#555555"></stop>
-                        </linearGradient>
-                    </defs>
-                    <g id="traces">
-                        <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
-                        <path d="M100 100 H200 V210 H326" class="trace-flow purple"></path>
-                        <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
-                        <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
-                        <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
-                        <path d="M60 260 H150 V250 H326" class="trace-flow yellow"></path>
-                        <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
-                        <path d="M100 350 H200 V270 H326" class="trace-flow green"></path>
-                        <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
-                        <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
-                        <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
-                        <path d="M740 160 H580 V230 H474" class="trace-flow green"></path>
-                        <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
-                        <path d="M720 250 H590 V250 H474" class="trace-flow red"></path>
-                        <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
-                        <path d="M680 340 H570 V270 H474" class="trace-flow yellow"></path>
-                    </g>
-                    <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
-                    <g>
-                        <rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                    </g>
-                    <g>
-                        <rect x="470" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="470" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="470" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        <rect x="470" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                    </g>
-                    <text x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient)" text-anchor="middle" alignment-baseline="middle">
-                        Loading
-                    </text>
-                    <circle cx="100" cy="100" r="5" fill="black"></circle>
-                    <circle cx="80" cy="180" r="5" fill="black"></circle>
-                    <circle cx="60" cy="260" r="5" fill="black"></circle>
-                    <circle cx="100" cy="350" r="5" fill="black"></circle>
-                    <circle cx="700" cy="90" r="5" fill="black"></circle>
-                    <circle cx="740" cy="160" r="5" fill="black"></circle>
-                    <circle cx="720" cy="250" r="5" fill="black"></circle>
-                    <circle cx="680" cy="340" r="5" fill="black"></circle>
-                </svg>
-            </div>
-        </div>
-    </div>
-
     <footer class="footer">
         <p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p>
     </footer>
@@ -830,10 +783,9 @@
                 payButton: document.getElementById('pay-button'),
                 mobileNumberInput: document.getElementById('mobile-number'),
                 paymentStatusDiv: document.getElementById('payment-status'),
-                logoutConfirmationModal: document.getElementById('logoutConfirmationModal'),
-                confirmLogoutBtn: document.getElementById('confirmLogoutBtn'),
-                cancelLogoutBtn: document.getElementById('cancelLogoutBtn'),
-                loaderOverlay: document.getElementById('loaderOverlay')
+                // NEW
+                pricingCardContainer: document.getElementById('pricing-card-container'),
+                paymentBox: document.querySelector('#payment-section .payment-box')
             };
 
             // --- INITIALIZATION ---
@@ -877,8 +829,6 @@
                 elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
                 elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
                 elements.ecocashForm.addEventListener('submit', handleEcocashPayment);
-                elements.confirmLogoutBtn.addEventListener('click', executeLogout);
-                elements.cancelLogoutBtn.addEventListener('click', () => elements.logoutConfirmationModal.style.display = 'none');
                 
                 document.querySelectorAll('a[href^="#"]').forEach(link => {
                     if (link.id !== 'coursesDropdownToggle') {
@@ -937,9 +887,9 @@
             function showView(targetId) {
                 window.scrollTo({ top: 0, behavior: 'auto' });
 
-                elements.paymentSection.style.display = 'none';
                 elements.mainContent.style.display = 'none';
                 elements.coursePageTemplate.style.display = 'none';
+                elements.paymentSection.style.display = 'none'; // Hide all sections first
 
                 const targetElement = document.querySelector(targetId);
                 const targetCourse = courses.find(c => `#${c.id}` === targetId);
@@ -948,7 +898,23 @@
                     renderCoursePage(targetCourse);
                     elements.coursePageTemplate.style.display = 'block';
                 } else if (targetId === '#payment-section') {
-                    elements.paymentSection.style.display = 'block';
+                    elements.paymentSection.style.display = 'flex'; // Use flex for centering
+                    
+                    // --- NEW LOGIC FOR TIMED DISPLAY ---
+                    elements.pricingCardContainer.style.display = 'block';
+                    elements.paymentBox.style.display = 'none';
+
+                    setTimeout(() => {
+                        elements.pricingCardContainer.style.animation = 'fadeOut 0.5s ease forwards';
+                        setTimeout(() => {
+                             elements.pricingCardContainer.style.display = 'none';
+                             elements.paymentBox.style.display = 'block';
+                             elements.paymentBox.style.animation = 'fadeIn 0.5s ease';
+                             elements.pricingCardContainer.style.animation = ''; // Reset animation
+                        }, 500); // Wait for fade-out to complete
+                    }, 5000); // 5-second delay
+                    // --- END NEW LOGIC ---
+
                 } else if (targetId === '#home-section' || !targetElement) {
                     elements.mainContent.style.display = 'block';
                 } else {
@@ -1133,19 +1099,11 @@
                 }
             }
 
-            function handleLogout() {
-                elements.logoutConfirmationModal.style.display = 'flex';
-            }
-
-            function executeLogout() {
-                elements.logoutConfirmationModal.style.display = 'none';
-                elements.loaderOverlay.style.display = 'flex';
-
-                setTimeout(async () => {
+            async function handleLogout() {
+                if(confirm("Are you sure you want to log out?")){
                     await firebase.signOut(firebase.auth);
-                    elements.loaderOverlay.style.display = 'none';
                     showView('#home-section');
-                }, 3000);
+                }
             }
 
             function openAuthModal() { elements.authModal.classList.add('active'); }
