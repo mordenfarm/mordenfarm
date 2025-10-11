@@ -8,6 +8,8 @@
     
     <!-- This script and its values are injected by Netlify during build. -->
     <!-- The values are read from the Environment Variables you set in the UI. -->
+    <!-- This script and its values are injected by Netlify during build. -->
+    <!-- The values are read from the Environment Variables you set in the UI. -->
     <script>
       const firebaseConfig = {
         apiKey: "{{- .Env.FIREBASE_API_KEY -}}",
@@ -18,6 +20,19 @@
         appId: "{{- .Env.FIREBASE_APP_ID -}}",
         measurementId: "{{- .Env.FIREBASE_MEASUREMENT_ID -}}"
       };
+
+      // This new check will warn you if the variables are not being replaced.
+      if (!firebaseConfig.apiKey || firebaseConfig.apiKey.startsWith("{{-")) {
+          const errorMessage = "FATAL ERROR: Firebase environment variables were not replaced by Netlify. Please check your Netlify build settings and ensure environment variables are set correctly.";
+          console.error(errorMessage);
+          // Optionally, display a message to the user on the page itself
+          document.body.innerHTML = `<div style="padding: 2rem; text-align: center; color: white; font-family: sans-serif;">
+                                        <h1>Configuration Error</h1>
+                                        <p>The application could not be loaded due to a misconfiguration. Please check the console for details.</p>
+                                    </div>`;
+          // Throw an error to stop further script execution
+          throw new Error(errorMessage);
+      }
     </script>
     
     <!-- Firebase SDKs -->
@@ -666,7 +681,6 @@
                 elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
                 elements.ecocashForm.addEventListener('submit', handleEcocashPayment);
                 
-                // Attach navigation listener to all hash links EXCEPT the course dropdown toggle
                 document.querySelectorAll('a[href^="#"]').forEach(link => {
                     if (link.id !== 'coursesDropdownToggle') {
                         link.addEventListener('click', handleNavigation);
@@ -773,7 +787,10 @@
                         const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query));
                         displaySearchResults(filtered);
                     } else {
-                        closeSearch();
+                        // FIX: Instead of closing the search bar, just hide the results.
+                        // This prevents the search from closing on focus on mobile.
+                        elements.searchResults.classList.remove('active');
+                        elements.noResults.style.display = 'none';
                     }
                 }, 250);
             }
@@ -791,7 +808,6 @@
                     elements.searchResults.querySelectorAll('.search-result-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const targetId = `#${item.getAttribute('data-target')}`;
-                             // Re-create a synthetic link element to pass to handleNavigation
                             const syntheticLink = document.createElement('a');
                             syntheticLink.setAttribute('href', targetId);
                             handleNavigation({ preventDefault: () => {}, currentTarget: syntheticLink });
@@ -806,7 +822,6 @@
 
             function closeSearch(force = false) {
                 if (force) { elements.searchInput.value = ''; }
-                if (elements.searchInput.value.length > 1 && !force) return;
                 
                 elements.searchBackdrop.classList.remove('active');
                 elements.noResults.style.display = 'none';
@@ -835,9 +850,8 @@
                         currentUser = { ...user, ...userData };
                         isSubscribed = userData.subscription || false;
                     } else {
-                        // This case handles users who signed up but data wasn't saved, or new Google sign-ins
                         currentUser = user;
-                        isSubscribed = false; // Default for new users
+                        isSubscribed = false;
                     }
                 } else {
                     currentUser = null;
@@ -968,11 +982,10 @@
                         elements.paymentStatusDiv.style.color = 'var(--secondary-color)';
                         elements.paymentStatusDiv.textContent = 'Payment successful! Processing subscription...';
                         
-                        // Update Firestore
                         const userDocRef = firebase.doc(firebase.db, 'users', currentUser.uid);
                         firebase.updateDoc(userDocRef, { subscription: true })
                             .then(() => {
-                                isSubscribed = true; // Update local state
+                                isSubscribed = true;
                                 alert('Welcome! Your subscription is active. You now have full access.');
                                 showView('#home-section');
                             })
