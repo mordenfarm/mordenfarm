@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MODERN FARMER - Full Course Catalog</title>
-    
+
     <!-- Firebase Config -->
     <script>
       const firebaseConfig = {
@@ -50,7 +49,7 @@
             window.firebase = {};
         }
     </script>
-    
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- Modern CSS Variables --- */
@@ -71,7 +70,7 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --blur-backdrop: blur(10px);
         }
-        
+
         /* --- Global & Body Styling --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -83,7 +82,7 @@
             overflow-x: hidden;
             padding-top: 70px;
         }
-        
+
         /* --- NEW LOADER STYLES --- */
         .loadingspinner {
           --square: 26px; --offset: 30px; --duration: 2.4s; --delay: 0.2s;
@@ -110,7 +109,7 @@
         @keyframes square4 { 0% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 33.33% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 41.67% { left: calc( 2 * var(--offset) ); top: calc( 2 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 2 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
         @keyframes square5 { 0% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 0 * var(--offset) ); } 66.67% { left: calc( 2 * var(--offset) ); top: calc( 0 * var(--offset) ); } 75.00% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
         @keyframes squarefadein { 0% { transform: scale(0.75); opacity: 0.0; } 100% { transform: scale(1.0); opacity: 1.0; } }
-        
+
         /* --- Main Payment Section & Pricing Card --- */
         #payment-section {
              display: none;
@@ -135,7 +134,7 @@
           border: none; border-radius: 8px; transition: var(--transition);
         }
         .pricing-card-attractive .button:hover { transform: translateY(-2px); background-color: #cc0000; }
-        
+
         /* --- NEW DYNAMIC PAYMENT MODAL STYLES --- */
         .payment-modal-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
@@ -237,7 +236,7 @@
 </head>
 <body>
     <!-- Header, Auth Modal, Main Content etc. from your original HTML -->
- 
+
 
     <div class="container" id="main-content-area">
         <div id="home-view">
@@ -245,7 +244,13 @@
             <div class="course-grid"> <!-- Populated by JS --> </div>
         </div>
     </div>
-    
+
+    <!-- NEW: Page loader to wait for Firebase auth -->
+    <div class="loadingspinner active" id="pageLoader" style="margin-top: 20vh;">
+      <div id="square1"></div> <div id="square2"></div> <div id="square3"></div>
+      <div id="square4"></div> <div id="square5"></div>
+    </div>
+
     <section id="payment-section">
         <div class="pricing-card-attractive" id="pricingCard">
             <span class="title">Full Access Pass</span>
@@ -282,7 +287,7 @@
                                 <!-- Dynamic input fields will be inserted here by JS -->
                             </div>
                             <button class="form-button" type="submit" id="submitPaymentBtn">Pay $49.99</button>
-                            
+
                             <!-- Integrated Loader -->
                             <div class="loadingspinner" id="paymentLoader">
                               <div id="square1"></div> <div id="square2"></div> <div id="square3"></div>
@@ -359,69 +364,75 @@
             paymentSection: document.getElementById('payment-section'),
             successOverlay: document.getElementById('successOverlay'),
             redirectMessage: document.getElementById('redirectMessage'),
+            pageLoader: document.getElementById('pageLoader'), // Added page loader
         };
 
         // --- PAYMENT METHODS DATA ---
         const paymentMethods = [
-            { 
-                name: 'EcoCash', 
-                currency: 'USD', 
-                active: true, 
-                input: { 
-                    type: 'tel', 
-                    label: 'Mobile Number', 
-                    placeholder: '077xxxxxxx' 
-                } 
+            {
+                name: 'EcoCash',
+                currency: 'USD',
+                active: true,
+                input: {
+                    type: 'tel',
+                    label: 'Mobile Number',
+                    placeholder: '077xxxxxxx'
+                }
             },
-            { 
-                name: 'OneMoney', 
-                currency: 'ZWG', 
-                active: true, 
-                input: { 
-                    type: 'tel', 
-                    label: 'Mobile Number', 
-                    placeholder: '071xxxxxxx' 
-                } 
+            {
+                name: 'OneMoney',
+                currency: 'ZWG',
+                active: true,
+                input: {
+                    type: 'tel',
+                    label: 'Mobile Number',
+                    placeholder: '071xxxxxxx'
+                }
             },
             // Add other payment methods as needed
         ];
-        
-      // --- INITIALIZATION ---
-function init() {
-    // Ensure Firebase is loaded before auth check
-    if (!window.firebase || !firebase.auth) {
-        console.error("Firebase not initialized properly.");
-        alert("Firebase failed to load. Please refresh the page.");
-        return;
-    }
 
-    // Firebase Authentication Check
-    firebase.onAuthStateChanged(firebase.auth, (user) => {
-        // --- THIS IS THE MODIFIED LINE ---
-        // It now only checks if a user is logged in, not if they are verified.
-        if (user) {
-            currentUser = user;
-            elements.paymentSection.style.display = 'flex';
-            console.log("User authenticated:", user.email);
-        } else {
-            currentUser = null;
-            console.warn("User not authenticated."); // Message updated for clarity
-            alert("Please log in to access this page.");
-            // No need to sign out if the user object is null
-            window.location.replace('index.html');
+        // --- INITIALIZATION ---
+        function init() {
+            // Check if Firebase is available
+            if (!window.firebase || !window.firebase.auth) {
+                console.error("Firebase not ready.");
+                elements.pageLoader.classList.remove('active');
+                alert("Critical error: Firebase is not loaded. Please try refreshing.");
+                return;
+            }
+
+            // Use a one-time listener to get the initial auth state
+            const unsubscribe = firebase.onAuthStateChanged(firebase.auth, (user) => {
+                unsubscribe(); // Stop listening after the first check
+
+                elements.pageLoader.classList.remove('active'); // Hide loader
+
+                if (user) {
+                    // User is signed in.
+                    currentUser = user;
+                    console.log("User authenticated:", user.email);
+                    elements.paymentSection.style.display = 'flex'; // Show content
+
+                    // Initialize the rest of the page features
+                    populatePaymentOptions();
+                    initializeEventListeners();
+                } else {
+                    // User is signed out.
+                    currentUser = null;
+                    console.warn("User not authenticated. Redirecting.");
+                    alert("Please log in to access the payment page.");
+                    window.location.replace('index.html');
+                }
+            });
         }
-    });
-
-    populatePaymentOptions();
-    initializeEventListeners();
-}
 
 
         // --- POPULATE PAYMENT OPTIONS ---
         function populatePaymentOptions() {
             elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
-                <div class="payment-option ${!method.active ? 'inactive' : ''}" 
-                     data-name="${method.name}" 
+                <div class="payment-option ${!method.active ? 'inactive' : ''}"
+                     data-name="${method.name}"
                      data-currency="${method.currency}"
                      ${!method.active ? 'disabled' : ''}>
                     <span class="payment-option-label">${method.name}</span>
@@ -429,7 +440,7 @@ function init() {
                 </div>
             `).join('');
         }
-        
+
         // --- EVENT LISTENERS ---
         function initializeEventListeners() {
             elements.unlockButton.addEventListener('click', openPaymentModal);
@@ -441,7 +452,7 @@ function init() {
             });
             elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
             elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
-            
+
             // Payment option selection
             elements.paymentOptionsGrid.addEventListener('click', (e) => {
                 const option = e.target.closest('.payment-option');
@@ -452,7 +463,7 @@ function init() {
                 }
             });
         }
-        
+
         // --- MODAL CONTROLS ---
         function openPaymentModal() {
             elements.paymentModalBackdrop.classList.add('active');
@@ -463,7 +474,7 @@ function init() {
             elements.paymentModalBackdrop.classList.remove('active');
             elements.paymentSlider.style.transform = 'translateX(0)';
             elements.paymentForm.reset();
-            
+
             // Stop any active polling when modal is closed
             stopPolling();
         }
@@ -491,11 +502,11 @@ function init() {
                 <label class="payment-input-label" for="payment-input-field">
                     ${method.input.label}
                 </label>
-                <input 
-                    type="${method.input.type}" 
-                    id="payment-input-field" 
+                <input
+                    type="${method.input.type}"
+                    id="payment-input-field"
                     name="payment-input-field"
-                    placeholder="${method.input.placeholder}" 
+                    placeholder="${method.input.placeholder}"
                     required
                     autocomplete="tel"
                 />
@@ -522,7 +533,7 @@ function init() {
         function handleSuccessfulPayment() {
             stopPolling();
             closePaymentModal();
-            
+
             // Show success overlay
             elements.successOverlay.classList.add('active');
 
@@ -579,7 +590,7 @@ function init() {
                         elements.submitPaymentBtn.disabled = false;
                     }
                     // For other statuses (created, sent, delivered), keep polling
-                    
+
                 } catch (error) {
                     console.error("Polling error:", error);
                     // Don't stop polling - might be a temporary network issue
@@ -590,10 +601,10 @@ function init() {
         // --- PAYMENT SUBMISSION ---
         async function handlePaymentSubmit(e) {
             e.preventDefault();
-            
+
             const paymentInputField = document.getElementById('payment-input-field');
             const paymentDetails = paymentInputField.value.trim();
-            
+
             if (!paymentDetails) {
                 alert("Please fill in the required details.");
                 return;
@@ -629,10 +640,10 @@ function init() {
                 if (!response.ok || !result.success) {
                     throw new Error(result.message || 'Failed to initiate payment.');
                 }
-                
+
                 // Show payment instructions to user
                 alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
-                
+
                 // Start polling for payment confirmation
                 if (result.pollUrl) {
                     startPolling(result.pollUrl);
@@ -643,7 +654,7 @@ function init() {
             } catch (error) {
                 console.error("Error initiating payment:", error);
                 alert(`Error: ${error.message}`);
-                
+
                 // Reset UI on error
                 elements.paymentLoader.classList.remove('active');
                 elements.submitPaymentBtn.disabled = false;
