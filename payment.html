@@ -386,7 +386,7 @@
             // Add other payment methods as needed
         ];
         
-       // --- INITIALIZATION ---
+      // --- INITIALIZATION ---
 function init() {
     // Ensure Firebase is loaded before auth check
     if (!window.firebase || !firebase.auth) {
@@ -397,15 +397,17 @@ function init() {
 
     // Firebase Authentication Check
     firebase.onAuthStateChanged(firebase.auth, (user) => {
-        if (user && user.emailVerified !== false) {
+        // --- THIS IS THE MODIFIED LINE ---
+        // It now only checks if a user is logged in, not if they are verified.
+        if (user) {
             currentUser = user;
             elements.paymentSection.style.display = 'flex';
             console.log("User authenticated:", user.email);
         } else {
             currentUser = null;
-            console.warn("User not authenticated or missing verification.");
+            console.warn("User not authenticated."); // Message updated for clarity
             alert("Please log in to access this page.");
-            firebase.signOut(firebase.auth).catch(console.error);
+            // No need to sign out if the user object is null
             window.location.replace('index.html');
         }
     });
