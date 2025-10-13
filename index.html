@@ -1,3 +1,13 @@
+Of course! I have removed the payment modal and its associated JavaScript logic from your code. The "Unlock Your Potential" button has been converted into a direct link to payment.html.
+
+Here is the updated code:
+
+code
+Html
+play_circle
+download
+content_copy
+expand_less
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -485,95 +495,6 @@
           background-color: #cc0000;
         }
 
-        /* --- PAYMENT MODAL: SLIDER & VISUAL FIXES --- */
-        .payment-modal-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: var(--blur-backdrop); z-index: 3000; display: flex; align-items: center;
-            justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition);
-        }
-        .payment-modal-backdrop.active { opacity: 1; visibility: visible; }
-
-        .payment-modal-container {
-            background: var(--bg-card); border-radius: var(--border-radius); padding: 2rem;
-            width: 90%; max-width: 500px; box-shadow: var(--shadow-hover); position: relative;
-            transform: scale(0.9) translateY(20px); transition: var(--transition);
-            overflow: hidden; /* CRITICAL: This hides the sliding content */
-        }
-        .payment-modal-backdrop.active .payment-modal-container { transform: scale(1) translateY(0); }
-
-        .payment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .payment-modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
-
-        .payment-slider {
-            display: flex;
-            /* A cool, fast-out slow-in animation */
-            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
-        }
-
-        .payment-view {
-            width: 100%;
-            flex-shrink: 0; /* Prevents the views from shrinking */
-        }
-
-        .payment-options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-
-        .payment-option {
-            background: var(--bg-darker);
-            /* A very tiny white border */
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);
-            /* A small glow white shadow */
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
-        }
-        .payment-option:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-color);
-            /* Enhanced glow on hover */
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.1);
-        }
-        .payment-option img { max-height: 40px; margin-bottom: 1rem; }
-        .payment-option span { font-weight: 500; }
-
-        .payment-input-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .back-to-options-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
-        .back-to-options-btn:hover { color: var(--text-primary); }
-        .payment-input-logo { max-height: 30px; }
-
-        /* --- NEW LOADER STYLES --- */
-        .loader-backdrop {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: var(--blur-backdrop); z-index: 4000; display: flex; align-items: center;
-            justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition);
-        }
-        .loader-backdrop.active { opacity: 1; visibility: visible; }
-        .loader-card {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-        }
-        .loader { display: flex; align-items: flex-end; gap: 0.5rem; font-family: inherit; font-size: 1.5rem; font-weight: 600; color: var(--text-primary); }
-        .loader .word {
-            display: block;
-            height: 1.5rem;
-            width: auto;
-            overflow: hidden;
-            animation: spin 6s infinite;
-            color: var(--primary-color);
-        }
-        @keyframes spin {
-            10% { transform: translateY(-112%); }
-            25% { transform: translateY(-100%); }
-            35% { transform: translateY(-212%); }
-            50% { transform: translateY(-200%); }
-            60% { transform: translateY(-312%); }
-            75% { transform: translateY(-300%); }
-            85% { transform: translateY(-412%); }
-            100% { transform: translateY(-400%); }
-        }
-
         /* --- Course Page Styles --- */
         .course-page {
             max-width: 1000px; margin: 2rem auto; padding: 2.5rem; background: var(--bg-card);
@@ -762,78 +683,11 @@
                 <li class="list-item"><span class="check">✓</span> Community Access</li>
                 <li class="list-item"><span class="check">✓</span> Future Course Updates</li>
             </ul>
-            <button class="button" id="unlockButton">
+            <a href="payment.html" class="button" id="unlockButton" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">
                 <span class="text-button">Unlock Your Potential</span>
-            </button>
+            </a>
         </div>
     </section>
-
-    <!-- NEW PAYMENT MODAL -->
-    <div class="payment-modal-backdrop" id="paymentModalBackdrop">
-        <div class="payment-modal-container">
-            <div class="payment-modal-header">
-                <h3 class="payment-modal-title" id="paymentModalTitle">Select Your Payment Option</h3>
-                <button class="close-button" id="closePaymentModal">&times;</button>
-            </div>
-            <div class="payment-modal-body">
-                <!-- This slider holds both views -->
-                <div class="payment-slider">
-                    <!-- View 1: Payment Options -->
-                    <div id="payment-options-view" class="payment-view">
-                        <div class="payment-options-grid">
-                            <div class="payment-option" data-method="EcoCash">
-                                <img src="images/ecocash.png" alt="EcoCash">
-                                <span>Pay with EcoCash</span>
-                            </div>
-                            <div class="payment-option" data-method="InnBucks">
-                                <img src="images/innbucks.png" alt="InnBucks">
-                                <span>Pay with InnBucks</span>
-                            </div>
-                            <div class="payment-option" data-method="Omari">
-                                <img src="images/omari.png" alt="O'mari">
-                                <span>Pay with O'mari</span>
-                            </div>
-                            <div class="payment-option" data-method="OneMoney">
-                                <img src="images/onemoney.png" alt="OneMoney">
-                                <span>Pay with OneMoney</span>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- View 2: Payment Input Form -->
-                    <div id="payment-input-view" class="payment-view">
-                        <div class="payment-input-header">
-                            <button class="back-to-options-btn" id="backToOptionsBtn">&#8592;</button>
-                            <img id="paymentInputLogo" class="payment-input-logo" src="" alt="">
-                        </div>
-                        <form id="payment-form">
-                            <div class="form-group">
-                                <label class="form-label" id="payment-input-label">Mobile Number</label>
-                                <input class="form-input" type="tel" id="payment-input-field" placeholder="+263 77xxxxxxx" required>
-                            </div>
-                            <button class="form-button" type="submit">Pay $49.99</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- NEW LOADER -->
-    <div class="loader-backdrop" id="loaderBackdrop">
-        <div class="loader-card">
-            <div class="loader">
-                <p>Wait a sec:</p>
-                <div class="words">
-                    <span class="word">Securing Transaction</span>
-                    <span class="word">Confirm on Your Phone</span>
-                    <span class="word">Finalizing...</span>
-                    <span class="word">Transaction Complete!</span>
-                    <span class="word">Securing Transaction</span>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <!-- Course Page Templates (will be populated by JS) -->
     <div id="course-page-template" class="course-page" style="display: none;">
@@ -864,8 +718,6 @@
             let isSubscribed = false;
             let currentAuthMode = 'signin';
             let searchDebounceTimer;
-            let selectedPaymentMethod = '';
-            let pollingInterval; // To hold the interval ID for polling
 
             // --- COURSE DATA ---
             const courses = [
@@ -907,18 +759,6 @@
                 paymentSection: document.getElementById('payment-section'),
                 courseGrid: document.querySelector('.course-grid'),
                 coursePageTemplate: document.getElementById('course-page-template'),
-                // Payment Elements
-                unlockButton: document.getElementById('unlockButton'),
-                paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
-                closePaymentModal: document.getElementById('closePaymentModal'),
-                paymentSlider: document.querySelector('.payment-slider'), // New slider element
-                paymentModalTitle: document.getElementById('paymentModalTitle'),
-                backToOptionsBtn: document.getElementById('backToOptionsBtn'),
-                paymentInputLogo: document.getElementById('paymentInputLogo'),
-                paymentInputLabel: document.getElementById('payment-input-label'),
-                paymentInputField: document.getElementById('payment-input-field'),
-                paymentForm: document.getElementById('payment-form'),
-                loaderBackdrop: document.getElementById('loaderBackdrop'),
             };
 
             // --- INITIALIZATION ---
@@ -961,16 +801,6 @@
                 elements.authForm.addEventListener('submit', handleAuthSubmit);
                 elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
                 elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
-
-                // NEW Payment Listeners
-                elements.unlockButton.addEventListener('click', openPaymentModal);
-                elements.closePaymentModal.addEventListener('click', closePaymentModal);
-                elements.paymentModalBackdrop.addEventListener('click', (e) => e.target === elements.paymentModalBackdrop && closePaymentModal());
-                document.querySelectorAll('.payment-option').forEach(option => {
-                    option.addEventListener('click', () => selectPaymentMethodHandler(option.dataset.method));
-                });
-                elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
-                elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
 
                 document.querySelectorAll('a[href^="#"]').forEach(link => {
                     if (link.id !== 'coursesDropdownToggle') {
@@ -1265,135 +1095,6 @@
                     elements.authSwitchLink.textContent = 'Sign up';
                     elements.usernameGroup.style.display = 'none';
                 }
-            }
-
-            // --- REAL PAYMENT LOGIC (WITH SLIDER FIX) ---
-            function openPaymentModal() {
-                if (!currentUser) {
-                    openAuthModal();
-                    return;
-                }
-                elements.paymentModalBackdrop.classList.add('active');
-            }
-
-            function closePaymentModal() {
-                elements.paymentModalBackdrop.classList.remove('active');
-                // Reset the slider position after the modal has faded out
-                setTimeout(showPaymentOptionsView, 400);
-            }
-
-            function selectPaymentMethodHandler(method) {
-                selectedPaymentMethod = method;
-                elements.paymentModalTitle.textContent = `Pay with ${method}`;
-                elements.paymentInputLogo.src = `images/${method.toLowerCase()}.png`;
-                elements.paymentInputField.value = ''; // Clear previous input
-
-                if (method === 'InnBucks') {
-                    elements.paymentInputLabel.textContent = 'InnBucks Voucher Code';
-                    elements.paymentInputField.placeholder = 'Enter your voucher code';
-                    elements.paymentInputField.type = 'text';
-                } else {
-                    elements.paymentInputLabel.textContent = 'Mobile Number';
-                    elements.paymentInputField.placeholder = '+263 7xxxxxxxx';
-                    elements.paymentInputField.type = 'tel';
-                }
-
-                // Slide to the input view
-                elements.paymentSlider.style.transform = 'translateX(-100%)';
-            }
-
-            function showPaymentOptionsView() {
-                elements.paymentModalTitle.textContent = 'Select Your Payment Option';
-                // Slide back to the options view
-                elements.paymentSlider.style.transform = 'translateX(0%)';
-                elements.paymentForm.reset();
-            }
-
-            async function handlePaymentSubmit(e) {
-                e.preventDefault();
-                const paymentDetails = elements.paymentInputField.value;
-                if (!paymentDetails) {
-                    alert("Please enter your payment details.");
-                    return;
-                }
-
-                closePaymentModal();
-                elements.loaderBackdrop.classList.add('active');
-
-                try {
-                    const response = await fetch('/.netlify/functions/zbpay-handler', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'initiate',
-                            paymentMethod: selectedPaymentMethod,
-                            phone: paymentDetails, // Assuming phone for now, backend will handle variations
-                            userId: currentUser.uid,
-                            email: currentUser.email,
-                            amount: 49.99,
-                            itemName: 'Modern Farmer Full Access'
-                        }),
-                    });
-
-                    const result = await response.json();
-
-                    if (!response.ok || !result.success) {
-                        throw new Error(result.message || 'Failed to initiate payment.');
-                    }
-
-                    // Start polling for the status using the reference from the backend
-                    pollPaymentStatus(result.orderReference);
-
-                } catch (error) {
-                    console.error("Error initiating payment:", error);
-                    alert(`Error: ${error.message}`);
-                    elements.loaderBackdrop.classList.remove('active');
-                }
-            }
-
-            function pollPaymentStatus(orderReference) {
-                let attempts = 0;
-                const maxAttempts = 24; // 24 * 5s = 120 seconds (2 minutes) timeout
-
-                pollingInterval = setInterval(async () => {
-                    if (attempts >= maxAttempts) {
-                        clearInterval(pollingInterval);
-                        elements.loaderBackdrop.classList.remove('active');
-                        alert("Payment confirmation timed out. Please check your phone or try again.");
-                        return;
-                    }
-
-                    try {
-                        const response = await fetch(`/.netlify/functions/zbpay-handler?action=status&orderReference=${orderReference}`);
-                        const result = await response.json();
-
-                        if (result.status === 'PAID') {
-                            clearInterval(pollingInterval);
-                            // SUCCESS
-                            const userDocRef = firebase.doc(firebase.db, 'users', currentUser.uid);
-                            await firebase.updateDoc(userDocRef, { subscription: true });
-                            isSubscribed = true;
-
-                            setTimeout(() => { // Let the loader animation finish
-                                elements.loaderBackdrop.classList.remove('active');
-                                alert("Success! You can now access all the courses we offer.");
-                                updateUIForAuthState();
-                                showView('#home-section');
-                            }, 1500);
-
-                        } else if (result.status === 'FAILED' || result.status === 'CANCELLED') {
-                            clearInterval(pollingInterval);
-                            elements.loaderBackdrop.classList.remove('active');
-                            alert(`Payment failed with status: ${result.status}. Please try again.`);
-                        }
-                        // If status is 'PENDING', do nothing and let the interval run again.
-                    } catch (error) {
-                        console.error("Polling error:", error);
-                        // Optional: stop polling on multiple consecutive network errors
-                    }
-
-                    attempts++;
-                }, 5000); // Poll every 5 seconds
             }
 
             // --- START THE APP ---
