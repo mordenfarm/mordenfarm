@@ -495,7 +495,7 @@
           background-color: #cc0000;
         }
 
-        /* --- NEW PAYMENT MODAL STYLES --- */
+        /* --- PAYMENT MODAL: SLIDER & VISUAL FIXES --- */
         .payment-modal-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
             backdrop-filter: var(--blur-backdrop); z-index: 3000; display: flex; align-items: center;
@@ -507,27 +507,41 @@
             background: var(--bg-card); border-radius: var(--border-radius); padding: 2rem;
             width: 90%; max-width: 500px; box-shadow: var(--shadow-hover); position: relative;
             transform: scale(0.9) translateY(20px); transition: var(--transition);
-            overflow: hidden; /* For sliding effect */
+            overflow: hidden; /* CRITICAL: This hides the sliding content */
         }
         .payment-modal-backdrop.active .payment-modal-container { transform: scale(1) translateY(0); }
 
         .payment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .payment-modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
 
-        .payment-modal-body { position: relative; }
-        .payment-view { transition: transform 0.4s ease-in-out; }
-        .payment-view.slide-out { transform: translateX(-100%); }
-        .payment-view.slide-in { transform: translateX(0); }
-        #payment-input-view {
-            position: absolute; top: 0; left: 100%; width: 100%;
+        .payment-slider {
+            display: flex;
+            /* A cool, fast-out slow-in animation */
+            transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1);
+        }
+        
+        .payment-view {
+            width: 100%;
+            flex-shrink: 0; /* Prevents the views from shrinking */
         }
 
         .payment-options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        
         .payment-option {
-            background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px;
+            background: var(--bg-darker);
+            /* A very tiny white border */
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 8px;
             padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);
+            /* A small glow white shadow */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
         }
-        .payment-option:hover { transform: translateY(-5px); border-color: var(--primary-color); box-shadow: var(--shadow); }
+        .payment-option:hover { 
+            transform: translateY(-5px); 
+            border-color: var(--primary-color); 
+            /* Enhanced glow on hover */
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), 0 0 15px rgba(255, 255, 255, 0.1); 
+        }
         .payment-option img { max-height: 40px; margin-bottom: 1rem; }
         .payment-option span { font-weight: 500; }
 
@@ -772,40 +786,43 @@
                 <button class="close-button" id="closePaymentModal">&times;</button>
             </div>
             <div class="payment-modal-body">
-                <!-- View 1: Payment Options -->
-                <div id="payment-options-view" class="payment-view">
-                    <div class="payment-options-grid">
-                        <div class="payment-option" data-method="EcoCash">
-                            <img src="images/ecocash.png" alt="EcoCash">
-                            <span>Pay with EcoCash</span>
-                        </div>
-                        <div class="payment-option" data-method="InnBucks">
-                            <img src="images/innbucks.png" alt="InnBucks">
-                            <span>Pay with InnBucks</span>
-                        </div>
-                        <div class="payment-option" data-method="Omari">
-                            <img src="images/omari.png" alt="O'mari">
-                            <span>Pay with O'mari</span>
-                        </div>
-                        <div class="payment-option" data-method="OneMoney">
-                            <img src="images/onemoney.png" alt="OneMoney">
-                            <span>Pay with OneMoney</span>
+                <!-- This slider holds both views -->
+                <div class="payment-slider">
+                    <!-- View 1: Payment Options -->
+                    <div id="payment-options-view" class="payment-view">
+                        <div class="payment-options-grid">
+                            <div class="payment-option" data-method="EcoCash">
+                                <img src="images/ecocash.png" alt="EcoCash">
+                                <span>Pay with EcoCash</span>
+                            </div>
+                            <div class="payment-option" data-method="InnBucks">
+                                <img src="images/innbucks.png" alt="InnBucks">
+                                <span>Pay with InnBucks</span>
+                            </div>
+                            <div class="payment-option" data-method="Omari">
+                                <img src="images/omari.png" alt="O'mari">
+                                <span>Pay with O'mari</span>
+                            </div>
+                            <div class="payment-option" data-method="OneMoney">
+                                <img src="images/onemoney.png" alt="OneMoney">
+                                <span>Pay with OneMoney</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <!-- View 2: Payment Input Form -->
-                <div id="payment-input-view" class="payment-view">
-                    <div class="payment-input-header">
-                        <button class="back-to-options-btn" id="backToOptionsBtn">&#8592;</button>
-                        <img id="paymentInputLogo" class="payment-input-logo" src="" alt="">
-                    </div>
-                    <form id="payment-form">
-                        <div class="form-group">
-                            <label class="form-label" id="payment-input-label">Mobile Number</label>
-                            <input class="form-input" type="tel" id="payment-input-field" placeholder="+263 77xxxxxxx" required>
+                    <!-- View 2: Payment Input Form -->
+                    <div id="payment-input-view" class="payment-view">
+                        <div class="payment-input-header">
+                            <button class="back-to-options-btn" id="backToOptionsBtn">&#8592;</button>
+                            <img id="paymentInputLogo" class="payment-input-logo" src="" alt="">
                         </div>
-                        <button class="form-button" type="submit">Pay $49.99</button>
-                    </form>
+                        <form id="payment-form">
+                            <div class="form-group">
+                                <label class="form-label" id="payment-input-label">Mobile Number</label>
+                                <input class="form-input" type="tel" id="payment-input-field" placeholder="+263 77xxxxxxx" required>
+                            </div>
+                            <button class="form-button" type="submit">Pay $49.99</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -904,8 +921,7 @@
                 unlockButton: document.getElementById('unlockButton'),
                 paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
                 closePaymentModal: document.getElementById('closePaymentModal'),
-                paymentOptionsView: document.getElementById('payment-options-view'),
-                paymentInputView: document.getElementById('payment-input-view'),
+                paymentSlider: document.querySelector('.payment-slider'), // New slider element
                 paymentModalTitle: document.getElementById('paymentModalTitle'),
                 backToOptionsBtn: document.getElementById('backToOptionsBtn'),
                 paymentInputLogo: document.getElementById('paymentInputLogo'),
@@ -1261,7 +1277,7 @@
                 }
             }
 
-            // --- REAL PAYMENT LOGIC ---
+            // --- REAL PAYMENT LOGIC (WITH SLIDER FIX) ---
             function openPaymentModal() {
                 if (!currentUser) {
                     openAuthModal();
@@ -1272,7 +1288,8 @@
 
             function closePaymentModal() {
                 elements.paymentModalBackdrop.classList.remove('active');
-                setTimeout(showPaymentOptionsView, 400);
+                // Reset the slider position after the modal has faded out
+                setTimeout(showPaymentOptionsView, 400); 
             }
 
             function selectPaymentMethodHandler(method) {
@@ -1290,15 +1307,15 @@
                     elements.paymentInputField.placeholder = '+263 7xxxxxxxx';
                     elements.paymentInputField.type = 'tel';
                 }
-
-                elements.paymentOptionsView.classList.add('slide-out');
-                elements.paymentInputView.classList.add('slide-in');
+                
+                // Slide to the input view
+                elements.paymentSlider.style.transform = 'translateX(-100%)';
             }
 
             function showPaymentOptionsView() {
                 elements.paymentModalTitle.textContent = 'Select Your Payment Option';
-                elements.paymentOptionsView.classList.remove('slide-out');
-                elements.paymentInputView.classList.remove('slide-in');
+                // Slide back to the options view
+                elements.paymentSlider.style.transform = 'translateX(0%)';
                 elements.paymentForm.reset();
             }
 
