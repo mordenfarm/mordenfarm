@@ -294,25 +294,55 @@
             </div>
         </div>
     </div>
-
-    <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p><!-- ADD THIS HTML -->
-<!-- Success Overlay -->
+<!-- Success Overlay - Add this just before your <footer> tag -->
 <div class="payment-modal-backdrop" id="successOverlay">
     <div class="payment-modal-container" style="text-align: center; max-width: 400px;">
-        <div style="font-size: 4rem; color: var(--secondary-color);">✓</div>
+        <div style="font-size: 4rem; color: var(--secondary-color); margin-bottom: 1rem;">✓</div>
         <h2 class="payment-modal-title" style="margin: 1rem 0;">Payment Successful!</h2>
-        <p style="color: var(--text-secondary);">Thank you for your purchase. You now have full access to all courses.</p>
-        <p id="redirectMessage" style="margin-top: 1.5rem; font-weight: 600;"></p>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Thank you for your purchase. You now have full access to all courses.
+        </p>
+        <p id="redirectMessage" style="margin-top: 1.5rem; font-weight: 600; color: var(--primary-color);"></p>
     </div>
-</div></footer>
+</div>
+
+<style>
+    /* Success Overlay Styles */
+    #successOverlay {
+        display: none;
+        z-index: 10000; /* Higher than payment modal */
+    }
+
+    #successOverlay.active {
+        display: flex;
+    }
+
+    /* Animation for the checkmark */
+    #successOverlay.active > div {
+        animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes successPopIn {
+        0% {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+</style>
+    <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p></footer>
 
    <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- GLOBAL STATE & MOCKS ---
+        // --- GLOBAL STATE ---
         let currentUser = null;
-        let pollingInterval;
-        let pollingTimeout;
+        let pollingInterval = null;
+        let pollingTimeout = null;
 
+        // --- DOM ELEMENTS ---
         const elements = {
             unlockButton: document.getElementById('unlockButton'),
             paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
@@ -327,31 +357,46 @@
             submitPaymentBtn: document.getElementById('submitPaymentBtn'),
             paymentLoader: document.getElementById('paymentLoader'),
             paymentSection: document.getElementById('payment-section'),
-            // --- NEW ELEMENTS FOR SUCCESS AND REDIRECT ---
             successOverlay: document.getElementById('successOverlay'),
             redirectMessage: document.getElementById('redirectMessage'),
         };
 
-        // --- PAYMENT DATA (No changes here) ---
+        // --- PAYMENT METHODS DATA ---
         const paymentMethods = [
-            // Your payment methods array...
-            { name: 'EcoCash', currency: 'USD', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
-            { name: 'OneMoney', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 71xxxxxxx' } },
-             // ... other methods
+            { 
+                name: 'EcoCash', 
+                currency: 'USD', 
+                active: true, 
+                input: { 
+                    type: 'tel', 
+                    label: 'Mobile Number', 
+                    placeholder: '077xxxxxxx' 
+                } 
+            },
+            { 
+                name: 'OneMoney', 
+                currency: 'ZWG', 
+                active: true, 
+                input: { 
+                    type: 'tel', 
+                    label: 'Mobile Number', 
+                    placeholder: '071xxxxxxx' 
+                } 
+            },
+            // Add other payment methods as needed
         ];
         
         // --- INITIALIZATION ---
         function init() {
-            // Replace with your actual Firebase auth state change handler
+            // Firebase Authentication Check
             firebase.onAuthStateChanged(firebase.auth, (user) => {
-                if(user){
+                if (user) {
                     currentUser = user;
                     elements.paymentSection.style.display = 'flex';
                 } else {
                     currentUser = null;
-                    // Redirect to login if not authenticated
                     alert("You must be logged in to access this page.");
-                    window.location.href = 'index.html'; // Or your login page
+                    window.location.href = 'index.html';
                 }
             });
 
@@ -359,24 +404,32 @@
             initializeEventListeners();
         }
 
-        function populatePaymentOptions() { /* ... No changes here ... */ 
+        // --- POPULATE PAYMENT OPTIONS ---
+        function populatePaymentOptions() {
             elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
                 <div class="payment-option ${!method.active ? 'inactive' : ''}" 
-                        data-name="${method.name}" 
-                        data-currency="${method.currency}"
-                        ${!method.active ? 'disabled' : ''}>
+                     data-name="${method.name}" 
+                     data-currency="${method.currency}"
+                     ${!method.active ? 'disabled' : ''}>
                     <span class="payment-option-label">${method.name}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
             `).join('');
         }
         
-        function initializeEventListeners() { /* ... No changes here ... */ 
+        // --- EVENT LISTENERS ---
+        function initializeEventListeners() {
             elements.unlockButton.addEventListener('click', openPaymentModal);
             elements.closePaymentModal.addEventListener('click', closePaymentModal);
-            elements.paymentModalBackdrop.addEventListener('click', (e) => e.target === elements.paymentModalBackdrop && closePaymentModal());
+            elements.paymentModalBackdrop.addEventListener('click', (e) => {
+                if (e.target === elements.paymentModalBackdrop) {
+                    closePaymentModal();
+                }
+            });
             elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
             elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
+            
+            // Payment option selection
             elements.paymentOptionsGrid.addEventListener('click', (e) => {
                 const option = e.target.closest('.payment-option');
                 if (option && !option.hasAttribute('disabled')) {
@@ -387,24 +440,80 @@
             });
         }
         
-        // --- PAYMENT FLOW LOGIC (No changes in these functions) ---
-        function openPaymentModal() { /* ... */ }
-        function closePaymentModal() { /* ... */ }
-        function selectPaymentMethodHandler(name, currency) { /* ... */ }
-        function showPaymentOptionsView() { /* ... */ }
+        // --- MODAL CONTROLS ---
+        function openPaymentModal() {
+            elements.paymentModalBackdrop.classList.add('active');
+            showPaymentOptionsView();
+        }
 
-        // --- NEW POLLING AND REDIRECT LOGIC ---
+        function closePaymentModal() {
+            elements.paymentModalBackdrop.classList.remove('active');
+            elements.paymentSlider.style.transform = 'translateX(0)';
+            elements.paymentForm.reset();
+            
+            // Stop any active polling when modal is closed
+            stopPolling();
+        }
+
+        function showPaymentOptionsView() {
+            elements.paymentSlider.style.transform = 'translateX(0)';
+            elements.paymentModalTitle.textContent = 'Choose Payment Method';
+        }
+
+        // --- PAYMENT METHOD SELECTION ---
+        function selectPaymentMethodHandler(methodName, currency) {
+            const method = paymentMethods.find(m => m.name === methodName);
+            if (!method) return;
+
+            // Store method details in the form dataset
+            elements.paymentForm.dataset.methodName = methodName;
+            elements.paymentForm.dataset.methodCurrency = currency;
+
+            // Update UI
+            elements.paymentInputHeaderTitle.textContent = `Pay with ${methodName}`;
+            elements.submitPaymentBtn.textContent = `Pay Now`;
+
+            // Build the input field
+            const inputHTML = `
+                <label class="payment-input-label" for="payment-input-field">
+                    ${method.input.label}
+                </label>
+                <input 
+                    type="${method.input.type}" 
+                    id="payment-input-field" 
+                    name="payment-input-field"
+                    placeholder="${method.input.placeholder}" 
+                    required
+                    autocomplete="tel"
+                />
+            `;
+            elements.paymentFormInputs.innerHTML = inputHTML;
+
+            // Slide to the payment form
+            elements.paymentSlider.style.transform = 'translateX(-50%)';
+        }
+
+        // --- POLLING LOGIC ---
         function stopPolling() {
-            clearInterval(pollingInterval);
-            clearTimeout(pollingTimeout);
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            if (pollingTimeout) {
+                clearTimeout(pollingTimeout);
+                pollingTimeout = null;
+            }
             console.log("Polling stopped.");
         }
 
         function handleSuccessfulPayment() {
             stopPolling();
             closePaymentModal();
+            
+            // Show success overlay
             elements.successOverlay.classList.add('active');
 
+            // Countdown and redirect
             let countdown = 5;
             elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
 
@@ -413,7 +522,7 @@
                 elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
                 if (countdown <= 0) {
                     clearInterval(redirectInterval);
-                    window.location.href = 'index.html'; // The final redirect!
+                    window.location.href = 'index.html';
                 }
             }, 1000);
         }
@@ -421,14 +530,15 @@
         function startPolling(pollUrl) {
             console.log("Starting to poll for payment status...");
 
-            // Stop polling after 2 minutes to prevent infinite loops
+            // Safety timeout: Stop polling after 2 minutes
             pollingTimeout = setTimeout(() => {
                 stopPolling();
-                alert("Payment timed out. Please check your phone for any pending requests or try again.");
+                alert("Payment verification timed out. Please check your phone for any pending requests or try again.");
                 elements.paymentLoader.classList.remove('active');
                 elements.submitPaymentBtn.disabled = false;
             }, 120000); // 2 minutes
 
+            // Poll every 4 seconds
             pollingInterval = setInterval(async () => {
                 try {
                     const response = await fetch('/.netlify/functions/check-payment-status', {
@@ -437,33 +547,53 @@
                         body: JSON.stringify({ pollUrl: pollUrl }),
                     });
 
-                    if (!response.ok) return; // Don't stop polling on minor network errors
+                    // Don't stop polling on network errors
+                    if (!response.ok) {
+                        console.warn("Status check request failed, will retry...");
+                        return;
+                    }
 
                     const result = await response.json();
+                    console.log("Payment status:", result.status);
 
                     if (result.isPaid) {
+                        console.log("Payment confirmed!");
                         handleSuccessfulPayment();
-                    } else {
-                        console.log(`Status: ${result.status}`);
+                    } else if (result.status === 'cancelled') {
+                        stopPolling();
+                        alert("Payment was cancelled. Please try again if needed.");
+                        elements.paymentLoader.classList.remove('active');
+                        elements.submitPaymentBtn.disabled = false;
                     }
+                    // For other statuses (created, sent, delivered), keep polling
+                    
                 } catch (error) {
                     console.error("Polling error:", error);
-                    // Don't stop polling, it might be a temporary network issue
+                    // Don't stop polling - might be a temporary network issue
                 }
             }, 4000); // Check every 4 seconds
         }
 
-        // --- MODIFIED PAYMENT SUBMISSION HANDLER ---
+        // --- PAYMENT SUBMISSION ---
         async function handlePaymentSubmit(e) {
             e.preventDefault();
+            
             const paymentInputField = document.getElementById('payment-input-field');
-            const paymentDetails = paymentInputField.value;
+            const paymentDetails = paymentInputField.value.trim();
             
             if (!paymentDetails) {
                 alert("Please fill in the required details.");
                 return;
             }
 
+            // Basic phone number validation
+            const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
+            if (!phoneRegex.test(paymentDetails)) {
+                alert("Please enter a valid Zimbabwean mobile number (e.g., 077xxxxxxx)");
+                return;
+            }
+
+            // Show loading state
             elements.paymentLoader.classList.add('active');
             elements.submitPaymentBtn.disabled = true;
 
@@ -472,13 +602,12 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        // ... your payment data
                         paymentMethod: elements.paymentForm.dataset.methodName,
                         currency: elements.paymentForm.dataset.methodCurrency,
                         paymentDetails: paymentDetails,
                         userId: currentUser.uid,
                         email: currentUser.email,
-                        // Amount & ItemName are set on the server for security
+                        // Amount and ItemName are set securely on the server
                     }),
                 });
 
@@ -488,9 +617,10 @@
                     throw new Error(result.message || 'Failed to initiate payment.');
                 }
                 
-                // Show initial instruction and start polling
+                // Show payment instructions to user
                 alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
                 
+                // Start polling for payment confirmation
                 if (result.pollUrl) {
                     startPolling(result.pollUrl);
                 } else {
@@ -500,12 +630,15 @@
             } catch (error) {
                 console.error("Error initiating payment:", error);
                 alert(`Error: ${error.message}`);
+                
+                // Reset UI on error
                 elements.paymentLoader.classList.remove('active');
                 elements.submitPaymentBtn.disabled = false;
+                stopPolling();
             }
         }
 
-        // --- START THE APP ---
+        // --- START APPLICATION ---
         init();
     });
 </script>
