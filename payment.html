@@ -386,23 +386,34 @@
             // Add other payment methods as needed
         ];
         
-        // --- INITIALIZATION ---
-        function init() {
-            // Firebase Authentication Check
-            firebase.onAuthStateChanged(firebase.auth, (user) => {
-                if (user) {
-                    currentUser = user;
-                    elements.paymentSection.style.display = 'flex';
-                } else {
-                    currentUser = null;
-                    alert("You must be logged in to access this page.");
-                    window.location.href = 'index.html';
-                }
-            });
+       // --- INITIALIZATION ---
+function init() {
+    // Ensure Firebase is loaded before auth check
+    if (!window.firebase || !firebase.auth) {
+        console.error("Firebase not initialized properly.");
+        alert("Firebase failed to load. Please refresh the page.");
+        return;
+    }
 
-            populatePaymentOptions();
-            initializeEventListeners();
+    // Firebase Authentication Check
+    firebase.onAuthStateChanged(firebase.auth, (user) => {
+        if (user && user.emailVerified !== false) {
+            currentUser = user;
+            elements.paymentSection.style.display = 'flex';
+            console.log("User authenticated:", user.email);
+        } else {
+            currentUser = null;
+            console.warn("User not authenticated or missing verification.");
+            alert("Please log in to access this page.");
+            firebase.signOut(firebase.auth).catch(console.error);
+            window.location.replace('index.html');
         }
+    });
+
+    populatePaymentOptions();
+    initializeEventListeners();
+}
+
 
         // --- POPULATE PAYMENT OPTIONS ---
         function populatePaymentOptions() {
