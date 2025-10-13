@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODERN FARMER - Full Course Catalog</title>
+    
+    <!-- Firebase Config -->
+    <script>
+      const firebaseConfig = {
+        apiKey: "FIREBASE_API_KEY",
+        authDomain: "FIREBASE_AUTH_DOMAIN",
+        projectId: "FIREBASE_PROJECT_ID",
+        storageBucket: "FIREBASE_STORAGE_BUCKET",
+        messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
+        appId: "FIREBASE_APP_ID",
+        measurementId: "FIREBASE_MEASUREMENT_ID"
+      };
+      Object.keys(firebaseConfig).forEach(key => {
+        const value = firebaseConfig[key];
+        const envValue = window.ENV?.[value];
+        if (envValue) {
+          firebaseConfig[key] = envValue;
+        }
+      });
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
+            const googleProvider = new GoogleAuthProvider();
+
+            window.firebase = {
+                app, auth, db, googleProvider,
+                signInWithEmailAndPassword, createUserWithEmailAndPassword,
+                signInWithPopup, signOut, onAuthStateChanged, updateProfile,
+                doc, setDoc, getDoc, updateDoc
+            };
+            console.log("Firebase initialized successfully.");
+        } catch (error) {
+            console.error("Firebase initialization failed. Please check your config.", error);
+            window.firebase = {};
+        }
+    </script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Modern CSS Variables --- */
+        :root {
+            --primary-color: #ff0000;
+            --secondary-color: #00cc66;
+            --bg-dark: #0a0a0a;
+            --bg-darker: #121212;
+            --bg-card: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #8a8a8a;
+            --border-color: #333333;
+            --border-accent: #ff0000;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 8px 30px rgba(255, 0, 0, 0.15);
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --blur-backdrop: blur(10px);
+        }
+        
+        /* --- Global & Body Styling --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding-top: 70px;
+        }
+        
+        /* --- NEW LOADER STYLES --- */
+        .loadingspinner {
+          --square: 26px; --offset: 30px; --duration: 2.4s; --delay: 0.2s;
+          --timing-function: ease-in-out; --in-duration: 0.4s; --in-delay: 0.1s;
+          --in-timing-function: ease-out;
+          width: calc( 3 * var(--offset) + var(--square)); height: calc( 2 * var(--offset) + var(--square));
+          padding: 0px; margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 30px;
+          position: relative; display: none; /* Hidden by default */
+        }
+        .loadingspinner.active { display: block; }
+        .loadingspinner div {
+          display: inline-block; background: darkorange; border: none;
+          border-radius: 2px; width: var(--square); height: var(--square);
+          position: absolute; padding: 0px; margin: 0px; font-size: 6pt; color: black;
+        }
+        .loadingspinner #square1 { left: calc( 0 * var(--offset) ); top: calc( 0 * var(--offset) ); animation: square1 var(--duration) var(--delay) var(--timing-function) infinite, squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both; }
+        .loadingspinner #square2 { left: calc( 0 * var(--offset) ); top: calc( 1 * var(--offset) ); animation: square2 var(--duration) var(--delay) var(--timing-function) infinite, squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both; }
+        .loadingspinner #square3 { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); animation: square3 var(--duration) var(--delay) var(--timing-function) infinite, squarefadein var(--in-duration) calc(2 * var(--in-delay)) var(--in-timing-function) both; }
+        .loadingspinner #square4 { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); animation: square4 var(--duration) var(--delay) var(--timing-function) infinite, squarefadein var(--in-duration) calc(3 * var(--in-delay)) var(--in-timing-function) both; }
+        .loadingspinner #square5 { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); animation: square5 var(--duration) var(--delay) var(--timing-function) infinite, squarefadein var(--in-duration) calc(4 * var(--in-delay)) var(--in-timing-function) both; }
+        @keyframes square1 { 0% { left: calc( 0 * var(--offset) ); top: calc( 0 * var(--offset) ); } 8.333% { left: calc( 0 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 0 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
+        @keyframes square2 { 0% { left: calc( 0 * var(--offset) ); top: calc( 1 * var(--offset) ); } 8.333% { left: calc( 0 * var(--offset) ); top: calc( 2 * var(--offset) ); } 16.67% { left: calc( 1 * var(--offset) ); top: calc( 2 * var(--offset) ); } 25.00% { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); } 83.33% { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); } 91.67% { left: calc( 1 * var(--offset) ); top: calc( 0 * var(--offset) ); } 100% { left: calc( 0 * var(--offset) ); top: calc( 0 * var(--offset) ); } }
+        @keyframes square3 { 0%,100% { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); } 16.67% { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); } 25.00% { left: calc( 1 * var(--offset) ); top: calc( 0 * var(--offset) ); } 33.33% { left: calc( 2 * var(--offset) ); top: calc( 0 * var(--offset) ); } 41.67% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 66.67% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 75.00% { left: calc( 2 * var(--offset) ); top: calc( 2 * var(--offset) ); } 83.33% { left: calc( 1 * var(--offset) ); top: calc( 2 * var(--offset) ); } 91.67% { left: calc( 1 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
+        @keyframes square4 { 0% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 33.33% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 41.67% { left: calc( 2 * var(--offset) ); top: calc( 2 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 2 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
+        @keyframes square5 { 0% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 0 * var(--offset) ); } 66.67% { left: calc( 2 * var(--offset) ); top: calc( 0 * var(--offset) ); } 75.00% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
+        @keyframes squarefadein { 0% { transform: scale(0.75); opacity: 0.0; } 100% { transform: scale(1.0); opacity: 1.0; } }
+        
+        /* --- Main Payment Section & Pricing Card --- */
+        #payment-section {
+             display: none;
+             animation: fadeIn 0.6s ease;
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             min-height: 70vh;
+        }
+        .pricing-card-attractive { /* Styles from your original code */
+          overflow: hidden; position: relative; display: flex; flex-direction: column;
+          gap: 0.75rem; padding: 1.5rem; width: 20rem; height: auto;
+          background-color: var(--bg-card);
+          border-radius: var(--border-radius); border: 1px solid var(--border-color);
+        }
+        .pricing-card-attractive .title { font-size: 1.25rem; color: var(--text-primary); font-weight: 700; }
+        .pricing-card-attractive .pricing { font-size: 2rem; color: var(--text-primary); font-weight: 700; }
+        .pricing-card-attractive .list { margin-top: 1rem; list-style: none; }
+        .pricing-card-attractive .button {
+          cursor: pointer; margin-top: 1rem; padding: 0.75rem 1rem; width: 100%;
+          background-color: var(--primary-color); font-size: 0.9rem; color: var(--text-primary);
+          border: none; border-radius: 8px; transition: var(--transition);
+        }
+        .pricing-card-attractive .button:hover { transform: translateY(-2px); background-color: #cc0000; }
+        
+        /* --- NEW DYNAMIC PAYMENT MODAL STYLES --- */
+        .payment-modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--blur-backdrop); z-index: 3000; display: flex; align-items: center;
+            justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .payment-modal-backdrop.active { opacity: 1; visibility: visible; }
+        .payment-modal-container {
+            background: var(--bg-card); border-radius: var(--border-radius); padding: 2rem;
+            width: 90%; max-width: 550px; box-shadow: var(--shadow-hover); position: relative;
+            transform: scale(0.9) translateY(20px); transition: var(--transition);
+            overflow: hidden;
+        }
+        .payment-modal-backdrop.active .payment-modal-container { transform: scale(1) translateY(0); }
+        .payment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .payment-modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
+        .close-button {
+            background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer;
+            transition: var(--transition);
+        }
+        .close-button:hover { color: var(--text-primary); }
+        .payment-slider { display: flex; transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1); }
+        .payment-view { width: 100%; flex-shrink: 0; }
+        .payment-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 1rem;
+        }
+        .payment-option {
+            background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 1.25rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+        }
+        .payment-option:hover { transform: translateY(-5px); border-color: var(--primary-color); }
+        .payment-option.inactive { opacity: 0.4; cursor: not-allowed; background: #2a2a2a; }
+        .payment-option.inactive:hover { transform: none; border-color: var(--border-color); }
+        .payment-option-label { font-size: 0.9rem; font-weight: 500; }
+        .currency-badge {
+            font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem;
+            border-radius: 6px; background: var(--border-color); color: var(--text-secondary);
+        }
+        .payment-input-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .back-to-options-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
+        .back-to-options-btn:hover { color: var(--text-primary); }
+
+        /* General form styles from your original code */
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-label { font-size: 0.9rem; font-weight: 500; color: var(--text-primary); }
+        .form-input {
+            padding: 0.875rem; background: var(--bg-darker); border: 2px solid var(--border-color);
+            border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; transition: var(--transition);
+        }
+        .form-input:focus { outline: none; border-color: var(--primary-color); }
+        .form-button {
+            padding: 0.875rem; background: var(--primary-color); color: white; border: none;
+            border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: var(--transition); margin-top: 1rem;
+        }
+        .form-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .form-button:hover:not(:disabled) { background: #cc0000; }
+
+        /* Other styles from your file... (header, footer, course cards, etc.) */
+        /* --- Modern Header/Navigation --- */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: 70px; background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: var(--blur-backdrop); z-index: 1000;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; box-shadow: var(--shadow); transition: var(--transition);
+        }
+        .logo {
+            font-size: 1.3rem; font-weight: 700; color: var(--text-primary);
+            text-decoration: none; display: flex; align-items: center;
+            gap: 0.5rem; transition: var(--transition); flex-shrink: 0;
+        }
+        .header-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-menu { display: flex; list-style: none; gap: 1rem; align-items: center; }
+        .user-profile {
+            display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
+            padding: 0.5rem; border-radius: var(--border-radius); transition: var(--transition);
+        }
+        .user-avatar {
+            width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: 600; color: white; font-size: 1rem;
+            background: linear-gradient(135deg, var(--primary-color), #cc0000);
+        }
+        .user-info { display: flex; flex-direction: column; align-items: flex-start; }
+        .user-name { font-size: 0.8rem; color: var(--text-primary); font-weight: 500; }
+        .login-text { font-size: 0.7rem; color: var(--text-secondary); }
+        .hamburger { display: none; }
+        .container { width: 90%; max-width: 1400px; margin: 2rem auto; padding: 2rem; }
+        h1 { font-size: 2.5rem; text-align: center; margin-bottom: 3rem; }
+        .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+        .course-card { background: var(--bg-card); border-radius: var(--border-radius); text-decoration: none; color: var(--text-primary); }
+        .footer { text-align: center; padding: 2rem; margin-top: 4rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Include other necessary styles from your original file */
+    </style>
+</head>
+<body>
+    <!-- Header, Auth Modal, Main Content etc. from your original HTML -->
+ 
+
+    <div class="container" id="main-content-area">
+        <div id="home-view">
+            <h1>Your Agricultural Success Starts Here</h1>
+            <div class="course-grid"> <!-- Populated by JS --> </div>
+        </div>
+    </div>
+    
+    <section id="payment-section">
+        <div class="pricing-card-attractive" id="pricingCard">
+            <span class="title">Full Access Pass</span>
+            <p class="pricing">$49.99 <span class="pricing-time">/ year</span></p>
+            <ul class="list"><li>1-Year Full Access</li><li>All Farming Modules</li></ul>
+            <button class="button" id="unlockButton">Choose Payment Option</button>
+            <a href="index.html"><button class="button" style="background-color: var(--bg-dark);">Back</button></a>
+        </div>
+    </section>
+
+    <!-- NEW DYNAMIC PAYMENT MODAL -->
+    <div class="payment-modal-backdrop" id="paymentModalBackdrop">
+        <div class="payment-modal-container">
+            <div class="payment-modal-header">
+                <h3 class="payment-modal-title" id="paymentModalTitle">Select Payment Method</h3>
+                <button class="close-button" id="closePaymentModal">&times;</button>
+            </div>
+            <div class="payment-modal-body">
+                <div class="payment-slider">
+                    <!-- View 1: Payment Options Grid -->
+                    <div id="payment-options-view" class="payment-view">
+                        <div class="payment-options-grid" id="paymentOptionsGrid">
+                            <!-- Payment options will be dynamically inserted here by JS -->
+                        </div>
+                    </div>
+                    <!-- View 2: Payment Input Form -->
+                    <div id="payment-input-view" class="payment-view">
+                        <div class="payment-input-header">
+                            <button class="back-to-options-btn" id="backToOptionsBtn">&#8592;</button>
+                            <h3 id="paymentInputHeaderTitle">Enter Details</h3>
+                        </div>
+                        <form id="payment-form">
+                            <div class="form-group" id="payment-form-inputs">
+                                <!-- Dynamic input fields will be inserted here by JS -->
+                            </div>
+                            <button class="form-button" type="submit" id="submitPaymentBtn">Pay $49.99</button>
+                            
+                            <!-- Integrated Loader -->
+                            <div class="loadingspinner" id="paymentLoader">
+                              <div id="square1"></div> <div id="square2"></div> <div id="square3"></div>
+                              <div id="square4"></div> <div id="square5"></div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p></footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- GLOBAL STATE & MOCKS ---
+            let currentUser = null;
+            let pollingInterval;
+            const elements = {
+                unlockButton: document.getElementById('unlockButton'),
+                paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
+                closePaymentModal: document.getElementById('closePaymentModal'),
+                paymentSlider: document.querySelector('.payment-slider'),
+                paymentModalTitle: document.getElementById('paymentModalTitle'),
+                paymentOptionsGrid: document.getElementById('paymentOptionsGrid'),
+                backToOptionsBtn: document.getElementById('backToOptionsBtn'),
+                paymentForm: document.getElementById('payment-form'),
+                paymentFormInputs: document.getElementById('payment-form-inputs'),
+                paymentInputHeaderTitle: document.getElementById('paymentInputHeaderTitle'),
+                submitPaymentBtn: document.getElementById('submitPaymentBtn'),
+                paymentLoader: document.getElementById('paymentLoader'),
+                // Mock elements for demo
+                userProfile: document.getElementById('userProfile'),
+                paymentSection: document.getElementById('payment-section'),
+            };
+
+            // --- PAYMENT DATA ---
+            const paymentMethods = [
+                { name: 'Visa/Mastercard', currency: 'ZWG', active: false, input: { type: 'tel', label: 'Card Number', placeholder: 'xxxx xxxx xxxx xxxx' } },
+                { name: 'Visa/Mastercard', currency: 'USD', active: false, input: { type: 'tel', label: 'Card Number', placeholder: 'xxxx xxxx xxxx xxxx' } },
+                { name: 'EcoCash', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
+                { name: 'EcoCash', currency: 'USD', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
+                { name: 'Zimswitch', currency: 'ZWG', active: true, input: { type: 'text', label: 'Zimswitch Details', placeholder: 'Enter details' } },
+                { name: 'Zimswitch', currency: 'USD', active: true, input: { type: 'text', label: 'Zimswitch Details', placeholder: 'Enter details' } },
+                { name: 'PayGo', currency: 'ZWG', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter details' } },
+                { name: 'PayGo', currency: 'USD', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter details' } },
+                { name: 'InnBucks', currency: 'USD', active: true, input: { type: 'text', label: 'InnBucks Voucher', placeholder: 'Enter voucher code' } },
+                { name: 'OneMoney', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 71xxxxxxx' } },
+                { name: 'Telecash', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 73xxxxxxx' } },
+                { name: 'Internet/Mobile Banking', currency: 'ZWG', active: true, input: { type: 'text', label: 'Bank Details', placeholder: 'Enter details' } },
+                { name: 'Internet/Mobile Banking', currency: 'USD', active: true, input: { type: 'text', label: 'Bank Details', placeholder: 'Enter details' } },
+                { name: 'POS2U', currency: 'ZWG', active: true, input: { type: 'text', label: 'POS2U Details', placeholder: 'Enter details' } },
+                { name: 'POS2U', currency: 'USD', active: true, input: { type: 'text', label: 'POS2U Details', placeholder: 'Enter details' } },
+            ];
+            
+            // --- INITIALIZATION ---
+            function init() {
+                // Mock user login for demonstration
+                currentUser = { uid: 'mockUserId123', email: 'test@example.com' };
+                elements.paymentSection.style.display = 'flex'; // Show payment section for demo
+
+                populatePaymentOptions();
+                initializeEventListeners();
+                // Replace with your actual Firebase auth state change handler
+                // firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
+            }
+
+            function populatePaymentOptions() {
+                elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
+                    <div class="payment-option ${!method.active ? 'inactive' : ''}" 
+                         data-name="${method.name}" 
+                         data-currency="${method.currency}"
+                         ${!method.active ? 'disabled' : ''}>
+                        <span class="payment-option-label">${method.name}</span>
+                        <span class="currency-badge">${method.currency}</span>
+                    </div>
+                `).join('');
+            }
+
+            // --- EVENT LISTENERS ---
+            function initializeEventListeners() {
+                elements.unlockButton.addEventListener('click', openPaymentModal);
+                elements.closePaymentModal.addEventListener('click', closePaymentModal);
+                elements.paymentModalBackdrop.addEventListener('click', (e) => e.target === elements.paymentModalBackdrop && closePaymentModal());
+                elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
+                elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
+
+                // Add click listener to the grid container
+                elements.paymentOptionsGrid.addEventListener('click', (e) => {
+                    const option = e.target.closest('.payment-option');
+                    if (option && !option.hasAttribute('disabled')) {
+                        const name = option.dataset.name;
+                        const currency = option.dataset.currency;
+                        selectPaymentMethodHandler(name, currency);
+                    }
+                });
+            }
+            
+            // --- PAYMENT FLOW LOGIC ---
+            function openPaymentModal() {
+                if (!currentUser) { /* openAuthModal(); */ alert("Please log in first."); return; }
+                elements.paymentModalBackdrop.classList.add('active');
+            }
+
+            function closePaymentModal() {
+                elements.paymentModalBackdrop.classList.remove('active');
+                setTimeout(() => {
+                    showPaymentOptionsView(); // Reset view after closing
+                    elements.paymentLoader.classList.remove('active');
+                    elements.submitPaymentBtn.disabled = false;
+                }, 400);
+            }
+
+            function selectPaymentMethodHandler(name, currency) {
+                const method = paymentMethods.find(m => m.name === name && m.currency === currency);
+                if (!method) return;
+
+                // Store method details on the form element for later use
+                elements.paymentForm.dataset.methodName = name;
+                elements.paymentForm.dataset.methodCurrency = currency;
+                
+                elements.paymentInputHeaderTitle.textContent = `Pay with ${name} (${currency})`;
+
+                // Generate and inject the correct input field
+                elements.paymentFormInputs.innerHTML = `
+                    <label class="form-label" for="payment-input-field">${method.input.label}</label>
+                    <input class="form-input" type="${method.input.type}" id="payment-input-field" placeholder="${method.input.placeholder}" required>
+                `;
+                
+                elements.paymentSlider.style.transform = 'translateX(-100%)';
+            }
+
+            function showPaymentOptionsView() {
+                elements.paymentModalTitle.textContent = 'Select Payment Method';
+                elements.paymentSlider.style.transform = 'translateX(0%)';
+                elements.paymentForm.reset();
+            }
+
+            async function handlePaymentSubmit(e) {
+                e.preventDefault();
+                const paymentInputField = document.getElementById('payment-input-field');
+                const paymentDetails = paymentInputField.value;
+                
+                if (!paymentDetails) {
+                    alert("Please fill in the required details.");
+                    return;
+                }
+
+                // Show loader and disable button
+                elements.paymentLoader.classList.add('active');
+                elements.submitPaymentBtn.disabled = true;
+
+                try {
+                    const response = await fetch('/.netlify/functions/paynow-handler', { // Ensure this matches your function name
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'initiate',
+                            paymentMethod: elements.paymentForm.dataset.methodName,
+                            currency: elements.paymentForm.dataset.methodCurrency,
+                            paymentDetails: paymentDetails,
+                            userId: currentUser.uid,
+                            email: currentUser.email,
+                            amount: 49.99, // Or get this dynamically
+                            itemName: 'Modern Farmer Full Access'
+                        }),
+                    });
+
+                    const result = await response.json();
+
+                    if (!response.ok || !result.success) {
+                        throw new Error(result.message || 'Failed to initiate payment.');
+                    }
+                    
+                    alert('Payment Initiated! Please check your device to complete the transaction.');
+                    // You might want to start polling here if required
+                    // pollPaymentStatus(result.orderReference);
+                    closePaymentModal();
+
+                } catch (error) {
+                    console.error("Error initiating payment:", error);
+                    alert(`Error: ${error.message}`);
+                } finally {
+                    // Hide loader and re-enable button
+                    elements.paymentLoader.classList.remove('active');
+                    elements.submitPaymentBtn.disabled = false;
+                }
+            }
+
+            // --- START THE APP ---
+            init();
+        });
+    </script>
+</body>
+</html>
