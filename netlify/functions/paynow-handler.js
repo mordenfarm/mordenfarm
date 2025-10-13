@@ -1,90 +1,168 @@
 const { Paynow } = require("paynow");
-const crypto = require('crypto');
+
+// --- 1. CONFIGURATION & SECURITY ---
+// Define product information securely on the server.
+// This prevents client-side price manipulation. The frontend can send any amount,
+// but we will ALWAYS use the price defined here.
+const PRODUCT_INFO = {
+    name: 'Modern Farmer Full Access',
+    price: 49.99 
+};
 
 exports.handler = async (event) => {
-    // --- 1. PRE-FLIGHT CHECK & VALIDATION ---
-    // Only allow POST requests
+    // --- 2. PRE-FLIGHT CHECKS ---
+
+    // A. Only allow POST requests
     if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: JSON.stringify({ success: false, message: "Method Not Allowed" }) };
+        return {
+            statusCode: 405,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ success: false, message: "Method Not Allowed" })
+        };
     }
 
-    // Check for essential environment variables
+    // B. Check for essential environment variables
     const { PAYNOW_ID, PAYNOW_KEY, SITE_URL } = process.env;
     if (!PAYNOW_ID || !PAYNOW_KEY || !SITE_URL) {
-        console.error("Critical Error: Missing Paynow or Site URL environment variables.");
+        console.error("CRITICAL ERROR: Missing Paynow or Site URL environment variables.");
         return {
             statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ success: false, message: "Server configuration error. Please contact support." })
         };
     }
 
-    // --- 2. PARSE & VALIDATE INCOMING DATA ---
+    // --- 3. PARSE & VALIDATE INCOMING DATA ---
     let data;
     try {
         data = JSON.parse(event.body);
     } catch (error) {
-        return { statusCode: 400, body: JSON.stringify({ success: false, message: "Invalid request body." }) };
+        return {
+            statusCode: 400,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ success: false, message: "Invalid JSON in request body." })
+        };
     }
 
-    const { action, paymentMethod, currency, paymentDetails, userId, email, amount, itemName } = data;
+    // Destructure the required fields from the client.
+    // We deliberately ignore `amount` and `itemName` from the client for security.
+    const { paymentMethod, currency, paymentDetails, userId, email } = data;
 
-    // Ensure all required fields are present
-    if (!action || !paymentMethod || !currency || !paymentDetails || !userId || !email || !amount || !itemName) {
-        return { statusCode: 400, body: JSON.stringify({ success: false, message: "Missing required payment information." }) };
+    // Ensure all required fields from the client are present.
+    const requiredFields = { paymentMethod, currency, paymentDetails, userId, email };
+    for (const [key, value] of Object.entries(requiredFields)) {
+        if (!value) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ success: false, message: `Missing required field: ${key}` })
+            };
+        }
     }
 
-    // --- 3. PAYNOW INTEGRATION LOGIC ---
+    // --- 4. PAYNOW INTEGRATION LOGIC ---
     try {
-        // Instantiate the Paynow SDK
+        // Instantiate the Paynow SDK with your credentials
         const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
 
-        // Set the URL where Paynow will send the payment status update (the webhook)
+        // Set the URL where Paynow will post the transaction status update (your webhook)
         paynow.resultUrl = `${SITE_URL}/.netlify/functions/paynow-webhook`;
-        // Optional: Set a return URL if you want to redirect the user somewhere specific after they pay on a Paynow page
-        paynow.returnUrl = `${SITE_URL}`;
+        
+        // Set the URL where the user is returned to after payment on a Paynow page (optional but good practice)
+        paynow.returnUrl = `${SITE_URL}`; // e.g., redirect to a "thank you" page
 
         // Create a unique reference for this transaction.
-        // Embedding the userId makes it easy to identify the user in the webhook.
+        // Embedding the userId is crucial for identifying the user in the webhook.
         const uniqueReference = `MF-${userId}-${Date.now()}`;
         
-        // Create a new payment object
+        // Create a new payment object using the user's email
         const payment = paynow.createPayment(uniqueReference, email);
-        payment.add(itemName, amount);
 
-        // Map frontend method names to Paynow SDK expected values (must be lowercase)
+        // Add the product to the cart using the SECURE, server-defined name and price
+        payment.add(PRODUCT_INFO.name, PRODUCT_INFO.price);
+
+        // --- 4A. VALIDATE MOBILE METHOD ---
+        // Sanitize the payment method name from the frontend (e.g., "EcoCash" -> "ecocash")
         const mobileMethod = paymentMethod.toLowerCase().replace(/\s/g, '');
+        const validMethods = ['ecocash', 'onemoney'];
+        
+        if (!validMethods.includes(mobileMethod)) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    success: false, 
+                    message: `Invalid payment method. Supported methods: ${validMethods.join(', ')}` 
+                })
+            };
+        }
 
-        // --- 4. SEND MOBILE PAYMENT REQUEST ---
-        // 'sendMobile' is used for push payments like EcoCash, OneMoney, etc.
-        const response = await paynow.sendMobile(payment, paymentDetails, mobileMethod);
+        // --- 4B. VALIDATE PHONE NUMBER FORMAT ---
+        // Zimbabwean mobile numbers: 077XXXXXXX, 078XXXXXXX, 071XXXXXXX, 073XXXXXXX, 076XXXXXXX
+        const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
+        if (!phoneRegex.test(paymentDetails)) {
+            return {
+                statusCode: 400,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    success: false, 
+                    message: "Invalid phone number format. Please use format: 07XXXXXXXX" 
+                })
+            };
+        }
+
+        // --- 5. SEND MOBILE PAYMENT REQUEST ---
+        // Use `sendMobile` for push payments like EcoCash, OneMoney, etc.
+        let response;
+        try {
+            response = await paynow.sendMobile(payment, paymentDetails, mobileMethod);
+        } catch (apiError) {
+            // Handle promise rejection from Paynow SDK
+            console.error("Paynow API call failed:", apiError);
+            return {
+                statusCode: 500,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    success: false, 
+                    message: "Failed to communicate with payment gateway. Please try again." 
+                }),
+            };
+        }
 
         if (response && response.success) {
-            // Payment initiated successfully
+            // Payment was initiated successfully by Paynow.
             console.log(`Successfully initiated payment for user ${userId}. Poll URL: ${response.pollUrl}`);
+            
+            // Return a success response to the frontend, including the poll URL.
+            // The frontend can use this URL to check the transaction status.
             return {
                 statusCode: 200,
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     success: true,
-                    message: "Payment initiated. Please check your phone.",
-                    instructions: response.instructions,
+                    message: "Payment initiated. Please check your phone to approve the transaction.",
+                    instructions: response.instructions || "Check your phone for the payment prompt",
                     pollUrl: response.pollUrl,
                 }),
             };
         } else {
-            // Paynow returned an error
-            const errorMessage = response ? response.error : "Unknown error from payment gateway.";
+            // Paynow returned an error (e.g., invalid phone number, service unavailable).
+            const errorMessage = response?.error || "Unknown error from payment gateway.";
             console.error(`Paynow initiation failed for user ${userId}:`, errorMessage);
+            
             return {
-                statusCode: 400, // Bad request, as the issue is likely with payment details or gateway status
+                statusCode: 400, // Bad Request, as the issue is likely with the payment details
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ success: false, message: errorMessage }),
             };
         }
 
     } catch (error) {
-        // --- 5. ROBUST ERROR HANDLING ---
-        console.error("An unexpected error occurred in paynow-handler:", error);
+        // --- 6. UNEXPECTED ERROR HANDLING ---
+        console.error("An unexpected error occurred in the paynow-handler:", error);
         return {
             statusCode: 500,
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ success: false, message: "An internal server error occurred. Please try again later." }),
         };
     }
