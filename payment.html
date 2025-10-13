@@ -295,187 +295,219 @@
         </div>
     </div>
 
-    <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p></footer>
+    <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p><!-- ADD THIS HTML -->
+<!-- Success Overlay -->
+<div class="payment-modal-backdrop" id="successOverlay">
+    <div class="payment-modal-container" style="text-align: center; max-width: 400px;">
+        <div style="font-size: 4rem; color: var(--secondary-color);">✓</div>
+        <h2 class="payment-modal-title" style="margin: 1rem 0;">Payment Successful!</h2>
+        <p style="color: var(--text-secondary);">Thank you for your purchase. You now have full access to all courses.</p>
+        <p id="redirectMessage" style="margin-top: 1.5rem; font-weight: 600;"></p>
+    </div>
+</div></footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- GLOBAL STATE & MOCKS ---
-            let currentUser = null;
-            let pollingInterval;
-            const elements = {
-                unlockButton: document.getElementById('unlockButton'),
-                paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
-                closePaymentModal: document.getElementById('closePaymentModal'),
-                paymentSlider: document.querySelector('.payment-slider'),
-                paymentModalTitle: document.getElementById('paymentModalTitle'),
-                paymentOptionsGrid: document.getElementById('paymentOptionsGrid'),
-                backToOptionsBtn: document.getElementById('backToOptionsBtn'),
-                paymentForm: document.getElementById('payment-form'),
-                paymentFormInputs: document.getElementById('payment-form-inputs'),
-                paymentInputHeaderTitle: document.getElementById('paymentInputHeaderTitle'),
-                submitPaymentBtn: document.getElementById('submitPaymentBtn'),
-                paymentLoader: document.getElementById('paymentLoader'),
-                // Mock elements for demo
-                userProfile: document.getElementById('userProfile'),
-                paymentSection: document.getElementById('payment-section'),
-            };
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- GLOBAL STATE & MOCKS ---
+        let currentUser = null;
+        let pollingInterval;
+        let pollingTimeout;
 
-            // --- PAYMENT DATA ---
-            const paymentMethods = [
-                { name: 'Visa/Mastercard', currency: 'ZWG', active: false, input: { type: 'tel', label: 'Card Number', placeholder: 'xxxx xxxx xxxx xxxx' } },
-                { name: 'Visa/Mastercard', currency: 'USD', active: false, input: { type: 'tel', label: 'Card Number', placeholder: 'xxxx xxxx xxxx xxxx' } },
-                { name: 'EcoCash', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
-                { name: 'EcoCash', currency: 'USD', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
-                { name: 'Zimswitch', currency: 'ZWG', active: true, input: { type: 'text', label: 'Zimswitch Details', placeholder: 'Enter details' } },
-                { name: 'Zimswitch', currency: 'USD', active: true, input: { type: 'text', label: 'Zimswitch Details', placeholder: 'Enter details' } },
-                { name: 'PayGo', currency: 'ZWG', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter details' } },
-                { name: 'PayGo', currency: 'USD', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter details' } },
-                { name: 'InnBucks', currency: 'USD', active: true, input: { type: 'text', label: 'InnBucks Voucher', placeholder: 'Enter voucher code' } },
-                { name: 'OneMoney', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 71xxxxxxx' } },
-                { name: 'Telecash', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 73xxxxxxx' } },
-                { name: 'Internet/Mobile Banking', currency: 'ZWG', active: true, input: { type: 'text', label: 'Bank Details', placeholder: 'Enter details' } },
-                { name: 'Internet/Mobile Banking', currency: 'USD', active: true, input: { type: 'text', label: 'Bank Details', placeholder: 'Enter details' } },
-                { name: 'POS2U', currency: 'ZWG', active: true, input: { type: 'text', label: 'POS2U Details', placeholder: 'Enter details' } },
-                { name: 'POS2U', currency: 'USD', active: true, input: { type: 'text', label: 'POS2U Details', placeholder: 'Enter details' } },
-            ];
-            
-            // --- INITIALIZATION ---
-            function init() {
-                // Mock user login for demonstration
-                currentUser = { uid: 'mockUserId123', email: 'test@example.com' };
-                elements.paymentSection.style.display = 'flex'; // Show payment section for demo
+        const elements = {
+            unlockButton: document.getElementById('unlockButton'),
+            paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
+            closePaymentModal: document.getElementById('closePaymentModal'),
+            paymentSlider: document.querySelector('.payment-slider'),
+            paymentModalTitle: document.getElementById('paymentModalTitle'),
+            paymentOptionsGrid: document.getElementById('paymentOptionsGrid'),
+            backToOptionsBtn: document.getElementById('backToOptionsBtn'),
+            paymentForm: document.getElementById('payment-form'),
+            paymentFormInputs: document.getElementById('payment-form-inputs'),
+            paymentInputHeaderTitle: document.getElementById('paymentInputHeaderTitle'),
+            submitPaymentBtn: document.getElementById('submitPaymentBtn'),
+            paymentLoader: document.getElementById('paymentLoader'),
+            paymentSection: document.getElementById('payment-section'),
+            // --- NEW ELEMENTS FOR SUCCESS AND REDIRECT ---
+            successOverlay: document.getElementById('successOverlay'),
+            redirectMessage: document.getElementById('redirectMessage'),
+        };
 
-                populatePaymentOptions();
-                initializeEventListeners();
-                // Replace with your actual Firebase auth state change handler
-                // firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
-            }
-
-            function populatePaymentOptions() {
-                elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
-                    <div class="payment-option ${!method.active ? 'inactive' : ''}" 
-                         data-name="${method.name}" 
-                         data-currency="${method.currency}"
-                         ${!method.active ? 'disabled' : ''}>
-                        <span class="payment-option-label">${method.name}</span>
-                        <span class="currency-badge">${method.currency}</span>
-                    </div>
-                `).join('');
-            }
-
-            // --- EVENT LISTENERS ---
-            function initializeEventListeners() {
-                elements.unlockButton.addEventListener('click', openPaymentModal);
-                elements.closePaymentModal.addEventListener('click', closePaymentModal);
-                elements.paymentModalBackdrop.addEventListener('click', (e) => e.target === elements.paymentModalBackdrop && closePaymentModal());
-                elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
-                elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
-
-                // Add click listener to the grid container
-                elements.paymentOptionsGrid.addEventListener('click', (e) => {
-                    const option = e.target.closest('.payment-option');
-                    if (option && !option.hasAttribute('disabled')) {
-                        const name = option.dataset.name;
-                        const currency = option.dataset.currency;
-                        selectPaymentMethodHandler(name, currency);
-                    }
-                });
-            }
-            
-            // --- PAYMENT FLOW LOGIC ---
-            function openPaymentModal() {
-                if (!currentUser) { /* openAuthModal(); */ alert("Please log in first."); return; }
-                elements.paymentModalBackdrop.classList.add('active');
-            }
-
-            function closePaymentModal() {
-                elements.paymentModalBackdrop.classList.remove('active');
-                setTimeout(() => {
-                    showPaymentOptionsView(); // Reset view after closing
-                    elements.paymentLoader.classList.remove('active');
-                    elements.submitPaymentBtn.disabled = false;
-                }, 400);
-            }
-
-            function selectPaymentMethodHandler(name, currency) {
-                const method = paymentMethods.find(m => m.name === name && m.currency === currency);
-                if (!method) return;
-
-                // Store method details on the form element for later use
-                elements.paymentForm.dataset.methodName = name;
-                elements.paymentForm.dataset.methodCurrency = currency;
-                
-                elements.paymentInputHeaderTitle.textContent = `Pay with ${name} (${currency})`;
-
-                // Generate and inject the correct input field
-                elements.paymentFormInputs.innerHTML = `
-                    <label class="form-label" for="payment-input-field">${method.input.label}</label>
-                    <input class="form-input" type="${method.input.type}" id="payment-input-field" placeholder="${method.input.placeholder}" required>
-                `;
-                
-                elements.paymentSlider.style.transform = 'translateX(-100%)';
-            }
-
-            function showPaymentOptionsView() {
-                elements.paymentModalTitle.textContent = 'Select Payment Method';
-                elements.paymentSlider.style.transform = 'translateX(0%)';
-                elements.paymentForm.reset();
-            }
-
-            async function handlePaymentSubmit(e) {
-                e.preventDefault();
-                const paymentInputField = document.getElementById('payment-input-field');
-                const paymentDetails = paymentInputField.value;
-                
-                if (!paymentDetails) {
-                    alert("Please fill in the required details.");
-                    return;
+        // --- PAYMENT DATA (No changes here) ---
+        const paymentMethods = [
+            // Your payment methods array...
+            { name: 'EcoCash', currency: 'USD', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 77xxxxxxx' } },
+            { name: 'OneMoney', currency: 'ZWG', active: true, input: { type: 'tel', label: 'Mobile Number', placeholder: '+263 71xxxxxxx' } },
+             // ... other methods
+        ];
+        
+        // --- INITIALIZATION ---
+        function init() {
+            // Replace with your actual Firebase auth state change handler
+            firebase.onAuthStateChanged(firebase.auth, (user) => {
+                if(user){
+                    currentUser = user;
+                    elements.paymentSection.style.display = 'flex';
+                } else {
+                    currentUser = null;
+                    // Redirect to login if not authenticated
+                    alert("You must be logged in to access this page.");
+                    window.location.href = 'index.html'; // Or your login page
                 }
+            });
 
-                // Show loader and disable button
-                elements.paymentLoader.classList.add('active');
-                elements.submitPaymentBtn.disabled = true;
+            populatePaymentOptions();
+            initializeEventListeners();
+        }
 
+        function populatePaymentOptions() { /* ... No changes here ... */ 
+            elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
+                <div class="payment-option ${!method.active ? 'inactive' : ''}" 
+                        data-name="${method.name}" 
+                        data-currency="${method.currency}"
+                        ${!method.active ? 'disabled' : ''}>
+                    <span class="payment-option-label">${method.name}</span>
+                    <span class="currency-badge">${method.currency}</span>
+                </div>
+            `).join('');
+        }
+        
+        function initializeEventListeners() { /* ... No changes here ... */ 
+            elements.unlockButton.addEventListener('click', openPaymentModal);
+            elements.closePaymentModal.addEventListener('click', closePaymentModal);
+            elements.paymentModalBackdrop.addEventListener('click', (e) => e.target === elements.paymentModalBackdrop && closePaymentModal());
+            elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
+            elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
+            elements.paymentOptionsGrid.addEventListener('click', (e) => {
+                const option = e.target.closest('.payment-option');
+                if (option && !option.hasAttribute('disabled')) {
+                    const name = option.dataset.name;
+                    const currency = option.dataset.currency;
+                    selectPaymentMethodHandler(name, currency);
+                }
+            });
+        }
+        
+        // --- PAYMENT FLOW LOGIC (No changes in these functions) ---
+        function openPaymentModal() { /* ... */ }
+        function closePaymentModal() { /* ... */ }
+        function selectPaymentMethodHandler(name, currency) { /* ... */ }
+        function showPaymentOptionsView() { /* ... */ }
+
+        // --- NEW POLLING AND REDIRECT LOGIC ---
+        function stopPolling() {
+            clearInterval(pollingInterval);
+            clearTimeout(pollingTimeout);
+            console.log("Polling stopped.");
+        }
+
+        function handleSuccessfulPayment() {
+            stopPolling();
+            closePaymentModal();
+            elements.successOverlay.classList.add('active');
+
+            let countdown = 5;
+            elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
+
+            const redirectInterval = setInterval(() => {
+                countdown--;
+                elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
+                if (countdown <= 0) {
+                    clearInterval(redirectInterval);
+                    window.location.href = 'index.html'; // The final redirect!
+                }
+            }, 1000);
+        }
+
+        function startPolling(pollUrl) {
+            console.log("Starting to poll for payment status...");
+
+            // Stop polling after 2 minutes to prevent infinite loops
+            pollingTimeout = setTimeout(() => {
+                stopPolling();
+                alert("Payment timed out. Please check your phone for any pending requests or try again.");
+                elements.paymentLoader.classList.remove('active');
+                elements.submitPaymentBtn.disabled = false;
+            }, 120000); // 2 minutes
+
+            pollingInterval = setInterval(async () => {
                 try {
-                    const response = await fetch('/.netlify/functions/paynow-handler', { // Ensure this matches your function name
+                    const response = await fetch('/.netlify/functions/check-payment-status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'initiate',
-                            paymentMethod: elements.paymentForm.dataset.methodName,
-                            currency: elements.paymentForm.dataset.methodCurrency,
-                            paymentDetails: paymentDetails,
-                            userId: currentUser.uid,
-                            email: currentUser.email,
-                            amount: 49.99, // Or get this dynamically
-                            itemName: 'Modern Farmer Full Access'
-                        }),
+                        body: JSON.stringify({ pollUrl: pollUrl }),
                     });
+
+                    if (!response.ok) return; // Don't stop polling on minor network errors
 
                     const result = await response.json();
 
-                    if (!response.ok || !result.success) {
-                        throw new Error(result.message || 'Failed to initiate payment.');
+                    if (result.isPaid) {
+                        handleSuccessfulPayment();
+                    } else {
+                        console.log(`Status: ${result.status}`);
                     }
-                    
-                    alert('Payment Initiated! Please check your device to complete the transaction.');
-                    // You might want to start polling here if required
-                    // pollPaymentStatus(result.orderReference);
-                    closePaymentModal();
-
                 } catch (error) {
-                    console.error("Error initiating payment:", error);
-                    alert(`Error: ${error.message}`);
-                } finally {
-                    // Hide loader and re-enable button
-                    elements.paymentLoader.classList.remove('active');
-                    elements.submitPaymentBtn.disabled = false;
+                    console.error("Polling error:", error);
+                    // Don't stop polling, it might be a temporary network issue
                 }
+            }, 4000); // Check every 4 seconds
+        }
+
+        // --- MODIFIED PAYMENT SUBMISSION HANDLER ---
+        async function handlePaymentSubmit(e) {
+            e.preventDefault();
+            const paymentInputField = document.getElementById('payment-input-field');
+            const paymentDetails = paymentInputField.value;
+            
+            if (!paymentDetails) {
+                alert("Please fill in the required details.");
+                return;
             }
 
-            // --- START THE APP ---
-            init();
-        });
-    </script>
+            elements.paymentLoader.classList.add('active');
+            elements.submitPaymentBtn.disabled = true;
+
+            try {
+                const response = await fetch('/.netlify/functions/paynow-handler', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        // ... your payment data
+                        paymentMethod: elements.paymentForm.dataset.methodName,
+                        currency: elements.paymentForm.dataset.methodCurrency,
+                        paymentDetails: paymentDetails,
+                        userId: currentUser.uid,
+                        email: currentUser.email,
+                        // Amount & ItemName are set on the server for security
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to initiate payment.');
+                }
+                
+                // Show initial instruction and start polling
+                alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
+                
+                if (result.pollUrl) {
+                    startPolling(result.pollUrl);
+                } else {
+                    throw new Error("Did not receive a pollUrl from the server.");
+                }
+
+            } catch (error) {
+                console.error("Error initiating payment:", error);
+                alert(`Error: ${error.message}`);
+                elements.paymentLoader.classList.remove('active');
+                elements.submitPaymentBtn.disabled = false;
+            }
+        }
+
+        // --- START THE APP ---
+        init();
+    });
+</script>
 </body>
 </html>
