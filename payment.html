@@ -1,12 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MODERN FARMER - Full Course Catalog</title>
-    
-    <!-- NOTE: Firebase SDKs are included but no longer used for authentication on this page -->
+    <title>MODERN FARMER - Secure Payment</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,21 +35,20 @@
             background-color: var(--bg-dark);
             color: var(--text-primary);
             overflow-x: hidden;
-            padding-top: 70px;
         }
         
-        /* --- NEW LOADER STYLES --- */
+        /* --- Loader Styles --- */
         .loadingspinner {
           --square: 26px; --offset: 30px; --duration: 2.4s; --delay: 0.2s;
           --timing-function: ease-in-out; --in-duration: 0.4s; --in-delay: 0.1s;
           --in-timing-function: ease-out;
           width: calc( 3 * var(--offset) + var(--square)); height: calc( 2 * var(--offset) + var(--square));
           padding: 0px; margin-left: auto; margin-right: auto; margin-top: 10px; margin-bottom: 30px;
-          position: relative; display: none; /* Hidden by default */
+          position: relative; display: none;
         }
         .loadingspinner.active { display: block; }
         .loadingspinner div {
-          display: inline-block; background: darkorange; border: none;
+          display: inline-block; background: var(--primary-color); border: none;
           border-radius: 2px; width: var(--square); height: var(--square);
           position: absolute; padding: 0px; margin: 0px; font-size: 6pt; color: black;
         }
@@ -70,29 +66,48 @@
         
         /* --- Main Payment Section & Pricing Card --- */
         #payment-section {
-             display: flex; /* Always visible now */
+             display: flex;
+             flex-direction: column;
              justify-content: center;
              align-items: center;
-             min-height: 70vh;
+             min-height: 100vh;
              animation: fadeIn 0.6s ease;
+             padding: 1rem;
         }
         .pricing-card-attractive {
           overflow: hidden; position: relative; display: flex; flex-direction: column;
-          gap: 0.75rem; padding: 1.5rem; width: 20rem; height: auto;
+          gap: 0.75rem; padding: 1.5rem; width: 100%; max-width: 22rem; height: auto;
           background-color: var(--bg-card);
           border-radius: var(--border-radius); border: 1px solid var(--border-color);
         }
         .pricing-card-attractive .title { font-size: 1.25rem; color: var(--text-primary); font-weight: 700; }
         .pricing-card-attractive .pricing { font-size: 2rem; color: var(--text-primary); font-weight: 700; }
-        .pricing-card-attractive .list { margin-top: 1rem; list-style: none; }
+        .pricing-card-attractive .list { margin-top: 1rem; list-style: none; padding: 0; }
+        .pricing-card-attractive .list li { margin-bottom: 0.5rem; }
         .pricing-card-attractive .button {
-          cursor: pointer; margin-top: 1rem; padding: 0.75rem 1rem; width: 100%;
-          background-color: var(--primary-color); font-size: 0.9rem; color: var(--text-primary);
+          cursor: pointer; margin-top: 0.5rem; padding: 0.875rem 1rem; width: 100%;
+          background-color: var(--primary-color); font-size: 1rem; font-weight: 600; color: var(--text-primary);
           border: none; border-radius: 8px; transition: var(--transition);
         }
-        .pricing-card-attractive .button:hover { transform: translateY(-2px); background-color: #cc0000; }
+        .pricing-card-attractive .button:hover:not(:disabled) { transform: translateY(-2px); background-color: #cc0000; box-shadow: var(--shadow-hover); }
+        .pricing-card-attractive .button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
         
-        /* --- NEW DYNAMIC PAYMENT MODAL STYLES --- */
+        .login-prompt {
+            color: var(--primary-color);
+            background: rgba(255, 0, 0, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 22rem;
+            border: 1px solid var(--primary-color);
+            display: none; /* Hidden by default */
+        }
+        .login-prompt.active { display: block; }
+        .login-prompt a { color: var(--text-primary); font-weight: 700; text-decoration: underline; }
+
+        /* --- Payment Modal Styles --- */
         .payment-modal-backdrop {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
             backdrop-filter: var(--blur-backdrop); z-index: 3000; display: flex; align-items: center;
@@ -103,26 +118,23 @@
             background: var(--bg-card); border-radius: var(--border-radius); padding: 2rem;
             width: 90%; max-width: 550px; box-shadow: var(--shadow-hover); position: relative;
             transform: scale(0.9) translateY(20px); transition: var(--transition);
-            overflow: hidden;
+            overflow-x: hidden;
         }
         .payment-modal-backdrop.active .payment-modal-container { transform: scale(1) translateY(0); }
         .payment-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
         .payment-modal-title { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); }
-        .close-button {
-            background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer;
-            transition: var(--transition);
-        }
+        .close-button { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
         .close-button:hover { color: var(--text-primary); }
-        .payment-slider { display: flex; transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1); }
-        .payment-view { width: 100%; flex-shrink: 0; }
+        .payment-slider { display: flex; width: 200%; transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1); }
+        .payment-view { width: 50%; flex-shrink: 0; padding: 0 0.5rem; }
         .payment-options-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 1rem;
         }
         .payment-option {
             background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px;
-            padding: 1.25rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);
+            padding: 1rem; text-align: center; cursor: pointer; transition: var(--transition);
             display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
         }
         .payment-option:hover { transform: translateY(-5px); border-color: var(--primary-color); }
@@ -134,8 +146,16 @@
             border-radius: 6px; background: var(--border-color); color: var(--text-secondary);
         }
         .payment-input-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .back-to-options-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); }
+        .back-to-options-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); padding: 0; line-height: 1; }
         .back-to-options-btn:hover { color: var(--text-primary); }
+        
+        .info-panel {
+            background-color: var(--bg-darker);
+            border-left: 4px solid var(--primary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
 
         /* General form styles */
         .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -154,25 +174,14 @@
         .form-button:hover:not(:disabled) { background: #cc0000; }
 
         /* Other styles */
-        .container { width: 90%; max-width: 1400px; margin: 2rem auto; padding: 2rem; }
-        .footer { text-align: center; padding: 2rem; margin-top: 4rem; }
+        .footer { text-align: center; padding: 2rem; margin-top: 4rem; color: var(--text-muted); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         /* Success Overlay Styles */
-        #successOverlay {
-            display: none;
-            z-index: 10000; /* Higher than payment modal */
-        }
-        #successOverlay.active {
-            display: flex;
-        }
-        #successOverlay.active > div {
-            animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        @keyframes successPopIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+        #successOverlay { display: none; z-index: 10000; }
+        #successOverlay.active { display: flex; }
+        #successOverlay.active > div { animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes successPopIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -181,13 +190,23 @@
         <div class="pricing-card-attractive" id="pricingCard">
             <span class="title">Full Access Pass</span>
             <p class="pricing">$49.99 <span class="pricing-time">/ year</span></p>
-            <ul class="list"><li>1-Year Full Access</li><li>All Farming Modules</li></ul>
+            <ul class="list">
+                <li>✓ 1-Year Full Access</li>
+                <li>✓ All Farming Modules</li>
+                <li>✓ Expert Guidance & Tips</li>
+                <li>✓ Future Course Updates</li>
+            </ul>
             <button class="button" id="unlockButton">Choose Payment Option</button>
-            <a href="index.html"><button class="button" style="background-color: var(--bg-dark);">Back</button></a>
+            <a href="index.html" style="text-decoration: none;">
+                <button class="button" style="background-color: var(--bg-darker); margin-top: 0.5rem;">Back to Courses</button>
+            </a>
+        </div>
+        <div class="login-prompt" id="loginPrompt">
+            Please <a href="index.html">log in or sign up</a> first to proceed with the payment.
         </div>
     </section>
 
-    <!-- NEW DYNAMIC PAYMENT MODAL -->
+    <!-- Payment Modal -->
     <div class="payment-modal-backdrop" id="paymentModalBackdrop">
         <div class="payment-modal-container">
             <div class="payment-modal-header">
@@ -199,7 +218,7 @@
                     <!-- View 1: Payment Options Grid -->
                     <div id="payment-options-view" class="payment-view">
                         <div class="payment-options-grid" id="paymentOptionsGrid">
-                            <!-- Payment options will be dynamically inserted here by JS -->
+                            <!-- Dynamically inserted -->
                         </div>
                     </div>
                     <!-- View 2: Payment Input Form -->
@@ -208,12 +227,11 @@
                             <button class="back-to-options-btn" id="backToOptionsBtn">&#8592;</button>
                             <h3 id="paymentInputHeaderTitle">Enter Details</h3>
                         </div>
-                        <form id="payment-form">
-                            <div class="form-group" id="payment-form-inputs">
-                                <!-- Dynamic input fields will be inserted here by JS -->
+                        <form id="payment-form" novalidate>
+                            <div id="payment-form-content">
+                                <!-- Dynamic content (form inputs or info panel) -->
                             </div>
                             <button class="form-button" type="submit" id="submitPaymentBtn">Pay $49.99</button>
-                            
                             <div class="loadingspinner" id="paymentLoader">
                               <div id="square1"></div> <div id="square2"></div> <div id="square3"></div>
                               <div id="square4"></div> <div id="square5"></div>
@@ -231,7 +249,7 @@
             <div style="font-size: 4rem; color: var(--secondary-color); margin-bottom: 1rem;">✓</div>
             <h2 class="payment-modal-title" style="margin: 1rem 0;">Payment Successful!</h2>
             <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                Thank you for your purchase. You now have full access to all courses.
+                Thank you! You now have full access to all courses. Welcome to Modern Farmer.
             </p>
             <p id="redirectMessage" style="margin-top: 1.5rem; font-weight: 600; color: var(--primary-color);"></p>
         </div>
@@ -244,10 +262,12 @@
         // --- GLOBAL STATE ---
         let pollingInterval = null;
         let pollingTimeout = null;
+        let currentUser = null;
 
         // --- DOM ELEMENTS ---
         const elements = {
             unlockButton: document.getElementById('unlockButton'),
+            loginPrompt: document.getElementById('loginPrompt'),
             paymentModalBackdrop: document.getElementById('paymentModalBackdrop'),
             closePaymentModal: document.getElementById('closePaymentModal'),
             paymentSlider: document.querySelector('.payment-slider'),
@@ -255,7 +275,7 @@
             paymentOptionsGrid: document.getElementById('paymentOptionsGrid'),
             backToOptionsBtn: document.getElementById('backToOptionsBtn'),
             paymentForm: document.getElementById('payment-form'),
-            paymentFormInputs: document.getElementById('payment-form-inputs'),
+            paymentFormContent: document.getElementById('payment-form-content'),
             paymentInputHeaderTitle: document.getElementById('paymentInputHeaderTitle'),
             submitPaymentBtn: document.getElementById('submitPaymentBtn'),
             paymentLoader: document.getElementById('paymentLoader'),
@@ -263,68 +283,59 @@
             redirectMessage: document.getElementById('redirectMessage'),
         };
 
-        // --- PAYMENT METHODS DATA (UPDATED & EXPANDED) ---
+        // --- PAYMENT METHODS CONFIGURATION ---
         const paymentMethods = [
-            { 
-                name: 'EcoCash', 
-                currency: 'USD', 
-                active: true, 
-                input: { type: 'tel', label: 'Mobile Number', placeholder: '077xxxxxxx' } 
-            },
-            { 
-                name: 'OneMoney', 
-                currency: 'ZWG', 
-                active: true, 
-                input: { type: 'tel', label: 'Mobile Number', placeholder: '071xxxxxxx' } 
-            },
-            { 
-                name: 'Innbucks', 
-                currency: 'USD', 
-                active: true, 
-                input: { type: 'tel', label: 'Mobile Number', placeholder: '07xxxxxxxx' } 
-            },
-            { 
-                name: 'Telecash', 
-                currency: 'ZWG', 
-                active: false, // Example of an inactive method
-                input: { type: 'tel', label: 'Mobile Number', placeholder: '073xxxxxxx' } 
-            },
-            {
-                name: 'Visa/Mastercard',
-                currency: 'USD',
-                active: true,
-                input: { type: 'text', label: 'Card Details', placeholder: 'Card processing not yet active' } // Placeholder for future integration
-            },
-            {
-                name: 'Zimswitch',
-                currency: 'ZWG',
-                active: false,
-                input: { type: 'text', label: 'Card Details', placeholder: 'Not yet active' }
-            },
-            {
-                name: 'Bank Transfer',
-                currency: 'USD',
-                active: true,
-                input: { type: 'text', label: 'Account Details', placeholder: 'Contact support for details' }
-            },
+            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
+            { name: 'OneMoney (ZWG)', currency: 'ZWG', backendName: 'onemoney', active: true, input: { type: 'tel', label: 'OneMoney Mobile Number', placeholder: '071xxxxxxx' } },
+            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: false, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: 'Coming Soon' } },
+            { name: 'Bank Transfer (USD)', currency: 'USD', backendName: 'banktransfer', active: true, input: { type: 'info', content: 'For bank transfers, please contact our support team via the main page for account details and reference number.' } },
+            { name: 'EcoCash (ZWG)', currency: 'ZWG', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
+            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: false, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: 'Coming Soon' } },
+            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
+            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
+            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: false, input: { type: 'text', label: 'PayGo Details', placeholder: 'Coming Soon' } },
         ];
         
         // --- INITIALIZATION ---
         function init() {
-            // No longer need to check for login. Page is open for everyone.
-            console.log("Payment page initialized for public access.");
+            checkLoginStatus();
             populatePaymentOptions();
             initializeEventListeners();
         }
 
-        // --- POPULATE PAYMENT OPTIONS ---
+        // --- AUTHENTICATION CHECK ---
+        function checkLoginStatus() {
+            try {
+                // Assuming user data is stored in localStorage from index.html after login
+                const userDataString = localStorage.getItem('modernFarmerUser');
+                if (userDataString) {
+                    currentUser = JSON.parse(userDataString);
+                    // Basic validation
+                    if (currentUser && currentUser.uid && currentUser.email) {
+                        console.log("User logged in:", currentUser.email);
+                        elements.unlockButton.disabled = false;
+                        elements.loginPrompt.classList.remove('active');
+                    } else {
+                        throw new Error("Invalid user data in storage.");
+                    }
+                } else {
+                    throw new Error("No user data found.");
+                }
+            } catch (error) {
+                console.warn("Login check failed:", error.message);
+                currentUser = null;
+                elements.unlockButton.disabled = true;
+                elements.loginPrompt.classList.add('active');
+            }
+        }
+
+        // --- UI RENDERING ---
         function populatePaymentOptions() {
             elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
                 <div class="payment-option ${!method.active ? 'inactive' : ''}" 
                      data-name="${method.name}" 
-                     data-currency="${method.currency}"
                      ${!method.active ? 'disabled' : ''}>
-                    <span class="payment-option-label">${method.name}</span>
+                    <span class="payment-option-label">${method.name.split(' (')[0]}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
             `).join('');
@@ -343,54 +354,142 @@
             elements.paymentOptionsGrid.addEventListener('click', (e) => {
                 const option = e.target.closest('.payment-option');
                 if (option && !option.hasAttribute('disabled')) {
-                    selectPaymentMethodHandler(option.dataset.name, option.dataset.currency);
+                    selectPaymentMethodHandler(option.dataset.name);
                 }
             });
         }
         
-        // --- MODAL CONTROLS ---
+        // --- MODAL & VIEW CONTROLS ---
         function openPaymentModal() {
+            if (!currentUser) {
+                alert("You must be logged in to make a payment.");
+                return;
+            }
             elements.paymentModalBackdrop.classList.add('active');
             showPaymentOptionsView();
         }
 
         function closePaymentModal() {
             elements.paymentModalBackdrop.classList.remove('active');
-            elements.paymentSlider.style.transform = 'translateX(0)';
+            elements.paymentSlider.style.transform = 'translateX(0%)';
             elements.paymentForm.reset();
             stopPolling();
         }
 
         function showPaymentOptionsView() {
-            elements.paymentSlider.style.transform = 'translateX(0)';
+            elements.paymentSlider.style.transform = 'translateX(0%)';
             elements.paymentModalTitle.textContent = 'Choose Payment Method';
         }
+        
+        function showPaymentInputView() {
+            elements.paymentSlider.style.transform = 'translateX(-50%)';
+            elements.paymentModalTitle.textContent = 'Complete Payment';
+        }
 
-        // --- PAYMENT METHOD SELECTION ---
-        function selectPaymentMethodHandler(methodName, currency) {
+        // --- PAYMENT LOGIC ---
+        function selectPaymentMethodHandler(methodName) {
             const method = paymentMethods.find(m => m.name === methodName);
             if (!method) return;
 
-            elements.paymentForm.dataset.methodName = methodName;
-            elements.paymentForm.dataset.methodCurrency = currency;
-            elements.paymentInputHeaderTitle.textContent = `Pay with ${methodName}`;
-            elements.submitPaymentBtn.textContent = `Pay Now`;
-
-            const inputHTML = `
-                <label class="payment-input-label" for="payment-input-field">${method.input.label}</label>
-                <input 
-                    type="${method.input.type}" 
-                    id="payment-input-field" 
-                    name="payment-input-field"
-                    placeholder="${method.input.placeholder}" 
-                    required
-                    autocomplete="tel"
-                />`;
-            elements.paymentFormInputs.innerHTML = inputHTML;
-            elements.paymentSlider.style.transform = 'translateX(-50%)';
+            elements.paymentForm.dataset.methodName = method.backendName;
+            elements.paymentForm.dataset.methodCurrency = method.currency;
+            elements.paymentInputHeaderTitle.textContent = `Pay with ${method.name}`;
+            
+            let contentHTML = '';
+            if (method.input.type === 'info') {
+                contentHTML = `<div class="info-panel">${method.input.content}</div>`;
+                elements.submitPaymentBtn.style.display = 'none';
+            } else {
+                contentHTML = `
+                    <div class="form-group">
+                        <label class="form-label" for="payment-input-field">${method.input.label}</label>
+                        <input 
+                            type="${method.input.type}" 
+                            id="payment-input-field" 
+                            name="payment-input-field"
+                            placeholder="${method.input.placeholder}" 
+                            required
+                            autocomplete="tel"
+                        />
+                    </div>`;
+                elements.submitPaymentBtn.style.display = 'block';
+            }
+            
+            elements.paymentFormContent.innerHTML = contentHTML;
+            showPaymentInputView();
         }
 
-        // --- POLLING LOGIC ---
+        async function handlePaymentSubmit(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                alert("Session expired. Please log in again.");
+                return;
+            }
+
+            const paymentInputField = document.getElementById('payment-input-field');
+            const paymentDetails = paymentInputField.value.trim();
+            const paymentMethodName = elements.paymentForm.dataset.methodName;
+
+            if (!paymentDetails) {
+                alert("Please fill in the required details.");
+                return;
+            }
+
+            if (['ecocash', 'onemoney'].includes(paymentMethodName)) {
+                const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
+                if (!phoneRegex.test(paymentDetails)) {
+                    alert("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)");
+                    return;
+                }
+            }
+
+            setLoadingState(true);
+
+            try {
+                const response = await fetch('/.netlify/functions/paynow-handler', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        paymentMethod: paymentMethodName,
+                        currency: elements.paymentForm.dataset.methodCurrency,
+                        paymentDetails: paymentDetails,
+                        userId: currentUser.uid,
+                        email: currentUser.email,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || 'Failed to initiate payment.');
+                }
+                
+                alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
+                
+                if (result.pollUrl) {
+                    startPolling(result.pollUrl);
+                } else {
+                    throw new Error("Did not receive a poll URL from the server.");
+                }
+
+            } catch (error) {
+                console.error("Error initiating payment:", error);
+                alert(`Error: ${error.message}`);
+                setLoadingState(false);
+            }
+        }
+
+        function setLoadingState(isLoading) {
+            if (isLoading) {
+                elements.paymentLoader.classList.add('active');
+                elements.submitPaymentBtn.disabled = true;
+            } else {
+                elements.paymentLoader.classList.remove('active');
+                elements.submitPaymentBtn.disabled = false;
+            }
+        }
+
+        // --- POLLING & SUCCESS HANDLING ---
         function stopPolling() {
             if (pollingInterval) clearInterval(pollingInterval);
             if (pollingTimeout) clearTimeout(pollingTimeout);
@@ -412,7 +511,7 @@
                 elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
                 if (countdown <= 0) {
                     clearInterval(redirectInterval);
-                    window.location.href = 'index.html'; // Or a dedicated success page
+                    window.location.href = 'index.html';
                 }
             }, 1000);
         }
@@ -421,10 +520,9 @@
             console.log("Starting to poll for payment status...");
             pollingTimeout = setTimeout(() => {
                 stopPolling();
-                alert("Payment verification timed out. Please check your phone or try again.");
-                elements.paymentLoader.classList.remove('active');
-                elements.submitPaymentBtn.disabled = false;
-            }, 120000); // 2 minutes
+                alert("Payment verification timed out. Please check your transaction status or try again.");
+                setLoadingState(false);
+            }, 120000); // 2 minute timeout
 
             pollingInterval = setInterval(async () => {
                 try {
@@ -434,84 +532,20 @@
                         body: JSON.stringify({ pollUrl: pollUrl }),
                     });
 
-                    if (!response.ok) {
-                        console.warn("Status check request failed, will retry...");
-                        return;
-                    }
+                    if (!response.ok) return;
 
                     const result = await response.json();
                     if (result.isPaid) {
                         handleSuccessfulPayment();
-                    } else if (result.status === 'cancelled') {
+                    } else if (['cancelled', 'failed', 'disputed'].includes(result.status)) {
                         stopPolling();
-                        alert("Payment was cancelled.");
-                        elements.paymentLoader.classList.remove('active');
-                        elements.submitPaymentBtn.disabled = false;
+                        alert(`Payment was not successful. Status: ${result.status}.`);
+                        setLoadingState(false);
                     }
                 } catch (error) {
                     console.error("Polling error:", error);
                 }
-            }, 4000);
-        }
-
-        // --- PAYMENT SUBMISSION ---
-        async function handlePaymentSubmit(e) {
-            e.preventDefault();
-            const paymentInputField = document.getElementById('payment-input-field');
-            const paymentDetails = paymentInputField.value.trim();
-            const paymentMethodName = elements.paymentForm.dataset.methodName;
-
-            if (!paymentDetails) {
-                alert("Please fill in the required details.");
-                return;
-            }
-
-            // Simple phone validation for relevant methods
-            if (['EcoCash', 'OneMoney', 'Innbucks', 'Telecash'].includes(paymentMethodName)) {
-                const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
-                if (!phoneRegex.test(paymentDetails)) {
-                    alert("Please enter a valid Zimbabwean mobile number (e.g., 077xxxxxxx)");
-                    return;
-                }
-            }
-
-            elements.paymentLoader.classList.add('active');
-            elements.submitPaymentBtn.disabled = true;
-
-            try {
-                const response = await fetch('/.netlify/functions/paynow-handler', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        paymentMethod: paymentMethodName,
-                        currency: elements.paymentForm.dataset.methodCurrency,
-                        paymentDetails: paymentDetails,
-                        // User-specific data is removed
-                    }),
-                });
-
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    throw new Error(result.message || 'Failed to initiate payment.');
-                }
-                
-                alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
-                
-                if (result.pollUrl) {
-                    startPolling(result.pollUrl);
-                } else {
-                    throw new Error("Did not receive a pollUrl from the server.");
-                }
-
-            } catch (error) {
-                console.error("Error initiating payment:", error);
-                alert(`Error: ${error.message}`);
-                
-                elements.paymentLoader.classList.remove('active');
-                elements.submitPaymentBtn.disabled = false;
-                stopPolling();
-            }
+            }, 4000); // Poll every 4 seconds
         }
 
         // --- START APPLICATION ---
