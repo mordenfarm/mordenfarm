@@ -203,13 +203,41 @@
         }
 
         /* General form styles */
-        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .form-label { font-size: 0.9rem; font-weight: 500; color: var(--text-primary); }
-        .form-input {
-            padding: 0.875rem; background: var(--bg-darker); border: 2px solid var(--border-color);
-            border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; transition: var(--transition);
+        .form-group { position: relative; margin-bottom: 1.5rem; }
+        .form-label {
+            position: absolute;
+            top: 0.875rem;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+            transition: all 0.2s ease;
         }
-        .form-input:focus { outline: none; border-color: var(--primary-color); }
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        /* Floating label effect */
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -0.75rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            background-color: var(--bg-card);
+            padding: 0 0.25rem;
+        }
         .form-button {
             padding: 0.875rem; background: var(--primary-color); color: white; border: none;
             border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
@@ -358,7 +386,8 @@
 
         // --- PAYMENT METHODS CONFIGURATION ---
         const paymentMethods = [
-            { name: 'EcoCash', currency: 'USD', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
+            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
+            { name: 'EcoCash (ZWL)', currency: 'ZWL', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
             { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `<img src="https://in-bucket.s3.us-east-2.amazonaws.com/wp-content/uploads/2021/08/21204635/innbucks-logo.svg" class="payment-option-icon" alt="InnBucks">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your InnBucks payment.' } },
             { name: 'Visa/Mastercard', currency: 'USD', backendName: 'visa', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/visa/visa-icon.svg" class="payment-option-icon" alt="Visa/Mastercard">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to enter your card details.' } },
             { name: 'ZimSwitch', currency: 'ZWL', backendName: 'zimswitch', active: true, icon: `<img src="https://www.zimswitch.co.zw/wp-content/uploads/2021/02/zimswitch-logo.png" class="payment-option-icon" alt="ZimSwitch">`, input: { type: 'redirect', content: 'You will be redirected to the ZimSwitch portal to log in to your bank.' } },
@@ -432,7 +461,7 @@
                      data-name="${method.name}"
                      ${!method.active ? 'disabled' : ''}>
                     ${method.icon}
-                    <span class="payment-option-label">${method.name}</span>
+                    <span class="payment-option-label">${method.name.replace(/ *\([^)]*\) */g, "")}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
             `).join('');
@@ -499,15 +528,16 @@
             if (method.input.type === 'tel') {
                 contentHTML = `
                     <div class="form-group">
-                        <label class="form-label" for="payment-input-field">${method.input.label}</label>
                         <input
                             type="tel"
                             id="payment-input-field"
+                            class="form-input"
                             name="payment-input-field"
-                            placeholder="${method.input.placeholder}"
+                            placeholder=" "
                             required
                             autocomplete="tel"
                         />
+                        <label class="form-label" for="payment-input-field">${method.input.label}</label>
                     </div>`;
                 elements.submitPaymentBtn.textContent = 'Pay $49.99';
             } else if (method.input.type === 'redirect') {
@@ -613,19 +643,10 @@
             stopPolling();
             closePaymentModal();
             elements.successOverlay.classList.add('active');
-            showNotification("Payment Successful! You now have full access.", "success");
+            showNotification("Payment Successful! Redirecting...", "success");
 
-            let countdown = 5;
-            elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
-
-            const redirectInterval = setInterval(() => {
-                countdown--;
-                elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
-                if (countdown <= 0) {
-                    clearInterval(redirectInterval);
-                    window.location.href = 'index.html';
-                }
-            }, 1000);
+            // Immediate redirect to the homepage
+            window.location.href = 'index.html';
         }
 
         function startPolling(pollUrl) {
