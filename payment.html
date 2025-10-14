@@ -555,10 +555,12 @@
 
                 showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
 
-                if (result.pollUrl) {
+                if (result.redirectUrl) {
+                    window.location.href = result.redirectUrl;
+                } else if (result.pollUrl) {
                     startPolling(result.pollUrl);
                 } else {
-                    throw new Error("Did not receive a poll URL from the server.");
+                    throw new Error("Did not receive a valid poll or redirect URL from the server.");
                 }
 
             } catch (error) {
