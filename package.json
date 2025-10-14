@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "firebase-admin": "^12.0.0",
-    "@mugoma/paynow": "^1.0.4"
+    "paynow": "^1.1.2"
   }
 }
