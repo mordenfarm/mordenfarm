@@ -1,4 +1,5 @@
-const { Paynow } = require("paynow");
+const { Paynow } = require("@mugoma/paynow");
+
 
 const PRODUCT_INFO = {
     name: 'Modern Farmer Full Access',
