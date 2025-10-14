@@ -4,7 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MODERN FARMER - Secure Payment</title>
-    
+
+    <script>
+        const firebaseConfig = {
+          apiKey: "%%FIREBASE_API_KEY%%",
+          authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+          projectId: "%%FIREBASE_PROJECT_ID%%",
+          storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+          messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+          appId: "%%FIREBASE_APP_ID%%",
+          measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
+        };
+      </script>
+
+      <!-- Firebase SDKs -->
+      <script type="module">
+          // These imports make Firebase functions available globally under the 'firebase' namespace
+          import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+          import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+          import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+          // Initialize Firebase and attach to the window object for global access
+          try {
+              const app = initializeApp(firebaseConfig);
+              const auth = getAuth(app);
+              const db = getFirestore(app);
+
+              window.firebase = {
+                  app, auth, db,
+                  onAuthStateChanged,
+                  doc, getDoc
+              };
+              console.log("Firebase initialized successfully on payment page.");
+          } catch (error) {
+              console.error("Firebase initialization failed. Please check your config.", error);
+              window.firebase = {};
+          }
+      </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- Modern CSS Variables --- */
@@ -25,7 +61,7 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             --blur-backdrop: blur(10px);
         }
-        
+
         /* --- Global & Body Styling --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
@@ -36,7 +72,7 @@
             color: var(--text-primary);
             overflow-x: hidden;
         }
-        
+
         /* --- Loader Styles --- */
         .loadingspinner {
           --square: 26px; --offset: 30px; --duration: 2.4s; --delay: 0.2s;
@@ -63,7 +99,7 @@
         @keyframes square4 { 0% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 33.33% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 41.67% { left: calc( 2 * var(--offset) ); top: calc( 2 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 2 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
         @keyframes square5 { 0% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 50.00% { left: calc( 3 * var(--offset) ); top: calc( 1 * var(--offset) ); } 58.33% { left: calc( 3 * var(--offset) ); top: calc( 0 * var(--offset) ); } 66.67% { left: calc( 2 * var(--offset) ); top: calc( 0 * var(--offset) ); } 75.00% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } 100% { left: calc( 2 * var(--offset) ); top: calc( 1 * var(--offset) ); } }
         @keyframes squarefadein { 0% { transform: scale(0.75); opacity: 0.0; } 100% { transform: scale(1.0); opacity: 1.0; } }
-        
+
         /* --- Main Payment Section & Pricing Card --- */
         #payment-section {
              display: flex;
@@ -91,7 +127,7 @@
         }
         .pricing-card-attractive .button:hover:not(:disabled) { transform: translateY(-2px); background-color: #cc0000; box-shadow: var(--shadow-hover); }
         .pricing-card-attractive .button:disabled { background-color: #555; color: #999; cursor: not-allowed; }
-        
+
         .login-prompt {
             color: var(--primary-color);
             background: rgba(255, 0, 0, 0.1);
@@ -148,7 +184,7 @@
         .payment-input-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .back-to-options-btn { background: none; border: none; font-size: 1.5rem; color: var(--text-secondary); cursor: pointer; transition: var(--transition); padding: 0; line-height: 1; }
         .back-to-options-btn:hover { color: var(--text-primary); }
-        
+
         .info-panel {
             background-color: var(--bg-darker);
             border-left: 4px solid var(--primary-color);
@@ -176,16 +212,42 @@
         /* Other styles */
         .footer { text-align: center; padding: 2rem; margin-top: 4rem; color: var(--text-muted); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
+
         /* Success Overlay Styles */
         #successOverlay { display: none; z-index: 10000; }
         #successOverlay.active { display: flex; }
         #successOverlay.active > div { animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         @keyframes successPopIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .notification {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--primary-color);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--secondary-color);
+        }
+
+        .notification.error {
+            border-left-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
-    
+
     <section id="payment-section">
         <div class="pricing-card-attractive" id="pricingCard">
             <span class="title">Full Access Pass</span>
@@ -255,6 +317,7 @@
         </div>
     </div>
 
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 10001;"></div>
     <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p></footer>
 
    <script>
@@ -287,60 +350,86 @@
         const paymentMethods = [
             { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
             { name: 'OneMoney (ZWG)', currency: 'ZWG', backendName: 'onemoney', active: true, input: { type: 'tel', label: 'OneMoney Mobile Number', placeholder: '071xxxxxxx' } },
-            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: false, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: 'Coming Soon' } },
+            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: true, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: '075xxxxxxx' } },
             { name: 'Bank Transfer (USD)', currency: 'USD', backendName: 'banktransfer', active: true, input: { type: 'info', content: 'For bank transfers, please contact our support team via the main page for account details and reference number.' } },
             { name: 'EcoCash (ZWG)', currency: 'ZWG', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
-            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: false, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: 'Coming Soon' } },
-            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
-            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
-            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: false, input: { type: 'text', label: 'PayGo Details', placeholder: 'Coming Soon' } },
+            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: true, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: '073xxxxxxx' } },
+            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
+            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
+            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter PayGo details' } },
         ];
-        
+
         // --- INITIALIZATION ---
         function init() {
-            checkLoginStatus();
+            if (!window.firebase || !window.firebase.auth) {
+                console.error("Firebase not ready, delaying init.");
+                setTimeout(init, 100);
+                return;
+            }
             populatePaymentOptions();
             initializeEventListeners();
-        }
+            firebase.onAuthStateChanged(firebase.auth, async (user) => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const uidFromUrl = urlParams.get('uid');
 
-        // --- AUTHENTICATION CHECK ---
-        function checkLoginStatus() {
-            try {
-                // Assuming user data is stored in localStorage from index.html after login
-                const userDataString = localStorage.getItem('modernFarmerUser');
-                if (userDataString) {
-                    currentUser = JSON.parse(userDataString);
-                    // Basic validation
-                    if (currentUser && currentUser.uid && currentUser.email) {
-                        console.log("User logged in:", currentUser.email);
+                if (user && user.uid === uidFromUrl) {
+                    const userDocRef = firebase.doc(firebase.db, "users", user.uid);
+                    const userDoc = await firebase.getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        currentUser = { ...user, ...userDoc.data() };
+                        console.log("User authenticated:", currentUser.email);
                         elements.unlockButton.disabled = false;
                         elements.loginPrompt.classList.remove('active');
                     } else {
-                        throw new Error("Invalid user data in storage.");
+                        handleAuthError("User data not found in database.");
                     }
                 } else {
-                    throw new Error("No user data found.");
+                    handleAuthError("Authentication failed. UID mismatch or user not logged in.");
                 }
-            } catch (error) {
-                console.warn("Login check failed:", error.message);
-                currentUser = null;
-                elements.unlockButton.disabled = true;
-                elements.loginPrompt.classList.add('active');
-            }
+            });
+        }
+
+        function handleAuthError(message) {
+            console.error(message);
+            currentUser = null;
+            elements.unlockButton.disabled = true;
+            elements.loginPrompt.classList.add('active');
+            showNotification(message, 'error');
+            // Optional: redirect back to login page after a delay
+            // setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            container.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 500);
+            }, 5000);
         }
 
         // --- UI RENDERING ---
         function populatePaymentOptions() {
             elements.paymentOptionsGrid.innerHTML = paymentMethods.map(method => `
-                <div class="payment-option ${!method.active ? 'inactive' : ''}" 
-                     data-name="${method.name}" 
+                <div class="payment-option ${!method.active ? 'inactive' : ''}"
+                     data-name="${method.name}"
                      ${!method.active ? 'disabled' : ''}>
                     <span class="payment-option-label">${method.name.split(' (')[0]}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
             `).join('');
         }
-        
+
         // --- EVENT LISTENERS ---
         function initializeEventListeners() {
             elements.unlockButton.addEventListener('click', openPaymentModal);
@@ -350,7 +439,7 @@
             });
             elements.backToOptionsBtn.addEventListener('click', showPaymentOptionsView);
             elements.paymentForm.addEventListener('submit', handlePaymentSubmit);
-            
+
             elements.paymentOptionsGrid.addEventListener('click', (e) => {
                 const option = e.target.closest('.payment-option');
                 if (option && !option.hasAttribute('disabled')) {
@@ -358,11 +447,11 @@
                 }
             });
         }
-        
+
         // --- MODAL & VIEW CONTROLS ---
         function openPaymentModal() {
             if (!currentUser) {
-                alert("You must be logged in to make a payment.");
+                showNotification("You must be logged in to make a payment.", "error");
                 return;
             }
             elements.paymentModalBackdrop.classList.add('active');
@@ -380,7 +469,7 @@
             elements.paymentSlider.style.transform = 'translateX(0%)';
             elements.paymentModalTitle.textContent = 'Choose Payment Method';
         }
-        
+
         function showPaymentInputView() {
             elements.paymentSlider.style.transform = 'translateX(-50%)';
             elements.paymentModalTitle.textContent = 'Complete Payment';
@@ -394,7 +483,7 @@
             elements.paymentForm.dataset.methodName = method.backendName;
             elements.paymentForm.dataset.methodCurrency = method.currency;
             elements.paymentInputHeaderTitle.textContent = `Pay with ${method.name}`;
-            
+
             let contentHTML = '';
             if (method.input.type === 'info') {
                 contentHTML = `<div class="info-panel">${method.input.content}</div>`;
@@ -403,81 +492,134 @@
                 contentHTML = `
                     <div class="form-group">
                         <label class="form-label" for="payment-input-field">${method.input.label}</label>
-                        <input 
-                            type="${method.input.type}" 
-                            id="payment-input-field" 
+                        <input
+                            type="${method.input.type}"
+                            id="payment-input-field"
                             name="payment-input-field"
-                            placeholder="${method.input.placeholder}" 
+                            placeholder="${method.input.placeholder}"
                             required
                             autocomplete="tel"
                         />
                     </div>`;
                 elements.submitPaymentBtn.style.display = 'block';
             }
-            
+
             elements.paymentFormContent.innerHTML = contentHTML;
             showPaymentInputView();
         }
 
         async function handlePaymentSubmit(e) {
-            e.preventDefault();
-            if (!currentUser) {
-                alert("Session expired. Please log in again.");
-                return;
-            }
+    e.preventDefault();
+    
+    console.log('=== PAYMENT SUBMIT INITIATED ===');
+    
+    if (!currentUser) {
+        showNotification("Session expired. Please log in again.", "error");
+        return;
+    }
 
-            const paymentInputField = document.getElementById('payment-input-field');
-            const paymentDetails = paymentInputField.value.trim();
-            const paymentMethodName = elements.paymentForm.dataset.methodName;
+    const paymentInputField = document.getElementById('payment-input-field');
+    const paymentDetails = paymentInputField ? paymentInputField.value.trim() : '';
+    const paymentMethodName = elements.paymentForm.dataset.methodName;
+    const currency = elements.paymentForm.dataset.methodCurrency;
 
-            if (!paymentDetails) {
-                alert("Please fill in the required details.");
-                return;
-            }
+    console.log('Payment details:', {
+        hasPaymentDetails: !!paymentDetails,
+        paymentMethod: paymentMethodName,
+        currency: currency,
+        userId: currentUser.uid,
+        email: currentUser.email
+    });
 
-            if (['ecocash', 'onemoney'].includes(paymentMethodName)) {
-                const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
-                if (!phoneRegex.test(paymentDetails)) {
-                    alert("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)");
-                    return;
-                }
-            }
+    // Check if this is an info-only method (like bank transfer)
+    if (!paymentInputField) {
+        showNotification("This payment method requires manual processing. Please contact support.", "info");
+        return;
+    }
 
-            setLoadingState(true);
+    if (!paymentDetails) {
+        showNotification("Please fill in the required details.", "error");
+        return;
+    }
 
-            try {
-                const response = await fetch('/.netlify/functions/paynow-handler', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        paymentMethod: paymentMethodName,
-                        currency: elements.paymentForm.dataset.methodCurrency,
-                        paymentDetails: paymentDetails,
-                        userId: currentUser.uid,
-                        email: currentUser.email,
-                    }),
-                });
-
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    throw new Error(result.message || 'Failed to initiate payment.');
-                }
-                
-                alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
-                
-                if (result.pollUrl) {
-                    startPolling(result.pollUrl);
-                } else {
-                    throw new Error("Did not receive a poll URL from the server.");
-                }
-
-            } catch (error) {
-                console.error("Error initiating payment:", error);
-                alert(`Error: ${error.message}`);
-                setLoadingState(false);
-            }
+    // Validate phone number for mobile methods
+    if (['ecocash', 'onemoney', 'innbucks', 'telecash'].includes(paymentMethodName)) {
+        const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
+        if (!phoneRegex.test(paymentDetails)) {
+            showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
+            return;
         }
+    }
+
+    setLoadingState(true);
+
+    const requestBody = {
+        paymentMethod: paymentMethodName,
+        currency: currency,
+        paymentDetails: paymentDetails,
+        userId: currentUser.uid,
+        email: currentUser.email,
+    };
+
+    console.log('Sending request to Netlify function...');
+    console.log('Request body:', { ...requestBody, paymentDetails: '***REDACTED***' });
+
+    try {
+        const functionUrl = '/.netlify/functions/paynow-handler';
+        console.log('Function URL:', functionUrl);
+
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
+
+        let result;
+        try {
+            const responseText = await response.text();
+            console.log('Raw response:', responseText);
+            result = JSON.parse(responseText);
+            console.log('Parsed result:', result);
+        } catch (parseError) {
+            console.error('Failed to parse response:', parseError);
+            throw new Error('Invalid response from server');
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || `Server error: ${response.status}`);
+        }
+
+        console.log('Payment initiated successfully!');
+        showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
+
+        if (result.redirectUrl) {
+            console.log('Redirecting to:', result.redirectUrl);
+            setTimeout(() => {
+                window.location.href = result.redirectUrl;
+            }, 1500);
+        } else if (result.pollUrl) {
+            console.log('Starting polling with URL:', result.pollUrl);
+            startPolling(result.pollUrl);
+        } else {
+            console.warn('No redirect or poll URL received');
+            throw new Error("Did not receive a valid poll or redirect URL from the server.");
+        }
+
+    } catch (error) {
+        console.error("=== PAYMENT ERROR ===");
+        console.error("Error type:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+        showNotification(`Error: ${error.message}`, "error");
+        setLoadingState(false);
+    }
+}
 
         function setLoadingState(isLoading) {
             if (isLoading) {
@@ -502,6 +644,7 @@
             stopPolling();
             closePaymentModal();
             elements.successOverlay.classList.add('active');
+            showNotification("Payment Successful! You now have full access.", "success");
 
             let countdown = 5;
             elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
@@ -520,7 +663,7 @@
             console.log("Starting to poll for payment status...");
             pollingTimeout = setTimeout(() => {
                 stopPolling();
-                alert("Payment verification timed out. Please check your transaction status or try again.");
+                showNotification("Payment verification timed out. Please check your transaction status or try again.", "error");
                 setLoadingState(false);
             }, 120000); // 2 minute timeout
 
@@ -539,7 +682,7 @@
                         handleSuccessfulPayment();
                     } else if (['cancelled', 'failed', 'disputed'].includes(result.status)) {
                         stopPolling();
-                        alert(`Payment was not successful. Status: ${result.status}.`);
+                        showNotification(`Payment was not successful. Status: ${result.status}.`, "error");
                         setLoadingState(false);
                     }
                 } catch (error) {
