@@ -66,21 +66,37 @@ const PRODUCT_INFO = {
   basePriceUSD: 49.99
 };
 
-// Fetches the ZWL exchange rate from Firestore
+// Fetches the ZWL exchange rate from Firestore, creating it if it doesn't exist.
 async function getZwlRate() {
+  const docRef = db.collection("config").doc("exchangeRates");
+  const defaultRate = 31;
+
   try {
-    const doc = await db.collection("config").doc("exchangeRates").get();
-    if (!doc.exists || !doc.data().zwl) {
-      console.error("ZWL exchange rate not found in Firestore.");
-      throw new Error("Could not retrieve ZWL exchange rate.");
+    const doc = await docRef.get();
+
+    if (!doc.exists) {
+      // Document doesn't exist, so create it with the default rate
+      console.log(`'exchangeRates' document not found. Creating it with default rate: ${defaultRate}`);
+      await docRef.set({ zwl: defaultRate });
+      return defaultRate;
     }
-    const rate = doc.data().zwl;
-    console.log(`Fetched ZWL exchange rate: ${rate}`);
-    return rate;
+
+    const data = doc.data();
+    if (data && typeof data.zwl === 'number') {
+      // Document exists and has a valid 'zwl' field
+      console.log(`Fetched ZWL exchange rate: ${data.zwl}`);
+      return data.zwl;
+    }
+
+    // Document exists but 'zwl' field is missing or invalid, so update it
+    console.warn(`'zwl' field missing or invalid in 'exchangeRates' document. Setting default rate: ${defaultRate}`);
+    await docRef.update({ zwl: defaultRate });
+    return defaultRate;
+
   } catch (error) {
-    console.error("Error fetching ZWL rate from Firestore:", error);
-    // Re-throw to be caught by the main handler
-    throw new Error("Failed to fetch exchange rate from database.");
+    console.error("Error accessing or creating ZWL rate in Firestore:", error);
+    // Re-throw to be caught by the main handler, ensuring the function fails gracefully
+    throw new Error("Failed to access or create exchange rate in the database.");
   }
 }
 
