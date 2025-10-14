@@ -1,4 +1,23 @@
 const { Paynow } = require("paynow");
+const admin = require("firebase-admin");
+
+// -- Firebase Admin SDK Initialization --
+// Check if the app is already initialized to prevent errors on warm starts
+if (!admin.apps.length) {
+  try {
+    const credentials = JSON.parse(process.env.FIREBASE_ADMIN_CREDENTIALS);
+    admin.initializeApp({
+      credential: admin.credential.cert(credentials)
+    });
+    console.log("Firebase Admin SDK initialized successfully.");
+  } catch (error) {
+    console.error("Firebase Admin SDK initialization failed:", error);
+    // This is a critical error, so we might want to prevent the function from proceeding
+    throw new Error("Could not initialize Firebase Admin. Critical configuration error.");
+  }
+}
+
+const db = admin.firestore();
 
 // -- Utility: pick correct credentials --
 function getPaynowInstance(currency) {
@@ -41,11 +60,50 @@ function getPaynowInstance(currency) {
   return paynow;
 }
 
-// -- Product info --
-const PRODUCT_INFO = { 
-  name: "Modern Farmer Full Access", 
-  price: 49.99 
+// -- Product & Pricing --
+const PRODUCT_INFO = {
+  name: "Modern Farmer Full Access",
+  basePriceUSD: 49.99
 };
+
+// Fetches the ZWL exchange rate from Firestore
+async function getZwlRate() {
+  try {
+    const doc = await db.collection("config").doc("exchangeRates").get();
+    if (!doc.exists || !doc.data().zwl) {
+      console.error("ZWL exchange rate not found in Firestore.");
+      throw new Error("Could not retrieve ZWL exchange rate.");
+    }
+    const rate = doc.data().zwl;
+    console.log(`Fetched ZWL exchange rate: ${rate}`);
+    return rate;
+  } catch (error) {
+    console.error("Error fetching ZWL rate from Firestore:", error);
+    // Re-throw to be caught by the main handler
+    throw new Error("Failed to fetch exchange rate from database.");
+  }
+}
+
+// Calculates the final price based on currency
+async function getPrice(currency) {
+  const normalizedCurrency = (currency || '').toUpperCase();
+
+  if (normalizedCurrency === 'USD') {
+    return PRODUCT_INFO.basePriceUSD;
+  }
+
+  if (['ZWL', 'ZWG'].includes(normalizedCurrency)) {
+    const rate = await getZwlRate();
+    const priceZWL = (PRODUCT_INFO.basePriceUSD * rate).toFixed(2);
+    console.log(`Calculated ZWL price: ${priceZWL}`);
+    return parseFloat(priceZWL);
+  }
+
+  // Default to USD if currency is not supported/specified
+  console.warn(`Unsupported currency "${currency}", defaulting to USD.`);
+  return PRODUCT_INFO.basePriceUSD;
+}
+
 
 exports.handler = async (event) => {
   // CORS headers
@@ -106,9 +164,12 @@ exports.handler = async (event) => {
     const reference = `MF-${userId}-${Date.now()}`;
     console.log('Creating payment with reference:', reference);
 
+    // Calculate final price based on currency
+    const finalPrice = await getPrice(currency);
+
     // Create payment
     const payment = paynow.createPayment(reference, email);
-    payment.add(PRODUCT_INFO.name, PRODUCT_INFO.price);
+    payment.add(PRODUCT_INFO.name, finalPrice);
 
     // Determine payment method type
     const method = paymentMethod.toLowerCase().trim();
