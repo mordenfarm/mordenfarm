@@ -218,6 +218,32 @@
         #successOverlay.active { display: flex; }
         #successOverlay.active > div { animation: successPopIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
         @keyframes successPopIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .notification {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--primary-color);
+            box-shadow: var(--shadow);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--secondary-color);
+        }
+
+        .notification.error {
+            border-left-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -291,6 +317,7 @@
         </div>
     </div>
 
+    <div id="notification-container" style="position: fixed; top: 20px; right: 20px; z-index: 10001;"></div>
     <footer class="footer"><p>ALFA OCTAL SYSTEMS. ALL COPYRIGHTS RESERVED 2025</p></footer>
 
    <script>
@@ -323,13 +350,13 @@
         const paymentMethods = [
             { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
             { name: 'OneMoney (ZWG)', currency: 'ZWG', backendName: 'onemoney', active: true, input: { type: 'tel', label: 'OneMoney Mobile Number', placeholder: '071xxxxxxx' } },
-            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: false, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: 'Coming Soon' } },
+            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: true, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: '075xxxxxxx' } },
             { name: 'Bank Transfer (USD)', currency: 'USD', backendName: 'banktransfer', active: true, input: { type: 'info', content: 'For bank transfers, please contact our support team via the main page for account details and reference number.' } },
             { name: 'EcoCash (ZWG)', currency: 'ZWG', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
-            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: false, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: 'Coming Soon' } },
-            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
-            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: false, input: { type: 'text', label: 'Card Details', placeholder: 'Coming Soon' } },
-            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: false, input: { type: 'text', label: 'PayGo Details', placeholder: 'Coming Soon' } },
+            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: true, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: '073xxxxxxx' } },
+            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
+            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
+            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter PayGo details' } },
         ];
 
         // --- INITIALIZATION ---
@@ -367,8 +394,28 @@
             currentUser = null;
             elements.unlockButton.disabled = true;
             elements.loginPrompt.classList.add('active');
+            showNotification(message, 'error');
             // Optional: redirect back to login page after a delay
             // setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            container.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    container.removeChild(notification);
+                }, 500);
+            }, 5000);
         }
 
         // --- UI RENDERING ---
@@ -404,7 +451,7 @@
         // --- MODAL & VIEW CONTROLS ---
         function openPaymentModal() {
             if (!currentUser) {
-                alert("You must be logged in to make a payment.");
+                showNotification("You must be logged in to make a payment.", "error");
                 return;
             }
             elements.paymentModalBackdrop.classList.add('active');
@@ -464,7 +511,7 @@
         async function handlePaymentSubmit(e) {
             e.preventDefault();
             if (!currentUser) {
-                alert("Session expired. Please log in again.");
+                showNotification("Session expired. Please log in again.", "error");
                 return;
             }
 
@@ -473,14 +520,14 @@
             const paymentMethodName = elements.paymentForm.dataset.methodName;
 
             if (!paymentDetails) {
-                alert("Please fill in the required details.");
+                showNotification("Please fill in the required details.", "error");
                 return;
             }
 
-            if (['ecocash', 'onemoney'].includes(paymentMethodName)) {
-                const phoneRegex = /^0(77|78|71|73|76)\d{7}$/;
+            if (['ecocash', 'onemoney', 'innbucks', 'telecash'].includes(paymentMethodName)) {
+                const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
                 if (!phoneRegex.test(paymentDetails)) {
-                    alert("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)");
+                    showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
                     return;
                 }
             }
@@ -506,7 +553,7 @@
                     throw new Error(result.message || 'Failed to initiate payment.');
                 }
 
-                alert(result.instructions || 'Payment initiated! Please check your device to complete the transaction.');
+                showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
 
                 if (result.pollUrl) {
                     startPolling(result.pollUrl);
@@ -516,7 +563,7 @@
 
             } catch (error) {
                 console.error("Error initiating payment:", error);
-                alert(`Error: ${error.message}`);
+                showNotification(`Error: ${error.message}`, "error");
                 setLoadingState(false);
             }
         }
@@ -544,6 +591,7 @@
             stopPolling();
             closePaymentModal();
             elements.successOverlay.classList.add('active');
+            showNotification("Payment Successful! You now have full access.", "success");
 
             let countdown = 5;
             elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
@@ -562,7 +610,7 @@
             console.log("Starting to poll for payment status...");
             pollingTimeout = setTimeout(() => {
                 stopPolling();
-                alert("Payment verification timed out. Please check your transaction status or try again.");
+                showNotification("Payment verification timed out. Please check your transaction status or try again.", "error");
                 setLoadingState(false);
             }, 120000); // 2 minute timeout
 
@@ -581,7 +629,7 @@
                         handleSuccessfulPayment();
                     } else if (['cancelled', 'failed', 'disputed'].includes(result.status)) {
                         stopPolling();
-                        alert(`Payment was not successful. Status: ${result.status}.`);
+                        showNotification(`Payment was not successful. Status: ${result.status}.`, "error");
                         setLoadingState(false);
                     }
                 } catch (error) {
