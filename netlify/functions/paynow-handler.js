@@ -12,7 +12,12 @@ function getPaynowInstance(currency) {
     throw new Error(`Missing Paynow credentials for ${isUSD ? 'USD' : 'ZWL'}`);
   }
   
-  console.log(`Initializing Paynow for ${isUSD ? 'USD' : 'ZWL'}`);
+  // Log credentials (masked) for debugging
+  console.log(`Initializing Paynow for ${isUSD ? 'USD' : 'ZWL'}`, {
+    integrationId: PAYNOW_ID,
+    keyLength: PAYNOW_KEY.length,
+    keyPreview: PAYNOW_KEY.substring(0, 4) + '...' + PAYNOW_KEY.substring(PAYNOW_KEY.length - 4)
+  });
   
   const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
   
@@ -169,6 +174,7 @@ exports.handler = async (event) => {
       };
     } else {
       // Payment initiation failed
+      console.error('Paynow returned failure:', response.error);
       throw new Error(response.error || "Payment initiation failed. Please try again.");
     }
 
@@ -176,14 +182,26 @@ exports.handler = async (event) => {
     console.error("=== PAYNOW HANDLER ERROR ===");
     console.error("Error name:", error.name);
     console.error("Error message:", error.message);
-    console.error("Error stack:", error.stack);
+    
+    // Provide helpful error messages
+    let userMessage = error.message;
+    
+    if (error.message.includes('Hashes do not match')) {
+      userMessage = "Payment gateway configuration error. Please contact support.";
+      console.error("HINT: Check that your Paynow Integration Key is correct for the currency being used.");
+    }
+    
+    if (error.message.includes('Invalid integration')) {
+      userMessage = "Payment gateway authentication failed. Please contact support.";
+      console.error("HINT: Check that your Paynow Integration ID is correct.");
+    }
 
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ 
         success: false, 
-        message: error.message || "An unexpected error occurred. Please try again."
+        message: userMessage
       })
     };
   }
