@@ -2,7 +2,9 @@ const { Paynow } = require("paynow");
 
 // -- Utility: pick correct credentials --
 function getPaynowInstance(currency) {
-  const isUSD = (currency || '').toUpperCase() === 'USD';
+  // Normalize currency (handle both ZWL and ZWG as the same)
+  const normalizedCurrency = (currency || '').toUpperCase();
+  const isUSD = normalizedCurrency === 'USD';
   const PAYNOW_ID = isUSD ? process.env.PAYNOW_ID_USD : process.env.PAYNOW_ID_ZWL;
   const PAYNOW_KEY = isUSD ? process.env.PAYNOW_KEY_USD : process.env.PAYNOW_KEY_ZWL;
   
@@ -14,16 +16,22 @@ function getPaynowInstance(currency) {
   
   const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
   
-  // Set URLs - CRITICAL: These must match your Paynow dashboard settings
-  paynow.resultUrl = `${process.env.SITE_URL}/.netlify/functions/paynow-webhook`;
-  paynow.returnUrl = `${process.env.SITE_URL}/payment.html`;
-  
   // Enable sandbox mode if needed
   if (process.env.PAYNOW_SANDBOX === 'true') {
     console.log('Running in SANDBOX mode');
-    paynow.setResultUrl('https://example.com/gateways/paynow/update');
-    paynow.setReturnUrl('https://example.com/return');
+    // In sandbox mode, use test URLs
+    paynow.resultUrl = 'https://example.com/gateways/paynow/update';
+    paynow.returnUrl = 'https://example.com/return';
+  } else {
+    // Production mode - use real URLs
+    paynow.resultUrl = `${process.env.SITE_URL}/.netlify/functions/paynow-webhook`;
+    paynow.returnUrl = `${process.env.SITE_URL}/payment.html`;
   }
+  
+  console.log('Paynow URLs configured:', {
+    resultUrl: paynow.resultUrl,
+    returnUrl: paynow.returnUrl
+  });
   
   return paynow;
 }
