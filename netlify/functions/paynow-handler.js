@@ -36,7 +36,7 @@ exports.handler = async (event, context) => {
 
     console.log('POST request confirmed ✓');
 
-    // Check environment variables
+    // Check environment variables-
     const { PAYNOW_ID, PAYNOW_KEY, SITE_URL, PAYNOW_SANDBOX } = process.env;
     if (!PAYNOW_ID || !PAYNOW_KEY || !SITE_URL) {
         console.error("Missing environment variables:", {
