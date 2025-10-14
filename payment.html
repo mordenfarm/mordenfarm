@@ -509,66 +509,117 @@
         }
 
         async function handlePaymentSubmit(e) {
-            e.preventDefault();
-            if (!currentUser) {
-                showNotification("Session expired. Please log in again.", "error");
-                return;
-            }
+    e.preventDefault();
+    
+    console.log('=== PAYMENT SUBMIT INITIATED ===');
+    
+    if (!currentUser) {
+        showNotification("Session expired. Please log in again.", "error");
+        return;
+    }
 
-            const paymentInputField = document.getElementById('payment-input-field');
-            const paymentDetails = paymentInputField.value.trim();
-            const paymentMethodName = elements.paymentForm.dataset.methodName;
+    const paymentInputField = document.getElementById('payment-input-field');
+    const paymentDetails = paymentInputField ? paymentInputField.value.trim() : '';
+    const paymentMethodName = elements.paymentForm.dataset.methodName;
+    const currency = elements.paymentForm.dataset.methodCurrency;
 
-            if (!paymentDetails) {
-                showNotification("Please fill in the required details.", "error");
-                return;
-            }
+    console.log('Payment details:', {
+        hasPaymentDetails: !!paymentDetails,
+        paymentMethod: paymentMethodName,
+        currency: currency,
+        userId: currentUser.uid,
+        email: currentUser.email
+    });
 
-            if (['ecocash', 'onemoney', 'innbucks', 'telecash'].includes(paymentMethodName)) {
-                const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
-                if (!phoneRegex.test(paymentDetails)) {
-                    showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
-                    return;
-                }
-            }
+    // Check if this is an info-only method (like bank transfer)
+    if (!paymentInputField) {
+        showNotification("This payment method requires manual processing. Please contact support.", "info");
+        return;
+    }
 
-            setLoadingState(true);
+    if (!paymentDetails) {
+        showNotification("Please fill in the required details.", "error");
+        return;
+    }
 
-            try {
-                const response = await fetch('/.netlify/functions/paynow-handler', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        paymentMethod: paymentMethodName,
-                        currency: elements.paymentForm.dataset.methodCurrency,
-                        paymentDetails: paymentDetails,
-                        userId: currentUser.uid,
-                        email: currentUser.email,
-                    }),
-                });
-
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    throw new Error(result.message || 'Failed to initiate payment.');
-                }
-
-                showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
-
-                if (result.redirectUrl) {
-                    window.location.href = result.redirectUrl;
-                } else if (result.pollUrl) {
-                    startPolling(result.pollUrl);
-                } else {
-                    throw new Error("Did not receive a valid poll or redirect URL from the server.");
-                }
-
-            } catch (error) {
-                console.error("Error initiating payment:", error);
-                showNotification(`Error: ${error.message}`, "error");
-                setLoadingState(false);
-            }
+    // Validate phone number for mobile methods
+    if (['ecocash', 'onemoney', 'innbucks', 'telecash'].includes(paymentMethodName)) {
+        const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
+        if (!phoneRegex.test(paymentDetails)) {
+            showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
+            return;
         }
+    }
+
+    setLoadingState(true);
+
+    const requestBody = {
+        paymentMethod: paymentMethodName,
+        currency: currency,
+        paymentDetails: paymentDetails,
+        userId: currentUser.uid,
+        email: currentUser.email,
+    };
+
+    console.log('Sending request to Netlify function...');
+    console.log('Request body:', { ...requestBody, paymentDetails: '***REDACTED***' });
+
+    try {
+        const functionUrl = '/.netlify/functions/paynow-handler';
+        console.log('Function URL:', functionUrl);
+
+        const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        console.log('Response status:', response.status);
+        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
+
+        let result;
+        try {
+            const responseText = await response.text();
+            console.log('Raw response:', responseText);
+            result = JSON.parse(responseText);
+            console.log('Parsed result:', result);
+        } catch (parseError) {
+            console.error('Failed to parse response:', parseError);
+            throw new Error('Invalid response from server');
+        }
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || `Server error: ${response.status}`);
+        }
+
+        console.log('Payment initiated successfully!');
+        showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
+
+        if (result.redirectUrl) {
+            console.log('Redirecting to:', result.redirectUrl);
+            setTimeout(() => {
+                window.location.href = result.redirectUrl;
+            }, 1500);
+        } else if (result.pollUrl) {
+            console.log('Starting polling with URL:', result.pollUrl);
+            startPolling(result.pollUrl);
+        } else {
+            console.warn('No redirect or poll URL received');
+            throw new Error("Did not receive a valid poll or redirect URL from the server.");
+        }
+
+    } catch (error) {
+        console.error("=== PAYMENT ERROR ===");
+        console.error("Error type:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+        showNotification(`Error: ${error.message}`, "error");
+        setLoadingState(false);
+    }
+}
 
         function setLoadingState(isLoading) {
             if (isLoading) {
