@@ -52,9 +52,13 @@ exports.handler = async (event) => {
     });
 
     if (status.toLowerCase() === "paid") {
+      const now = new Date();
+      const expiryDate = new Date(now.setFullYear(now.getFullYear() + 1));
+
       await userRef.set({
         subscription: true,
         subscriptionStatus: "active",
+        subscriptionExpiry: admin.firestore.Timestamp.fromDate(expiryDate),
         lastPaymentReference: reference,
         lastPaymentAmount: amount,
         subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
