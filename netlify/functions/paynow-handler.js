@@ -1,31 +1,27 @@
 const { Paynow } = require("paynow");
 
-// --- 1. CONFIGURATION & SECURITY ---
 const PRODUCT_INFO = {
     name: 'Modern Farmer Full Access',
     price: 49.99
 };
 
-exports.handler = async (event) => {
-    // Add CORS headers
+exports.handler = async (event, context) => {
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Content-Type': 'application/json'
     };
 
-    // Handle OPTIONS request for CORS
+    console.log('=== PAYNOW HANDLER INVOKED ===');
+    console.log('HTTP Method:', event.httpMethod);
+    console.log('Path:', event.path);
+
     if (event.httpMethod === 'OPTIONS') {
-        return {
-            statusCode: 200,
-            headers,
-            body: ''
-        };
+        console.log('Handling OPTIONS preflight request');
+        return { statusCode: 200, headers, body: '' };
     }
 
-    // --- 2. PRE-FLIGHT CHECKS ---
-    console.log('Received request:', event.httpMethod);
-    
     if (event.httpMethod !== 'POST') {
         console.error(`Wrong HTTP method: ${event.httpMethod}`);
         return { 
@@ -33,14 +29,17 @@ exports.handler = async (event) => {
             headers,
             body: JSON.stringify({ 
                 success: false, 
-                message: "Method Not Allowed. Use POST." 
+                message: `Method Not Allowed. Received ${event.httpMethod}, expected POST.` 
             }) 
         };
     }
 
+    console.log('POST request confirmed ✓');
+
+    // Check environment variables
     const { PAYNOW_ID, PAYNOW_KEY, SITE_URL } = process.env;
     if (!PAYNOW_ID || !PAYNOW_KEY || !SITE_URL) {
-        console.error("CRITICAL ERROR: Missing environment variables", {
+        console.error("Missing environment variables:", {
             hasPaynowId: !!PAYNOW_ID,
             hasPaynowKey: !!PAYNOW_KEY,
             hasSiteUrl: !!SITE_URL
@@ -50,56 +49,76 @@ exports.handler = async (event) => {
             headers,
             body: JSON.stringify({ 
                 success: false, 
-                message: "Server configuration error." 
+                message: "Server configuration error. Please contact support." 
             }) 
         };
     }
 
-    // --- 3. PARSE & VALIDATE INCOMING DATA ---
+    console.log('Environment variables present ✓');
+
+    // Parse request body
     let data;
     try {
-        console.log('Parsing request body...');
         data = JSON.parse(event.body);
-        console.log('Parsed data:', { ...data, paymentDetails: '***REDACTED***' });
+        console.log('Request parsed:', {
+            paymentMethod: data.paymentMethod,
+            currency: data.currency,
+            userId: data.userId,
+            email: data.email,
+            hasPaymentDetails: !!data.paymentDetails
+        });
     } catch (error) {
         console.error('JSON parse error:', error);
         return { 
             statusCode: 400, 
             headers,
+            body: JSON.stringify({ success: false, message: "Invalid JSON in request body." }) 
+        };
+    }
+
+    // Validate required fields
+    const { paymentMethod, currency, paymentDetails, userId, email } = data;
+    const missingFields = [];
+    if (!paymentMethod) missingFields.push('paymentMethod');
+    if (!currency) missingFields.push('currency');
+    if (!paymentDetails) missingFields.push('paymentDetails');
+    if (!userId) missingFields.push('userId');
+    if (!email) missingFields.push('email');
+
+    if (missingFields.length > 0) {
+        console.error('Missing required fields:', missingFields);
+        return { 
+            statusCode: 400, 
+            headers,
             body: JSON.stringify({ 
                 success: false, 
-                message: "Invalid JSON." 
+                message: `Missing required fields: ${missingFields.join(', ')}` 
             }) 
         };
     }
 
-    const { paymentMethod, currency, paymentDetails, userId, email } = data;
-    const requiredFields = { paymentMethod, currency, paymentDetails, userId, email };
-    for (const [key, value] of Object.entries(requiredFields)) {
-        if (!value) {
-            console.error(`Missing field: ${key}`);
-            return { 
-                statusCode: 400, 
-                headers,
-                body: JSON.stringify({ 
-                    success: false, 
-                    message: `Missing field: ${key}` 
-                }) 
-            };
-        }
-    }
+    console.log('All required fields present ✓');
 
-    // --- 4. PAYNOW INTEGRATION LOGIC ---
+    // Process payment
     try {
-        console.log(`Initializing Paynow for user ${userId} with method ${paymentMethod}`);
-        
+        console.log('Initializing Paynow...');
         const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
+        
+        // Set URLs
         paynow.resultUrl = `${SITE_URL}/.netlify/functions/paynow-webhook`;
-        paynow.returnUrl = `${SITE_URL}`;
+        paynow.returnUrl = `${SITE_URL}/payment.html`;
+        
+        console.log('Paynow URLs set:', {
+            resultUrl: paynow.resultUrl,
+            returnUrl: paynow.returnUrl
+        });
 
+        // Create payment
         const uniqueReference = `MF-${userId}-${Date.now()}`;
         const payment = paynow.createPayment(uniqueReference, email);
         payment.add(PRODUCT_INFO.name, PRODUCT_INFO.price);
+        
+        console.log('Payment created with reference:', uniqueReference);
 
         const method = paymentMethod.toLowerCase().replace(/\s/g, '');
         const mobileMethods = ['ecocash', 'onemoney', 'innbucks', 'telecash'];
@@ -108,26 +127,30 @@ exports.handler = async (event) => {
         let response;
 
         if (mobileMethods.includes(method)) {
-            // --- 4A. HANDLE MOBILE PAYMENTS ---
             console.log(`Processing mobile payment: ${method}`);
+            
+            // Validate phone number
             const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
             if (!phoneRegex.test(paymentDetails)) {
+                console.error('Invalid phone number format:', paymentDetails);
                 return { 
                     statusCode: 400, 
                     headers,
                     body: JSON.stringify({ 
                         success: false, 
-                        message: "Invalid phone number format." 
+                        message: "Invalid phone number format. Use 07xxxxxxxx" 
                     }) 
                 };
             }
+
+            console.log('Calling paynow.sendMobile...');
             response = await paynow.sendMobile(payment, paymentDetails, method);
-
+            
         } else if (cardMethods.includes(method) || method === 'banktransfer') {
-            // --- 4B. HANDLE CARD & OTHER PAYMENTS ---
             console.log(`Processing card/standard payment: ${method}`);
+            console.log('Calling paynow.send...');
             response = await paynow.send(payment);
-
+            
         } else {
             console.error(`Invalid payment method: ${method}`);
             return { 
@@ -135,40 +158,43 @@ exports.handler = async (event) => {
                 headers,
                 body: JSON.stringify({ 
                     success: false, 
-                    message: "Invalid payment method specified." 
+                    message: `Invalid payment method: ${method}` 
                 }) 
             };
         }
 
-        // --- 5. PROCESS PAYNOW RESPONSE ---
-        console.log('Paynow response received:', {
+        console.log('Paynow API response:', {
             success: response?.success,
+            status: response?.status,
             hasInstructions: !!response?.instructions,
             hasPollUrl: !!response?.pollUrl,
             hasRedirectUrl: !!response?.redirectUrl,
-            error: response?.error
+            error: response?.error,
+            responseKeys: response ? Object.keys(response) : []
         });
 
         if (response && response.success) {
             const isMobile = mobileMethods.includes(method);
-            console.log(`Successfully initiated ${isMobile ? 'mobile' : 'standard'} payment for user ${userId}.`);
+            console.log(`✓ Payment initiated successfully (${isMobile ? 'mobile' : 'card'})`);
 
             return {
                 statusCode: 200,
                 headers,
                 body: JSON.stringify({
                     success: true,
-                    message: isMobile ? "Payment initiated. Please check your phone." : "Redirecting to payment page...",
-                    instructions: response.instructions,
-                    pollUrl: isMobile ? response.pollUrl : null,
-                    redirectUrl: !isMobile ? response.redirectUrl : null,
+                    message: isMobile 
+                        ? "Payment initiated. Please check your phone to approve." 
+                        : "Redirecting to payment page...",
+                    instructions: response.instructions || "Please complete payment on your device",
+                    pollUrl: response.pollUrl || null,
+                    redirectUrl: response.redirectUrl || null,
                 }),
             };
-
         } else {
-            const errorMessage = response?.error || "Unknown error from payment gateway.";
-            console.error(`Paynow initiation failed for user ${userId}:`, errorMessage);
-            console.error('Full response object:', JSON.stringify(response));
+            const errorMessage = response?.error || response?.message || "Unknown error from payment gateway";
+            console.error('Paynow initiation failed:', errorMessage);
+            console.error('Full response:', JSON.stringify(response));
+            
             return { 
                 statusCode: 400, 
                 headers,
@@ -180,16 +206,18 @@ exports.handler = async (event) => {
         }
 
     } catch (error) {
-        // --- 6. UNEXPECTED ERROR HANDLING ---
-        console.error("An unexpected error occurred in the paynow-handler:", error);
+        console.error('=== UNEXPECTED ERROR ===');
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
         console.error('Error stack:', error.stack);
+        
         return { 
             statusCode: 500, 
             headers,
             body: JSON.stringify({ 
                 success: false, 
-                message: "An internal server error occurred.",
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+                message: "An internal server error occurred. Please try again or contact support.",
+                ...(process.env.NODE_ENV === 'development' && { error: error.message })
             }) 
         };
     }
