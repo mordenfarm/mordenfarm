@@ -189,23 +189,19 @@ exports.handler = async (event) => {
 
     // Determine payment method type
     const method = paymentMethod.toLowerCase().trim();
-    const mobileMethods = ["ecocash", "onemoney", "innbucks", "telecash"];
-    const cardMethods = ["visa", "mastercard", "zimswitch", "paygo"];
 
     let response;
 
-    if (mobileMethods.includes(method)) {
-      // Validate phone number
-      if (!paymentDetails || !/^0(77|78|71|73|75|76)\d{7}$/.test(paymentDetails)) {
-        throw new Error("Invalid phone number format. Use 07xxxxxxxx");
+    // Based on documentation, only 'ecocash' uses the sendMobile method.
+    // All other methods, including other "mobile" ones, should use the redirect flow.
+    if (method === 'ecocash') {
+      // Validate phone number for EcoCash
+      if (!paymentDetails || !/^0(77|78)\d{7}$/.test(paymentDetails)) {
+        throw new Error("Invalid EcoCash phone number format. Use 077xxxxxxx or 078xxxxxxx");
       }
       
       console.log(`Initiating mobile payment via ${method}`);
       response = await paynow.sendMobile(payment, paymentDetails, method);
-      
-    } else if (cardMethods.includes(method)) {
-      console.log('Initiating card/online payment');
-      response = await paynow.send(payment);
       
     } else if (method === 'banktransfer') {
       // Bank transfer is manual - return instructions
@@ -222,7 +218,9 @@ exports.handler = async (event) => {
       };
       
     } else {
-      throw new Error(`Unsupported payment method: ${method}`);
+      // All other methods use the redirect flow
+      console.log(`Initiating redirect payment for method: ${method}`);
+      response = await paynow.send(payment);
     }
 
     // Log the raw response for debugging
@@ -240,7 +238,7 @@ exports.handler = async (event) => {
         headers,
         body: JSON.stringify({
           success: true,
-          message: mobileMethods.includes(method)
+          message: method === 'ecocash'
             ? "Payment initiated. Please check your phone to complete the transaction."
             : "Redirecting to payment gateway...",
           pollUrl: response.pollUrl || null,

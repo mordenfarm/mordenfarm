@@ -359,11 +359,11 @@
         // --- PAYMENT METHODS CONFIGURATION ---
         const paymentMethods = [
             { name: 'EcoCash', currency: 'USD', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
-            { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `<img src="https://in-bucket.s3.us-east-2.amazonaws.com/wp-content/uploads/2021/08/21204635/innbucks-logo.svg" class="payment-option-icon" alt="InnBucks">`, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: '078xxxxxxx' } },
+            { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `<img src="https://in-bucket.s3.us-east-2.amazonaws.com/wp-content/uploads/2021/08/21204635/innbucks-logo.svg" class="payment-option-icon" alt="InnBucks">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your InnBucks payment.' } },
             { name: 'Visa/Mastercard', currency: 'USD', backendName: 'visa', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/visa/visa-icon.svg" class="payment-option-icon" alt="Visa/Mastercard">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to enter your card details.' } },
             { name: 'ZimSwitch', currency: 'ZWL', backendName: 'zimswitch', active: true, icon: `<img src="https://www.zimswitch.co.zw/wp-content/uploads/2021/02/zimswitch-logo.png" class="payment-option-icon" alt="ZimSwitch">`, input: { type: 'redirect', content: 'You will be redirected to the ZimSwitch portal to log in to your bank.' } },
-            { name: 'OneMoney', currency: 'ZWL', backendName: 'onemoney', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/netone/netone-icon.svg" class="payment-option-icon" alt="OneMoney">`, input: { type: 'tel', label: 'OneMoney Mobile Number', placeholder: '071xxxxxxx' } },
-            { name: 'Telecash', currency: 'ZWL', backendName: 'telecash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/telecel/telecel-icon.svg" class="payment-option-icon" alt="Telecash">`, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: '073xxxxxxx' } },
+            { name: 'OneMoney', currency: 'ZWL', backendName: 'onemoney', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/netone/netone-icon.svg" class="payment-option-icon" alt="OneMoney">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your OneMoney payment.' } },
+            { name: 'Telecash', currency: 'ZWL', backendName: 'telecash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/telecel/telecel-icon.svg" class="payment-option-icon" alt="Telecash">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your Telecash payment.' } },
             { name: 'O\'mari', currency: 'USD', backendName: 'omari', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/oldmutual/oldmutual-icon.svg" class="payment-option-icon" alt="O'mari">`, input: { type: 'redirect', content: 'You will be redirected to the O\'mari portal to complete your payment.' } },
             { name: 'Bank Transfer', currency: 'USD', backendName: 'banktransfer', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/bankofamerica/bankofamerica-icon.svg" class="payment-option-icon" alt="Bank Transfer">`, input: { type: 'info', content: 'For bank transfers, please contact support for details and a reference number.' } },
         ];
@@ -577,7 +577,12 @@
                 } else if (result.pollUrl) {
                     startPolling(result.pollUrl);
                 } else {
-                    throw new Error("No valid poll or redirect URL received.");
+                    // For info-only methods like bank transfer, there's no redirect or poll URL.
+                    // The success message is enough. We can just close the modal.
+                    if (method.input.type !== 'info') {
+                        throw new Error("No valid poll or redirect URL received.");
+                    }
+                    setLoadingState(false);
                 }
 
             } catch (error) {
