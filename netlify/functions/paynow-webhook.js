@@ -17,7 +17,7 @@ exports.handler = async (event) => {
 
     if (!hash) return { statusCode: 403, body: "Forbidden: Missing hash" };
 
-    // Pick correct key based on currency
+    // Pick correct key based on currency$$$$$$$$$mulaaaaaaaaa
     const isUSD = (currency || "").toUpperCase() === "USD";
     const PAYNOW_KEY = isUSD ? process.env.PAYNOW_KEY_USD : process.env.PAYNOW_KEY_ZWL;
 
@@ -68,3 +68,4 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: "Internal Server Error" };
   }
 };
+
