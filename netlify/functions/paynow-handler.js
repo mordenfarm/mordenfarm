@@ -1,4 +1,20 @@
-const { Paynow } = require("@mugoma/paynow");
+// Patch punycode require before loading paynow
+try {
+  require('module').Module._extensions['.js'];
+  const Module = require('module');
+  const originalRequire = Module.prototype.require;
+  Module.prototype.require = function (id) {
+    if (id === 'punycode') {
+      return require('punycode/');  // redirect to userland punycode
+    }
+    return originalRequire.apply(this, arguments);
+  };
+} catch (e) {
+  // ignore if patch fails
+}
+
+const { Paynow } = require("paynow");
+
 
 
 const PRODUCT_INFO = {
