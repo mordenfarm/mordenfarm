@@ -37,7 +37,7 @@ exports.handler = async (event, context) => {
     console.log('POST request confirmed ✓');
 
     // Check environment variables
-    const { PAYNOW_ID, PAYNOW_KEY, SITE_URL } = process.env;
+    const { PAYNOW_ID, PAYNOW_KEY, SITE_URL, PAYNOW_SANDBOX } = process.env;
     if (!PAYNOW_ID || !PAYNOW_KEY || !SITE_URL) {
         console.error("Missing environment variables:", {
             hasPaynowId: !!PAYNOW_ID,
@@ -55,6 +55,7 @@ exports.handler = async (event, context) => {
     }
 
     console.log('Environment variables present ✓');
+    console.log('Sandbox mode:', PAYNOW_SANDBOX === 'true' ? 'ENABLED' : 'DISABLED');
 
     // Parse request body
     let data;
@@ -104,13 +105,20 @@ exports.handler = async (event, context) => {
         console.log('Initializing Paynow...');
         const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
         
+        // CRITICAL: Enable sandbox mode if in testing
+        if (PAYNOW_SANDBOX === 'true') {
+            paynow.sandbox = true;
+            console.log('🔧 SANDBOX MODE ENABLED');
+        }
+        
         // Set URLs
         paynow.resultUrl = `${SITE_URL}/.netlify/functions/paynow-webhook`;
         paynow.returnUrl = `${SITE_URL}/payment.html`;
         
         console.log('Paynow URLs set:', {
             resultUrl: paynow.resultUrl,
-            returnUrl: paynow.returnUrl
+            returnUrl: paynow.returnUrl,
+            sandboxMode: paynow.sandbox || false
         });
 
         // Create payment
@@ -211,13 +219,28 @@ exports.handler = async (event, context) => {
         console.error('Error message:', error.message);
         console.error('Error stack:', error.stack);
         
+        // Specific error handling
+        let userMessage = "An internal server error occurred. Please try again.";
+        let statusCode = 500;
+        
+        if (error.message && error.message.includes('Hashes do not match')) {
+            userMessage = "Payment gateway configuration error. Please contact support with error code: HASH_MISMATCH";
+            statusCode = 500;
+            console.error('CRITICAL: Paynow hash mismatch - check PAYNOW_ID and PAYNOW_KEY');
+            console.error('Integration ID (first 4 chars):', PAYNOW_ID.substring(0, 4) + '...');
+            console.error('Integration Key (first 4 chars):', PAYNOW_KEY.substring(0, 4) + '...');
+        } else if (error.message && error.message.includes('Network')) {
+            userMessage = "Unable to connect to payment gateway. Please check your internet connection.";
+            statusCode = 503;
+        }
+        
         return { 
-            statusCode: 500, 
+            statusCode, 
             headers,
             body: JSON.stringify({ 
                 success: false, 
-                message: "An internal server error occurred. Please try again or contact support.",
-                ...(process.env.NODE_ENV === 'development' && { error: error.message })
+                message: userMessage,
+                errorCode: error.message && error.message.includes('Hashes do not match') ? 'HASH_MISMATCH' : 'UNKNOWN'
             }) 
         };
     }
