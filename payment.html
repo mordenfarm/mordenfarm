@@ -176,7 +176,15 @@
         .payment-option:hover { transform: translateY(-5px); border-color: var(--primary-color); }
         .payment-option.inactive { opacity: 0.4; cursor: not-allowed; background: #2a2a2a; }
         .payment-option.inactive:hover { transform: none; border-color: var(--border-color); }
-        .payment-option-label { font-size: 0.9rem; font-weight: 500; }
+        .payment-option-icon {
+            height: 32px;
+            width: auto;
+            margin-bottom: 0.5rem;
+        }
+        .payment-option-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
         .currency-badge {
             font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem;
             border-radius: 6px; background: var(--border-color); color: var(--text-secondary);
@@ -191,16 +199,45 @@
             padding: 1rem;
             border-radius: 8px;
             color: var(--text-secondary);
+            text-align: center;
         }
 
         /* General form styles */
-        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-        .form-label { font-size: 0.9rem; font-weight: 500; color: var(--text-primary); }
-        .form-input {
-            padding: 0.875rem; background: var(--bg-darker); border: 2px solid var(--border-color);
-            border-radius: 8px; color: var(--text-primary); font-size: 0.9rem; transition: var(--transition);
+        .form-group { position: relative; margin-bottom: 1.5rem; }
+        .form-label {
+            position: absolute;
+            top: 0.875rem;
+            left: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+            transition: all 0.2s ease;
         }
-        .form-input:focus { outline: none; border-color: var(--primary-color); }
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        /* Floating label effect */
+        .form-input:focus + .form-label,
+        .form-input:not(:placeholder-shown) + .form-label {
+            top: -0.75rem;
+            left: 0.75rem;
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            background-color: var(--bg-card);
+            padding: 0 0.25rem;
+        }
         .form-button {
             padding: 0.875rem; background: var(--primary-color); color: white; border: none;
             border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer;
@@ -295,8 +332,9 @@
                             </div>
                             <button class="form-button" type="submit" id="submitPaymentBtn">Pay $49.99</button>
                             <div class="loadingspinner" id="paymentLoader">
-                              <div id="square1"></div> <div id="square2"></div> <div id="square3"></div>
-                              <div id="square4"></div> <div id="square5"></div>
+                                <div id="square1"></div><div id="square2"></div><div id="square3"></div>
+                                <div id="square4"></div><div id="square5"></div>
+                                <p style="text-align: center; color: var(--text-secondary); margin-top: 5rem; font-weight: 500;">Processing payment...</p>
                             </div>
                         </form>
                     </div>
@@ -348,15 +386,15 @@
 
         // --- PAYMENT METHODS CONFIGURATION ---
         const paymentMethods = [
-            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
-            { name: 'OneMoney (ZWG)', currency: 'ZWG', backendName: 'onemoney', active: true, input: { type: 'tel', label: 'OneMoney Mobile Number', placeholder: '071xxxxxxx' } },
-            { name: 'InnBucks (USD)', currency: 'USD', backendName: 'innbucks', active: true, input: { type: 'tel', label: 'InnBucks Mobile Number', placeholder: '075xxxxxxx' } },
-            { name: 'Bank Transfer (USD)', currency: 'USD', backendName: 'banktransfer', active: true, input: { type: 'info', content: 'For bank transfers, please contact our support team via the main page for account details and reference number.' } },
-            { name: 'EcoCash (ZWG)', currency: 'ZWG', backendName: 'ecocash', active: true, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
-            { name: 'Telecash (ZWG)', currency: 'ZWG', backendName: 'telecash', active: true, input: { type: 'tel', label: 'Telecash Mobile Number', placeholder: '073xxxxxxx' } },
-            { name: 'Visa/Mastercard (USD)', currency: 'USD', backendName: 'visa', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
-            { name: 'Zimswitch (ZWG)', currency: 'ZWG', backendName: 'zimswitch', active: true, input: { type: 'text', label: 'Card Details', placeholder: 'Enter card details' } },
-            { name: 'PayGo (USD)', currency: 'USD', backendName: 'paygo', active: true, input: { type: 'text', label: 'PayGo Details', placeholder: 'Enter PayGo details' } },
+            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
+            { name: 'EcoCash (ZWL)', currency: 'ZWL', backendName: 'ecocash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/ecocash/ecocash-icon.svg" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
+            { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `<img src="https://in-bucket.s3.us-east-2.amazonaws.com/wp-content/uploads/2021/08/21204635/innbucks-logo.svg" class="payment-option-icon" alt="InnBucks">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your InnBucks payment.' } },
+            { name: 'Visa/Mastercard', currency: 'USD', backendName: 'visa', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/visa/visa-icon.svg" class="payment-option-icon" alt="Visa/Mastercard">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to enter your card details.' } },
+            { name: 'ZimSwitch', currency: 'ZWL', backendName: 'zimswitch', active: true, icon: `<img src="https://www.zimswitch.co.zw/wp-content/uploads/2021/02/zimswitch-logo.png" class="payment-option-icon" alt="ZimSwitch">`, input: { type: 'redirect', content: 'You will be redirected to the ZimSwitch portal to log in to your bank.' } },
+            { name: 'OneMoney', currency: 'ZWL', backendName: 'onemoney', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/netone/netone-icon.svg" class="payment-option-icon" alt="OneMoney">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your OneMoney payment.' } },
+            { name: 'Telecash', currency: 'ZWL', backendName: 'telecash', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/telecel/telecel-icon.svg" class="payment-option-icon" alt="Telecash">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your Telecash payment.' } },
+            { name: 'O\'mari', currency: 'USD', backendName: 'omari', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/oldmutual/oldmutual-icon.svg" class="payment-option-icon" alt="O'mari">`, input: { type: 'redirect', content: 'You will be redirected to the O\'mari portal to complete your payment.' } },
+            { name: 'Bank Transfer', currency: 'USD', backendName: 'banktransfer', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/bankofamerica/bankofamerica-icon.svg" class="payment-option-icon" alt="Bank Transfer">`, input: { type: 'info', content: 'For bank transfers, please contact support for details and a reference number.' } },
         ];
 
         // --- INITIALIZATION ---
@@ -395,8 +433,6 @@
             elements.unlockButton.disabled = true;
             elements.loginPrompt.classList.add('active');
             showNotification(message, 'error');
-            // Optional: redirect back to login page after a delay
-            // setTimeout(() => { window.location.href = 'index.html'; }, 3000);
         }
 
         function showNotification(message, type = 'info') {
@@ -424,7 +460,8 @@
                 <div class="payment-option ${!method.active ? 'inactive' : ''}"
                      data-name="${method.name}"
                      ${!method.active ? 'disabled' : ''}>
-                    <span class="payment-option-label">${method.name.split(' (')[0]}</span>
+                    ${method.icon}
+                    <span class="payment-option-label">${method.name.replace(/ *\([^)]*\) */g, "")}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
             `).join('');
@@ -480,28 +517,35 @@
             const method = paymentMethods.find(m => m.name === methodName);
             if (!method) return;
 
-            elements.paymentForm.dataset.methodName = method.backendName;
+            elements.paymentForm.dataset.methodName = method.name;
+            elements.paymentForm.dataset.methodBackendName = method.backendName;
             elements.paymentForm.dataset.methodCurrency = method.currency;
             elements.paymentInputHeaderTitle.textContent = `Pay with ${method.name}`;
 
             let contentHTML = '';
-            if (method.input.type === 'info') {
-                contentHTML = `<div class="info-panel">${method.input.content}</div>`;
-                elements.submitPaymentBtn.style.display = 'none';
-            } else {
+            elements.submitPaymentBtn.style.display = 'block';
+
+            if (method.input.type === 'tel') {
                 contentHTML = `
                     <div class="form-group">
-                        <label class="form-label" for="payment-input-field">${method.input.label}</label>
                         <input
-                            type="${method.input.type}"
+                            type="tel"
                             id="payment-input-field"
+                            class="form-input"
                             name="payment-input-field"
-                            placeholder="${method.input.placeholder}"
+                            placeholder=" "
                             required
                             autocomplete="tel"
                         />
+                        <label class="form-label" for="payment-input-field">${method.input.label}</label>
                     </div>`;
-                elements.submitPaymentBtn.style.display = 'block';
+                elements.submitPaymentBtn.textContent = 'Pay $49.99';
+            } else if (method.input.type === 'redirect') {
+                contentHTML = `<div class="info-panel">${method.input.content}</div>`;
+                elements.submitPaymentBtn.textContent = 'Proceed to Secure Gateway';
+            } else if (method.input.type === 'info') {
+                contentHTML = `<div class="info-panel">${method.input.content}</div>`;
+                elements.submitPaymentBtn.style.display = 'none';
             }
 
             elements.paymentFormContent.innerHTML = contentHTML;
@@ -509,117 +553,73 @@
         }
 
         async function handlePaymentSubmit(e) {
-    e.preventDefault();
-    
-    console.log('=== PAYMENT SUBMIT INITIATED ===');
-    
-    if (!currentUser) {
-        showNotification("Session expired. Please log in again.", "error");
-        return;
-    }
+            e.preventDefault();
 
-    const paymentInputField = document.getElementById('payment-input-field');
-    const paymentDetails = paymentInputField ? paymentInputField.value.trim() : '';
-    const paymentMethodName = elements.paymentForm.dataset.methodName;
-    const currency = elements.paymentForm.dataset.methodCurrency;
+            if (!currentUser) {
+                showNotification("Session expired. Please log in again.", "error");
+                return;
+            }
 
-    console.log('Payment details:', {
-        hasPaymentDetails: !!paymentDetails,
-        paymentMethod: paymentMethodName,
-        currency: currency,
-        userId: currentUser.uid,
-        email: currentUser.email
-    });
+            const methodName = elements.paymentForm.dataset.methodName;
+            const method = paymentMethods.find(m => m.name === methodName);
+            if (!method) return showNotification("Invalid payment method.", "error");
 
-    // Check if this is an info-only method (like bank transfer)
-    if (!paymentInputField) {
-        showNotification("This payment method requires manual processing. Please contact support.", "info");
-        return;
-    }
+            const paymentInputField = document.getElementById('payment-input-field');
+            const paymentDetails = paymentInputField ? paymentInputField.value.trim() : '';
+            const paymentMethodName = elements.paymentForm.dataset.methodBackendName;
+            const currency = elements.paymentForm.dataset.methodCurrency;
 
-    if (!paymentDetails) {
-        showNotification("Please fill in the required details.", "error");
-        return;
-    }
+            if (method.input.type === 'tel') {
+                if (!paymentDetails) return showNotification("Please fill in the required details.", "error");
+                const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
+                if (!phoneRegex.test(paymentDetails)) {
+                    return showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
+                }
+            }
 
-    // Validate phone number for mobile methods
-    if (['ecocash', 'onemoney', 'innbucks', 'telecash'].includes(paymentMethodName)) {
-        const phoneRegex = /^0(77|78|71|73|75|76)\d{7}$/;
-        if (!phoneRegex.test(paymentDetails)) {
-            showNotification("Please enter a valid Zimbabwean mobile number (e.g., 07xxxxxxxx)", "error");
-            return;
+            setLoadingState(true);
+
+            const requestBody = {
+                paymentMethod: paymentMethodName,
+                currency: currency,
+                paymentDetails: paymentDetails,
+                userId: currentUser.uid,
+                email: currentUser.email,
+            };
+
+            try {
+                const response = await fetch('/.netlify/functions/paynow-handler', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    throw new Error(result.message || `Server error: ${response.status}`);
+                }
+
+                showNotification(result.instructions || 'Payment initiated!', 'success');
+
+                if (result.redirectUrl) {
+                    setTimeout(() => { window.location.href = result.redirectUrl; }, 1500);
+                } else if (result.pollUrl) {
+                    startPolling(result.pollUrl);
+                } else {
+                    // For info-only methods like bank transfer, there's no redirect or poll URL.
+                    // The success message is enough. We can just close the modal.
+                    if (method.input.type !== 'info') {
+                        throw new Error("No valid poll or redirect URL received.");
+                    }
+                    setLoadingState(false);
+                }
+
+            } catch (error) {
+                showNotification(`Error: ${error.message}`, "error");
+                setLoadingState(false);
+            }
         }
-    }
-
-    setLoadingState(true);
-
-    const requestBody = {
-        paymentMethod: paymentMethodName,
-        currency: currency,
-        paymentDetails: paymentDetails,
-        userId: currentUser.uid,
-        email: currentUser.email,
-    };
-
-    console.log('Sending request to Netlify function...');
-    console.log('Request body:', { ...requestBody, paymentDetails: '***REDACTED***' });
-
-    try {
-        const functionUrl = '/.netlify/functions/paynow-handler';
-        console.log('Function URL:', functionUrl);
-
-        const response = await fetch(functionUrl, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(requestBody),
-        });
-
-        console.log('Response status:', response.status);
-        console.log('Response headers:', Object.fromEntries([...response.headers.entries()]));
-
-        let result;
-        try {
-            const responseText = await response.text();
-            console.log('Raw response:', responseText);
-            result = JSON.parse(responseText);
-            console.log('Parsed result:', result);
-        } catch (parseError) {
-            console.error('Failed to parse response:', parseError);
-            throw new Error('Invalid response from server');
-        }
-
-        if (!response.ok || !result.success) {
-            throw new Error(result.message || `Server error: ${response.status}`);
-        }
-
-        console.log('Payment initiated successfully!');
-        showNotification(result.instructions || 'Payment initiated! Please check your device to complete the transaction.', 'success');
-
-        if (result.redirectUrl) {
-            console.log('Redirecting to:', result.redirectUrl);
-            setTimeout(() => {
-                window.location.href = result.redirectUrl;
-            }, 1500);
-        } else if (result.pollUrl) {
-            console.log('Starting polling with URL:', result.pollUrl);
-            startPolling(result.pollUrl);
-        } else {
-            console.warn('No redirect or poll URL received');
-            throw new Error("Did not receive a valid poll or redirect URL from the server.");
-        }
-
-    } catch (error) {
-        console.error("=== PAYMENT ERROR ===");
-        console.error("Error type:", error.name);
-        console.error("Error message:", error.message);
-        console.error("Error stack:", error.stack);
-        showNotification(`Error: ${error.message}`, "error");
-        setLoadingState(false);
-    }
-}
 
         function setLoadingState(isLoading) {
             if (isLoading) {
@@ -637,30 +637,19 @@
             if (pollingTimeout) clearTimeout(pollingTimeout);
             pollingInterval = null;
             pollingTimeout = null;
-            console.log("Polling stopped.");
         }
 
         function handleSuccessfulPayment() {
             stopPolling();
             closePaymentModal();
             elements.successOverlay.classList.add('active');
-            showNotification("Payment Successful! You now have full access.", "success");
+            showNotification("Payment Successful! Redirecting...", "success");
 
-            let countdown = 5;
-            elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
-
-            const redirectInterval = setInterval(() => {
-                countdown--;
-                elements.redirectMessage.textContent = `Redirecting you in ${countdown}...`;
-                if (countdown <= 0) {
-                    clearInterval(redirectInterval);
-                    window.location.href = 'index.html';
-                }
-            }, 1000);
+            // Immediate redirect to the homepage
+            window.location.href = 'index.html';
         }
 
         function startPolling(pollUrl) {
-            console.log("Starting to poll for payment status...");
             pollingTimeout = setTimeout(() => {
                 stopPolling();
                 showNotification("Payment verification timed out. Please check your transaction status or try again.", "error");
