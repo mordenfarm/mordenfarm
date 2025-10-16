@@ -171,19 +171,37 @@
         .payment-option {
             background: var(--bg-darker); border: 1px solid var(--border-color); border-radius: 8px;
             padding: 1rem; text-align: center; cursor: pointer; transition: var(--transition);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between; gap: 0.75rem;
         }
         .payment-option:hover { transform: translateY(-5px); border-color: var(--primary-color); }
         .payment-option.inactive { opacity: 0.4; cursor: not-allowed; background: #2a2a2a; }
         .payment-option.inactive:hover { transform: none; border-color: var(--border-color); }
-        .payment-option-icon {
-            height: 32px;
-            width: auto;
+
+        .payment-option-logo-container {
+            width: 100%;
+            height: 60px; /* Fixed height for the logo container */
+            background-color: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 0.5rem;
+            overflow: hidden; /* Prevents large images from overflowing */
+        }
+
+        .payment-option-icon {
+            max-height: 100%;  /* Ensures the image fits within the container's height */
+            max-width: 100%;   /* Ensures the image fits within the container's width */
+            width: auto;       /* Maintain aspect ratio */
+            height: auto;      /* Maintain aspect ratio */
+            object-fit: contain; /* Scales the image to fit without cropping */
         }
         .payment-option-label {
             font-size: 0.9rem;
             font-weight: 500;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
         }
         .currency-badge {
             font-size: 0.7rem; font-weight: 600; padding: 0.2rem 0.5rem;
@@ -444,15 +462,15 @@
 
         // --- PAYMENT METHODS CONFIGURATION ---
         const paymentMethods = [
-            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, icon: `<img src="images/ecocash.png" class="payment-option-icon" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
-            { name: 'EcoCash (ZWL)', currency: 'ZWL', backendName: 'ecocash', active: true, icon: `<img src="images/ecocash.png" alt="EcoCash">`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
-            { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `<img src="images/innbucks.png" class="payment-option-icon" alt="InnBucks">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your InnBucks payment.' } },
-            { name: 'Visa/Mastercard', currency: 'USD', backendName: 'visa', active: true, icon: `<img src="images/" class="payment-option-icon" alt="Visa/Mastercard">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to enter your card details.' } },
-            { name: 'ZimSwitch', currency: 'ZWL', backendName: 'zimswitch', active: true, icon: `<img src="images/zim.png" class="payment-option-icon" alt="ZimSwitch">`, input: { type: 'redirect', content: 'You will be redirected to the ZimSwitch portal to log in to your bank.' } },
-            { name: 'OneMoney', currency: 'ZWL', backendName: 'onemoney', active: true, icon: `<img src="images/onemoney.png" alt="OneMoney">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your OneMoney payment.' } },
-            { name: 'Telecash', currency: 'ZWL', backendName: 'telecash', active: true, icon: `<img src="images/telecash.png" alt="Telecash">`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your Telecash payment.' } },
-            { name: 'O\'mari', currency: 'USD', backendName: 'omari', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/oldmutual/oldmutual-icon.svg" class="payment-option-icon" alt="O'mari">`, input: { type: 'redirect', content: 'You will be redirected to the O\'mari portal to complete your payment.' } },
-            { name: 'Bank Transfer', currency: 'USD', backendName: 'banktransfer', active: true, icon: `<img src="https://www.vectorlogo.zone/logos/bankofamerica/bankofamerica-icon.svg" class="payment-option-icon" alt="Bank Transfer">`, input: { type: 'info', content: 'For bank transfers, please contact support for details and a reference number.' } },
+            { name: 'EcoCash (USD)', currency: 'USD', backendName: 'ecocash', active: true, icon: `images/ecocash.png`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '077xxxxxxx' } },
+            { name: 'EcoCash (ZWL)', currency: 'ZWL', backendName: 'ecocash', active: true, icon: `images/ecocash.png`, input: { type: 'tel', label: 'EcoCash Mobile Number', placeholder: '078xxxxxxx' } },
+            { name: 'InnBucks', currency: 'USD', backendName: 'innbucks', active: true, icon: `images/innbucks.png`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your InnBucks payment.' } },
+            { name: 'Visa/Mastercard', currency: 'USD', backendName: 'visa', active: true, icon: `https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to enter your card details.' } },
+            { name: 'ZimSwitch', currency: 'ZWL', backendName: 'zimswitch', active: true, icon: `images/zim.png`, input: { type: 'redirect', content: 'You will be redirected to the ZimSwitch portal to log in to your bank.' } },
+            { name: 'OneMoney', currency: 'ZWL', backendName: 'onemoney', active: true, icon: `images/onemoney.png`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your OneMoney payment.' } },
+            { name: 'Telecash', currency: 'ZWL', backendName: 'telecash', active: true, icon: `images/telecash.png`, input: { type: 'redirect', content: 'You will be redirected to a secure gateway to complete your Telecash payment.' } },
+            { name: 'O\'mari', currency: 'USD', backendName: 'omari', active: true, icon: `images/omari.png`, input: { type: 'redirect', content: 'You will be redirected to the O\'mari portal to complete your payment.' } },
+            { name: 'Bank Transfer', currency: 'USD', backendName: 'banktransfer', active: true, icon: `https://www.vectorlogo.zone/logos/bankofamerica/bankofamerica-icon.svg`, input: { type: 'info', content: 'For bank transfers, please contact support for details and a reference number.' } },
         ];
 
         // --- INITIALIZATION ---
@@ -518,7 +536,9 @@
                 <div class="payment-option ${!method.active ? 'inactive' : ''}"
                      data-name="${method.name}"
                      ${!method.active ? 'disabled' : ''}>
-                    ${method.icon}
+                    <div class="payment-option-logo-container">
+                        <img src="${method.icon}" class="payment-option-icon" alt="${method.name.replace(/ *\([^)]*\) */g, "")}">
+                    </div>
                     <span class="payment-option-label">${method.name.replace(/ *\([^)]*\) */g, "")}</span>
                     <span class="currency-badge">${method.currency}</span>
                 </div>
