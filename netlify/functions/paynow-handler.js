@@ -40,17 +40,9 @@ function getPaynowInstance(currency) {
   
   const paynow = new Paynow(PAYNOW_ID, PAYNOW_KEY);
   
-  // Enable sandbox mode if needed
-  if (process.env.PAYNOW_SANDBOX === 'true') {
-    console.log('Running in SANDBOX mode');
-    // In sandbox mode, use test URLs
-    paynow.resultUrl = 'https://example.com/gateways/paynow/update';
-    paynow.returnUrl = 'https://example.com/return';
-  } else {
-    // Production mode - use real URLs
-    paynow.resultUrl = `${process.env.SITE_URL}/.netlify/functions/paynow-webhook`;
-    paynow.returnUrl = `${process.env.SITE_URL}/payment.html`;
-  }
+  // Set production URLs
+  paynow.resultUrl = `${process.env.SITE_URL}/.netlify/functions/paynow-webhook`;
+  paynow.returnUrl = `${process.env.SITE_URL}/payment.html`;
   
   console.log('Paynow URLs configured:', {
     resultUrl: paynow.resultUrl,
