@@ -63,7 +63,7 @@ function getPaynowInstance(currency) {
 // -- Product & Pricing --
 const PRODUCT_INFO = {
   name: "Modern Farmer Full Access",
-  basePriceUSD: 49.99
+  basePriceUSD: 9.99
 };
 
 // Fetches the ZWL exchange rate from Firestore, creating it if it doesn't exist.
