@@ -2,32 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- SEO & Metadata -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern Farmer | Expert-Led Online Farming Courses</title>
     <meta name="description" content="Elevate your farming skills with expert-led online courses in broiler rearing, mushroom cultivation, fish farming, and more. Join Modern Farmer to increase your yield and profitability.">
     <meta name="keywords" content="farming courses, agriculture education, broiler chicken, road runner chicken, mushroom farming, fish farming, maize farming, modern agriculture, online learning">
-    <meta name="author" content="ALFA OCTAL SYSTEMS">
-
-    <!-- Social Media / Open Graph -->
-    <meta property="og:title" content="Modern Farmer | Expert-Led Online Farming Courses">
-    <meta property="og:description" content="Elevate your farming skills with expert-led online courses. Increase your yield and profitability today.">
-    <meta property="og:image" content="https://your-website-url.com/social-share-image.jpg">
-    <meta property="og:url" content="https://your-website-url.com/">
-    <meta property="twitter:card" content="summary_large_image">
-
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-    <!-- Google Fonts -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Firebase Configuration (Injected by Netlify) -->
     <script>
       const firebaseConfig = {
         apiKey: "%%FIREBASE_API_KEY%%",
@@ -40,7 +24,6 @@
       };
     </script>
 
-    <!-- Firebase SDKs -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
@@ -79,20 +62,35 @@
             font-family: var(--font-primary); line-height: 1.7;
             background-color: var(--bg-dark); color: var(--text-primary);
             overflow-x: hidden;
+            padding-top: 80px; /* Space for the fixed header */
         }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 4rem 0; }
         .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
         a { text-decoration: none; color: var(--color-primary); }
 
-        /* --- HEADER STYLES --- */
+        /* HEADER & SEARCH */
         .header {
             position: fixed; top: 0; left: 0; width: 100%; height: 80px;
             background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(10px);
             z-index: 1000; display: flex; align-items: center; justify-content: space-between;
             padding: 0 2rem; border-bottom: 1px solid var(--border-color);
         }
-        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;}
         .logo-icon { color: var(--color-primary); }
+        .header-center { flex-grow: 1; display: flex; justify-content: center; padding: 0 2rem; }
+        .search-container { position: relative; width: 100%; max-width: 400px; }
+        .search-input { width: 100%; padding: 0.6rem 1rem; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 0.9rem; transition: var(--transition); }
+        .search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2); }
+        .search-results { position: absolute; top: 120%; left: 0; right: 0; background: var(--bg-light); border-radius: var(--border-radius-sm); box-shadow: var(--shadow-md); max-height: 400px; overflow-y: auto; z-index: 1001; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition); }
+        .search-results.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .search-result-item { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s; }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-item:hover { background-color: rgba(229, 57, 53, 0.1); }
+        .no-results-message { padding: 1.5rem; text-align: center; color: var(--text-secondary); }
+        .search-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
+        .search-backdrop.active { display: block; }
+        .search-icon-mobile { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.3rem; cursor: pointer; }
+        
         .header-right { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
         .nav-menu { display: flex; list-style: none; gap: 1.5rem; align-items: center; }
         .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0; position: relative; }
@@ -101,13 +99,7 @@
         .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
         
         .dropdown { position: relative; }
-        .dropdown-content {
-            display: none; position: absolute; top: 120%; left: 50%;
-            transform: translateX(-50%); background: var(--bg-light); min-width: 220px;
-            box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm);
-            opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease;
-            z-index: 1001; overflow: hidden; border: 1px solid var(--border-color);
-        }
+        .dropdown-content { display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%); background: var(--bg-light); min-width: 220px; box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease; z-index: 1001; overflow: hidden; border: 1px solid var(--border-color); }
         .dropdown:hover .dropdown-content { display: block; opacity: 1; visibility: visible; top: 100%; }
         .dropdown-content a { display: block; padding: 0.75rem 1.5rem; color: var(--text-secondary); white-space: nowrap; }
         .dropdown-content a:hover { background: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
@@ -125,430 +117,439 @@
         .mobile-nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
         .mobile-nav-backdrop.active { display: block; }
 
-        @media (max-width: 992px) {
-            .desktop-nav { display: none; }
-            .hamburger { display: block; }
-            .mobile-nav {
-                position: fixed; top: 0; right: -100%; width: min(75vw, 300px); height: 100vh;
-                background: var(--bg-light); box-shadow: var(--shadow-lg); transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-                padding-top: 100px; z-index: 999;
-            }
+        @media (max-width: 1024px) {
+            .desktop-nav, .header-center { display: none; }
+            .search-icon-mobile, .hamburger { display: block; }
+            .header-center.mobile-active { display: flex; position: absolute; top: 80px; left: 0; width: 100%; background: var(--bg-dark); padding: 1rem; border-bottom: 1px solid var(--border-color); z-index: 1001;}
+            .mobile-nav { position: fixed; top: 0; right: -100%; width: min(75vw, 300px); height: 100vh; background: var(--bg-light); box-shadow: var(--shadow-lg); transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); padding-top: 100px; z-index: 999; overflow-y: auto; }
             .mobile-nav.active { right: 0; }
             .mobile-nav .nav-menu { flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
             .mobile-nav .nav-menu li { width: 100%; }
             .mobile-nav .nav-menu > li > a { display: block; padding: 1rem 2rem; width: 100%; font-size: 1.1rem; }
             .mobile-nav a::after { display: none; }
-            .mobile-nav .dropdown-content {
-                display: block; position: static; transform: none; box-shadow: none;
-                background: var(--bg-dark); max-height: 0; overflow: hidden;
-                opacity: 1; visibility: visible; transition: max-height 0.4s ease-in-out;
-                padding-left: 1rem; border: none; min-width: auto;
-            }
+            .mobile-nav .dropdown-content { display: block; position: static; transform: none; box-shadow: none; background: var(--bg-dark); max-height: 0; overflow: hidden; opacity: 1; visibility: visible; transition: max-height 0.4s ease-in-out; padding-left: 1rem; border: none; min-width: auto; }
             .mobile-nav .dropdown-content.show { max-height: 500px; }
             .mobile-nav .dropdown-content a { font-size: 1rem; }
         }
 
-        /* --- HERO SLIDER STYLES --- */
-        .hero-slider-container { width: 100%; height: 100vh; position: relative; overflow: hidden; }
-        .hero-slider-container .slide .item {
-            width: 200px; height: 300px; position: absolute; top: 50%;
-            transform: translate(0, -50%); border-radius: 20px;
-            box-shadow: 0 30px 50px #000; background-position: center;
-            background-size: cover; display: inline-block; transition: 0.5s;
-        }
-        .slide .item:nth-child(1), .slide .item:nth-child(2) {
-            top: 0; left: 0; transform: none; border-radius: 0; width: 100%; height: 100%;
-        }
+        /* HERO SLIDER */
+        .hero-slider-container { width: 100%; height: calc(100vh - 80px); position: relative; overflow: hidden; }
+        .hero-slider-container .slide .item { width: 200px; height: 300px; position: absolute; top: 50%; transform: translate(0, -50%); border-radius: 20px; box-shadow: 0 30px 50px #000; background-position: center; background-size: cover; display: inline-block; transition: 0.5s; }
+        .slide .item:nth-child(1), .slide .item:nth-child(2) { top: 0; left: 0; transform: none; border-radius: 0; width: 100%; height: 100%; }
         .slide .item:nth-child(2)::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; }
-        .slide .item:nth-child(3) { left: 50%; } .slide .item:nth-child(4) { left: calc(50% + 220px); }
-        .slide .item:nth-child(5) { left: calc(50% + 440px); } .slide .item:nth-child(n + 6) { left: calc(50% + 660px); opacity: 0; }
-        .item .content {
-            position: absolute; top: 50%; left: 100px; width: 90%; max-width: 500px;
-            text-align: left; color: #eee; transform: translateY(-50%);
-            font-family: var(--font-primary); display: none; z-index: 2;
-        }
+        .item .content { position: absolute; top: 50%; left: 100px; width: 90%; max-width: 500px; text-align: left; color: #eee; transform: translateY(-50%); font-family: var(--font-primary); display: none; z-index: 2; }
         .slide .item:nth-child(2) .content { display: block; }
-        .content .name {
-            font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem);
-            text-transform: uppercase; font-weight: bold; opacity: 0;
-            animation: animate 1s ease-in-out 1 forwards;
-        }
-        .content .des {
-            margin: 1rem 0 2rem; opacity: 0; font-size: 1.2rem;
-            animation: animate 1s ease-in-out 0.3s 1 forwards;
-        }
-        .content .cta-button {
-            padding: 12px 24px; border: none; cursor: pointer; opacity: 0;
-            border-radius: var(--border-radius-sm); background-color: var(--color-primary);
-            color: white; font-weight: 600; text-transform: uppercase; font-size: 1rem;
-            transition: all 0.5s; animation: animate 1s ease-in-out 0.6s 1 forwards;
-        }
+        .content .name { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); text-transform: uppercase; font-weight: bold; opacity: 0; animation: animate 1s ease-in-out 1 forwards; }
+        .content .des { margin: 1rem 0 2rem; opacity: 0; font-size: 1.2rem; animation: animate 1s ease-in-out 0.3s 1 forwards; }
+        .content .cta-button { padding: 12px 24px; border: none; cursor: pointer; opacity: 0; border-radius: var(--border-radius-sm); background-color: var(--color-primary); color: white; font-weight: 600; text-transform: uppercase; font-size: 1rem; transition: all 0.5s; animation: animate 1s ease-in-out 0.6s 1 forwards; }
         .content .cta-button:hover { background-color: var(--color-primary-dark); transform: scale(1.05); }
-        @keyframes animate {
-            from { opacity: 0; transform: translateY(100px); filter: blur(20px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
-        }
-        .slider-button {
-            position: absolute; bottom: 40px; left: 50%;
-            transform: translateX(-50%); display: flex; gap: 20px; z-index: 10;
-        }
-        .slider-button button {
-            width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7);
-            cursor: pointer; background: rgba(0,0,0,0.5); color: #fff;
-            font-size: 1.2rem; font-weight: bold; transition: 0.3s;
-        }
+        @keyframes animate { from { opacity: 0; transform: translateY(100px); filter: blur(20px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .slider-button { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10; }
+        .slider-button button { width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; background: rgba(0,0,0,0.5); color: #fff; font-size: 1.2rem; font-weight: bold; transition: 0.3s; }
         .slider-button button:hover { background: var(--color-primary); border-color: var(--color-primary); transform: scale(1.1); }
         @media (max-width: 768px) { .item .content { left: 2rem; } .content .name { font-size: 2.5rem; } }
 
-        /* --- ALL OTHER STYLES --- */
+        /* SECTIONS & COURSE GRID */
         .section-header { text-align: center; margin-bottom: 3rem; }
-        .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; }
-        h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); }
-
+        .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; }
         .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-        .course-card {
-            background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color);
-            overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition);
-        }
+        .course-card { background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color); overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition); cursor: pointer; }
         .course-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
-        .card-thumbnail { width: 100%; height: 180px; display: flex; justify-content: center; align-items: center; font-size: 4rem; }
+        .card-thumbnail { width: 100%; height: 200px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
         .card-info { padding: 1.5rem; } .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; }
-        .card-info p { color: var(--text-secondary); font-size: 0.95rem; }
+        .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+        /* VIEW MANAGEMENT */
+        .view-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* DYNAMIC COURSE PAGE */
+        .course-page { min-height: 100vh; }
+        .course-hero { background: var(--bg-card); padding: 4rem 2rem; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .course-hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; color: var(--color-primary); }
+        .course-hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto; color: var(--text-secondary); }
+        .course-content { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+        .course-section h3 { font-size: 1.8rem; margin-bottom: 1.5rem; border-left: 4px solid var(--color-primary); padding-left: 1rem;}
+        .module-list { list-style: none; }
+        .module-item { padding: 1rem; margin-bottom: 1rem; background: var(--bg-light); border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); }
+        .enroll-button { display: inline-block; padding: 1rem 3rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: var(--transition); text-transform: uppercase; }
+        .enroll-button:hover { background: var(--color-primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-primary); }
+
+        /* PAYMENT SECTION */
+        .payment-container { max-width: 600px; margin: 0 auto; padding: 3rem 2rem; min-height: 100vh; }
+        .payment-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2.5rem; border: 1px solid var(--border-color); }
+        .payment-header { text-align: center; margin-bottom: 2rem; }
+        .payment-amount { font-size: 2.5rem; color: var(--color-primary); font-weight: 700; }
+        .payment-form { display: flex; flex-direction: column; gap: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .form-group label { font-weight: 600; font-size: 0.9rem; }
+        .form-input { padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 1rem; }
+
+        /* TESTIMONIALS & CONTACT */
+        .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .testimonial-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--border-color); }
+        .testimonial-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+        .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+        .stars { color: var(--color-gold); margin-top: 1rem; }
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
         
-        #payment-section, .course-page { display: none; } /* JS controlled */
+        /* FOOTER */
+        .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
+        .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
+        .footer-section h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-primary); }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+        .footer-links a { color: var(--text-secondary); transition: var(--transition); }
+        .footer-links a:hover { color: var(--color-primary); padding-left: 5px; }
+        .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
+        .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        @media (max-width: 768px) { .footer-bottom-content { flex-direction: column; text-align: center; } }
         
-        /* Auth Modal, Payment Card, Course Page, Footer, etc. */
-        /* Paste remaining CSS from your previous versions here if needed */
+        /* AUTH MODAL */
         .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
         .auth-modal.active { opacity: 1; visibility: visible; }
         .auth-container { background: var(--bg-light); border-radius: var(--border-radius-md); padding: 2.5rem; width: 90%; max-width: 420px; box-shadow: var(--shadow-lg); position: relative; transform: scale(0.95); transition: transform 0.3s ease-out; }
         .auth-modal.active .auth-container { transform: scale(1); }
-        .auth-title { font-size: 1.8rem; text-align: center; margin-bottom: 0.5rem; }
-        .auth-subtitle { color: var(--text-secondary); text-align: center; margin-bottom: 2rem; }
         .auth-form { display: flex; flex-direction: column; gap: 1rem; }
-        .form-input { padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 1rem; transition: var(--transition); }
-        .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2); }
-        .form-button { padding: 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
-        .form-button:hover:not(:disabled) { background: var(--color-primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-primary); }
-        .form-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .form-button { padding: 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; }
         .google-button { background: #fff; color: #333; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-        .google-button:hover { background: #f5f5f5; }
         .auth-switch { text-align: center; margin-top: 1.5rem; color: var(--text-secondary); }
-        .auth-switch-link { color: var(--color-primary); font-weight: 600; }
-        .close-button { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; transition: var(--transition); }
-        .close-button:hover { color: var(--text-primary); }
+        .close-button { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-    <h1 class="visually-hidden">Modern Farmer: Online Agriculture Courses</h1>
+    <h1 class="visually-hidden">AlfaOctal Campus: Online Agriculture Courses</h1>
     
-    <!-- Auth Modal -->
     <div class="auth-modal" id="authModal">
         <div class="auth-container">
-            <button class="close-button" id="closeAuthModal" aria-label="Close authentication modal">&times;</button>
-            <div class="auth-header"><h2 class="auth-title" id="authTitle">Welcome Back</h2><p class="auth-subtitle" id="authSubtitle">Sign in to access your courses</p></div>
+            <button class="close-button" id="closeAuthModal" aria-label="Close">&times;</button>
+            <div class="auth-header"><h2 class="auth-title" id="authTitle"></h2><p class="auth-subtitle" id="authSubtitle"></p></div>
             <form class="auth-form" id="authForm" novalidate>
-                <div class="form-group hidden" id="usernameGroup"><label for="authUsername" class="visually-hidden">Username</label><input class="form-input" type="text" id="authUsername" placeholder="Enter your username"></div>
-                <div class="form-group"><label for="authEmail" class="visually-hidden">Email</label><input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required></div>
-                <div class="form-group"><label for="authPassword" class="visually-hidden">Password</label><input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required></div>
-                <button class="form-button" type="submit" id="authSubmitBtn">Sign In</button>
+                <div class="form-group hidden" id="usernameGroup"><input class="form-input" type="text" id="authUsername" placeholder="Enter your username"></div>
+                <div class="form-group"><input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required></div>
+                <div class="form-group"><input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required></div>
+                <button class="form-button" type="submit" id="authSubmitBtn"></button>
                 <button class="form-button google-button" type="button" id="googleSignInBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
             </form>
-            <div class="auth-switch"><span id="authSwitchText">Don't have an account?</span><a href="#" class="auth-switch-link" id="authSwitchLink">Sign up</a></div>
+            <div class="auth-switch"><span id="authSwitchText"></span><a href="#" class="auth-switch-link" id="authSwitchLink"></a></div>
         </div>
     </div>
     
     <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-    <header class="header" id="page-header">
-        <a href="#home-view" class="logo">
-            <span class="logo-icon" aria-hidden="true">🌱</span>
-            <span>MODERN FARMER</span>
-        </a>
+    <div class="search-backdrop" id="searchBackdrop"></div>
+    
+    <header class="header">
+        <a href="#" class="logo nav-link" data-view="home-view"><span class="logo-icon">▷</span><span>AlfaOctal Campus</span></a>
+        <div class="header-center" id="headerCenter">
+            <div class="search-container"><input type="search" class="search-input" id="searchInput" placeholder="Search courses..."><div class="search-results" id="searchResults"></div></div>
+        </div>
         <div class="header-right">
-            <nav class="desktop-nav" aria-label="Main Navigation">
+            <nav class="desktop-nav">
                 <ul class="nav-menu">
-                    <li><a href="#home-view">HOME</a></li>
+                    <li><a href="#" class="nav-link" data-view="home-view">HOME</a></li>
                     <li class="dropdown">
-                        <a href="#courses-section">COURSES &#9662;</a>
-                        <div class="dropdown-content">
-                            <!-- Populated by JS -->
-                        </div>
+                        <a href="#courses-section" class="nav-link" data-view="home-view">COURSES &#9662;</a>
+                        <div class="dropdown-content" id="desktopCoursesDropdown"></div>
                     </li>
-                    <li><a href="#testimonials-section">TESTIMONIALS</a></li>
-                    <li><a href="#contact-section">CONTACT</a></li>
+                    <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
+                    <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
                 </ul>
             </nav>
+             <button class="search-icon-mobile" id="searchIconMobile" aria-label="Open Search"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg></button>
             <div id="auth-section">
-                <div class="user-profile" id="userProfile" tabindex="0" aria-label="User profile and login/logout">
-                    <div class="user-avatar" id="userAvatar" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
-                    <div class="user-info"><div class="user-name" id="userName">Guest</div><div class="user-action-text" id="userActionText">Login</div></div>
-                </div>
+                <div class="user-profile" id="userProfile" tabindex="0"><div class="user-avatar" id="userAvatar"></div><div class="user-info"><div class="user-name" id="userName"></div><div class="user-action-text" id="userActionText"></div></div></div>
             </div>
-            <button class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <button class="hamburger" id="hamburger" aria-label="Menu"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
         </div>
     </header>
     
-    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile Navigation">
+    <nav class="mobile-nav" id="mobileNav">
         <ul class="nav-menu">
-            <li><a href="#home-view">HOME</a></li>
+            <li><a href="#" class="nav-link" data-view="home-view">HOME</a></li>
             <li class="dropdown">
                 <a href="#" id="mobileCoursesToggle">COURSES &#9662;</a>
-                <div class="dropdown-content">
-                    <!-- Populated by JS -->
-                </div>
+                <div class="dropdown-content" id="mobileCoursesDropdown"></div>
             </li>
-            <li><a href="#testimonials-section">TESTIMONIALS</a></li>
-            <li><a href="#contact-section">CONTACT</a></li>
+            <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
+            <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
         </ul>
     </nav>
 
     <main>
-        <section class="hero-slider-container" id="home-view" aria-label="Featured Courses Showcase">
-            <div class="slide">
-                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1587313439340-e070a2d05f3a?q=80&w=2070&auto=format&fit=crop');">
-                    <div class="content"><div class="name">Precision Poultry</div><div class="des">Master the 7-week broiler cycle for maximum profitability and efficiency.</div><a href="#broiler-course-page" class="cta-button">Learn More</a></div>
+        <!-- VIEWS ARE MANAGED BY JAVASCRIPT -->
+        <div id="home-view" class="view-section active">
+            <section class="hero-slider-container">
+                <div class="slide">
+                    <!-- Slider items populated by JS -->
                 </div>
-                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1598514983318-2f66f174e356?q=80&w=1974&auto=format&fit=crop');">
-                    <div class="content"><div class="name">High-Yield Crops</div><div class="des">Unlock secrets to boosting your maize harvest, even in challenging climates.</div><a href="#maize-course-page" class="cta-button">Learn More</a></div>
-                </div>
-                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1621232353920-7b5a8e3f1e9c?q=80&w=2070&auto=format&fit=crop');">
-                    <div class="content"><div class="name">Mushroom Cultivation</div><div class="des">Turn small spaces into profitable ventures by mastering the art of fungi farming.</div><a href="#mushroom-course-page" class="cta-button">Learn More</a></div>
-                </div>
-                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1597031123922-ac73c48054ac?q=80&w=1931&auto=format&fit=crop');">
-                    <div class="content"><div class="name">Aquaculture Mastery</div><div class="des">Learn the science of water quality to build a thriving, sustainable fish farming business.</div><a href="#fish-course-page" class="cta-button">Learn More</a></div>
-                </div>
-            </div>
-            <div class="slider-button"><button class="prev" aria-label="Previous Slide">◁</button><button class="next" aria-label="Next Slide">▷</button></div>
-        </section>
-
-        <div id="main-content-area">
-             <section id="courses-section" class="container" aria-labelledby="courses-title">
-                <div class="section-header">
-                    <p class="subtitle">Our Catalog</p><h2 id="courses-title">Featured Courses</h2>
-                </div>
-                <div class="course-grid"></div>
+                <div class="slider-button"><button class="prev">◁</button><button class="next">▷</button></div>
             </section>
-            <!-- Other sections like testimonials, payment, course pages will be inserted here by JS logic or can be added manually -->
+            <section id="courses-section" class="container"><div class="section-header"><p class="subtitle">Our Catalog</p><h2>Featured Courses</h2></div><div class="course-grid"></div></section>
+            <section id="testimonials-section" class="container"><div class="section-header"><p class="subtitle">Success Stories</p><h2>What Our Students Say</h2></div><div class="testimonials-grid"></div></section>
+            <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
         </div>
+        <div id="payment-section" class="view-section">
+            <div class="payment-container"><div class="payment-card"><div class="payment-header"><h2>Complete Your Enrollment</h2><p id="payment-course-title"></p><div class="payment-amount">$49.99</div></div><form class="payment-form" id="paymentForm"><div class="form-group"><label>Cardholder Name</label><input type="text" class="form-input" required></div><button type="submit" class="form-button">Complete Payment</button><button type="button" class="form-button back-button" style="background:var(--bg-dark)">Back</button></form></div></div>
+        </div>
+        <div id="course-pages-container"></div>
     </main>
+
+    <footer class="footer">
+        <div class="container"><div class="footer-content"><div class="footer-section"><h3>About Us</h3><p>Empowering farmers with world-class agricultural education, combining traditional wisdom with modern techniques.</p></div><div class="footer-section"><h3>Courses</h3><ul class="footer-links" id="footer-course-links"></ul></div><div class="footer-section"><h3>Support</h3><ul class="footer-links"><li><a href="#">Help Center</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li></ul></div><div class="footer-section"><h3>Newsletter</h3><p>Get updates on new courses and farming tips.</p><form class="newsletter-form" id="newsletterForm"><input type="email" placeholder="Your email" required><button type="submit">Subscribe</button></form></div></div><div class="footer-bottom"><div class="container"><div class="footer-bottom-content"><p>&copy; 2025 Modern Farmer by ALFA OCTAL SYSTEMS.</p></div></div></div></div>
+    </footer>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- HERO SLIDER LOGIC ---
-        const nextBtn = document.querySelector(".next");
-        const prevBtn = document.querySelector(".prev");
-        nextBtn.addEventListener("click", () => document.querySelector(".slide").appendChild(document.querySelectorAll(".item")[0]));
-        prevBtn.addEventListener("click", () => document.querySelector(".slide").prepend(document.querySelectorAll(".item")[document.querySelectorAll(".item").length - 1]));
+        // --- STATE & DATA ---
+        let currentUser = null, isSubscribed = false, currentAuthMode = 'signin', currentCourseId = null;
+       const courses = [
+    { 
+        id: 'broiler-course-page', 
+        title: 'Broiler Chicken Rearing', 
+        image: 'images/broiler-card.png', 
+        shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', 
+        price: '$9.99', 
+        description: 'We teach you how to finish a flock in just **7 weeks**, showing you the secrets to maximizing **profitability**, managing feed costs, and keeping your birds safe and healthy.', 
+        modules: [
+            { title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, 
+            { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, 
+            { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, 
+            { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }
+        ] 
+    },
+    { 
+        id: 'roadrunner-course-page', 
+        title: 'Indigenous Poultry Management', 
+        image: 'images/roadrunner-card.png', 
+        shortDesc: 'Specialized management to raise premium Road Runner chickens.', 
+        price: '$9.99', 
+        description: 'Move beyond basic poultry. Learn specialized, **indigenous poultry management** techniques to raise premium-quality **Road Runner** chickens for a profitable niche market.', 
+        modules: [
+            { title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, 
+            { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, 
+            { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, 
+            { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }
+        ] 
+    },
+    { 
+        id: 'mushroom-course-page', 
+        title: 'Commercial Mushroom Cultivation', 
+        image: 'images/mushroom-card.png', 
+        shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', 
+        price: '$9.99', 
+        description: 'Learn the three essential steps: perfect **substrate preparation**, sterile **spawning** to prevent contamination, and simple **climate control** to guarantee a successful harvest.', 
+        modules: [
+            { title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, 
+            { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, 
+            { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, 
+            { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }
+        ] 
+    },
+    { 
+        id: 'fish-course-page', 
+        title: 'Sustainable Fish Farming', 
+        image: 'images/fish-card.png', 
+        shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', 
+        price: '$9.99', 
+        description: 'Get the **aquaculture basics** right, with a special focus on managing **Dissolved Oxygen (DO)** levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', 
+        modules: [
+            { title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, 
+            { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, 
+            { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, 
+            { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }
+        ] 
+    },
+    { 
+        id: 'maize-course-page', 
+        title: 'High-Performance Maize Farming', 
+        image: 'images/maize-card.png', 
+        shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', 
+        price: '$9.99', 
+        description: 'Discover the best techniques for timing your **fertilizer**, how to protect your crops during **drought**, and simple steps to **maximize your yield** every season.', 
+        modules: [
+            { title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, 
+            { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, 
+            { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, 
+            { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }
+        ] 
+    },
+    { 
+        id: 'sorghum-course-page', 
+        title: 'Resilient Sorghum Farming', 
+        image: 'images/sorghum-card.png', 
+        shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', 
+        price: '$9.99', 
+        description: 'Master growing this tough, **drought-resistant** grain. We show you simple, effective **pest control** strategies and management techniques to ensure a reliable harvest.', 
+        modules: [
+            { title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, 
+            { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, 
+            { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, 
+            { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }
+        ] 
+    },
+    { 
+        id: 'tobacco-course-page', 
+        title: 'High-Value Tobacco Farming', 
+        image: 'images/tobbaco-card.png', 
+        shortDesc: 'Professional curing techniques for premium, market-ready leaves.', 
+        price: '$9.99', 
+        description: 'Focus on the high-value side of this crop. Learn the art of professional **curing techniques** and effective **sucker control** to produce premium, market-ready leaves.', 
+        modules: [
+            { title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, 
+            { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, 
+            { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, 
+            { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }
+        ] 
+    }
+];
 
-        // --- GLOBAL STATE ---
-        let currentUser = null, isSubscribed = false, currentAuthMode = 'signin';
-
-        // --- COURSE DATA ---
-        const courses = [
-            { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', emoji: '🐔', bgColor: 'rgba(211, 47, 47, 0.2)', shortDesc: '7-Week Profit Cycle. Mastering FCR and Biosecurity.'},
-            { id: 'roadrunner-course-page', title: 'Road Runner Chicken Rearing', emoji: '🏃', bgColor: 'rgba(56, 142, 60, 0.2)', shortDesc: 'Indigenous Poultry Management for Premium Markets.'},
-            { id: 'mushroom-course-page', title: 'Mushroom Farming', emoji: '🍄', bgColor: 'rgba(0, 105, 92, 0.2)', shortDesc: 'Substrate preparation, sterile spawning, and climate control.'},
-            { id: 'fish-course-page', title: 'Fish Farming (Tilapia/Catfish)', emoji: '🐟', bgColor: 'rgba(25, 118, 210, 0.2)', shortDesc: 'Aquaculture basics: Mastering Dissolved Oxygen (DO).'},
-            { id: 'maize-course-page', title: 'Maize Farming', emoji: '🌽', bgColor: 'rgba(251, 192, 45, 0.2)', shortDesc: 'Fertilizer timing, drought mitigation, and maximizing yield.'},
-            { id: 'sorghum-course-page', title: 'Sorghum Farming', emoji: '🌾', bgColor: 'rgba(103, 58, 183, 0.2)', shortDesc: 'Drought-resistant grain management and pest control.'},
-            { id: 'tobacco-course-page', title: 'Tobacco Farming', emoji: '🌿', bgColor: 'rgba(93, 64, 55, 0.2)', shortDesc: 'High-value crop: Curing techniques and sucker control.'},
-        ];
-
-        // --- DOM ELEMENTS CACHE ---
+        // --- DOM ELEMENTS ---
         const elements = {
+            views: document.querySelectorAll('.view-section'),
+            courseGrid: document.querySelector('.course-grid'),
+            coursePagesContainer: document.getElementById('course-pages-container'),
+            testimonialsGrid: document.querySelector('.testimonials-grid'),
+            contactGrid: document.querySelector('.contact-grid'),
+            paymentCourseTitle: document.getElementById('payment-course-title'),
+            searchInput: document.getElementById('searchInput'),
+            searchResults: document.getElementById('searchResults'),
+            searchIconMobile: document.getElementById('searchIconMobile'),
+            headerCenter: document.getElementById('headerCenter'),
+            searchBackdrop: document.getElementById('searchBackdrop'),
             hamburger: document.getElementById('hamburger'),
             mobileNav: document.getElementById('mobileNav'),
             mobileNavBackdrop: document.getElementById('mobileNavBackdrop'),
             mobileCoursesToggle: document.getElementById('mobileCoursesToggle'),
             mobileCoursesDropdown: document.getElementById('mobileNav').querySelector('.dropdown-content'),
             desktopCoursesDropdown: document.querySelector('.desktop-nav .dropdown-content'),
-            authModal: document.getElementById('authModal'),
-            authForm: document.getElementById('authForm'),
-            userProfile: document.getElementById('userProfile'),
-            userAvatar: document.getElementById('userAvatar'),
-            userName: document.getElementById('userName'),
-            userActionText: document.getElementById('userActionText'),
-            closeAuthModal: document.getElementById('closeAuthModal'),
-            authTitle: document.getElementById('authTitle'),
-            authSubtitle: document.getElementById('authSubtitle'),
-            authSubmitBtn: document.getElementById('authSubmitBtn'),
-            authSwitchLink: document.getElementById('authSwitchLink'),
-            googleSignInBtn: document.getElementById('googleSignInBtn'),
-            usernameGroup: document.getElementById('usernameGroup'),
-            mainContentArea: document.getElementById('main-content-area'),
-            courseGrid: document.querySelector('.course-grid'),
+            footerCourseLinks: document.getElementById('footer-course-links'),
+            slider: document.querySelector('.slide'),
+            authModal: document.getElementById('authModal'), authForm: document.getElementById('authForm'), userProfile: document.getElementById('userProfile'), userAvatar: document.getElementById('userAvatar'), userName: document.getElementById('userName'), userActionText: document.getElementById('userActionText'), closeAuthModal: document.getElementById('closeAuthModal'), authTitle: document.getElementById('authTitle'), authSubtitle: document.getElementById('authSubtitle'), authSubmitBtn: document.getElementById('authSubmitBtn'), authSwitchLink: document.getElementById('authSwitchLink'), googleSignInBtn: document.getElementById('googleSignInBtn'), usernameGroup: document.getElementById('usernameGroup'), authSwitchText: document.getElementById('authSwitchText'),
         };
+        let searchDebounceTimer;
 
         // --- INITIALIZATION ---
         function init() {
-            if (!window.firebase || !window.firebase.auth) {
-                console.error("Firebase is not configured."); return;
-            }
-            populateCourseGrid();
-            populateDropdowns();
+            if (!window.firebase || !window.firebase.auth) { console.error("Firebase not configured."); return; }
+            populateStaticContent();
+            generateCoursePages();
             initializeEventListeners();
             firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
+            switchAuthMode(currentAuthMode, true); // Set initial auth modal state
         }
 
-        function populateCourseGrid() {
-            elements.courseGrid.innerHTML = courses.map(course => `
-                <a href="#${course.id}" class="course-card" data-target="${course.id}">
-                    <div class="card-thumbnail" style="background-color: ${course.bgColor};" role="img" aria-label="${course.title}">${course.emoji}</div>
-                    <div class="card-info"><h3>${course.title}</h3><p>${course.shortDesc}</p></div>
-                </a>`).join('');
-        }
-        
-        function populateDropdowns() {
-            const dropdownHTML = courses.map(course => `<a href="#${course.id}" class="course-link" data-target="${course.id}">${course.title}</a>`).join('');
+        // --- DYNAMIC CONTENT POPULATION ---
+        function populateStaticContent() {
+            elements.courseGrid.innerHTML = courses.map(course => `<a href="#" class="course-card" data-course="${course.id}"><div class="card-thumbnail" style="background-color: var(--bg-dark); background-image: url('${course.image}'); background-size: cover; background-position: center;"></div><div class="card-info"><h3>${course.title}</h3><p>${course.shortDesc}</p></div></a>`).join('');
+            const dropdownHTML = courses.map(course => `<a href="#" class="nav-link" data-course="${course.id}">${course.title}</a>`).join('');
             elements.desktopCoursesDropdown.innerHTML = dropdownHTML;
             elements.mobileCoursesDropdown.innerHTML = dropdownHTML;
+            elements.footerCourseLinks.innerHTML = courses.map(c => `<li><a href="#" class="nav-link" data-course="${c.id}">${c.title}</a></li>`).join('');
+            elements.slider.innerHTML = courses.map(c => `<div class="item" style="background-image: url('${c.image}');"><div class="content"><div class="name">${c.title}</div><div class="des">${c.shortDesc}</div><button class="cta-button" data-course="${c.id}">Learn More</button></div></div>`).join('');
         }
 
-        // --- EVENT LISTENERS ---
+        function generateCoursePages() {
+            elements.coursePagesContainer.innerHTML = courses.map(course => `
+                <div id="${course.id}" class="view-section course-page">
+                    <div class="course-hero"><h1>${course.title}</h1><p>${course.shortDesc}</p></div>
+                    <div class="course-content">
+                        <div class="course-section"><h3>About This Course</h3><p>${course.description}</p></div>
+                        <div class="course-section"><h3>What You'll Learn</h3><ul class="module-list">${course.modules.map(m => `<li class="module-item"><h4>${m.title}</h4><p>${m.desc}</p></li>`).join('')}</ul></div>
+                        <div class="course-section price-section"><h3>Unlock Your Potential</h3><div class="price">${course.price}</div><p>One-time payment for lifetime access.</p><button class="enroll-button" data-course="${course.id}">Enroll Now</button></div>
+                    </div>
+                </div>`).join('');
+        }
+
+        // --- EVENT LISTENERS & NAVIGATION ---
         function initializeEventListeners() {
+            document.body.addEventListener('click', handleGlobalClick);
             elements.hamburger.addEventListener('click', toggleMobileMenu);
             elements.mobileNavBackdrop.addEventListener('click', toggleMobileMenu);
-            elements.mobileCoursesToggle.addEventListener('click', (e) => { e.preventDefault(); elements.mobileCoursesDropdown.classList.toggle('show'); });
-            elements.userProfile.addEventListener('click', () => currentUser ? handleLogout() : openAuthModal());
+            elements.mobileCoursesToggle.addEventListener('click', e => { e.preventDefault(); elements.mobileCoursesDropdown.classList.toggle('show'); });
+            elements.searchInput.addEventListener('input', handleSearchInput);
+            elements.searchInput.addEventListener('focus', () => handleSearchInput({ target: elements.searchInput }));
+            elements.searchIconMobile.addEventListener('click', toggleMobileSearch);
+            elements.searchBackdrop.addEventListener('click', closeSearch);
             elements.closeAuthModal.addEventListener('click', closeAuthModal);
-            elements.authModal.addEventListener('click', (e) => e.target === elements.authModal && closeAuthModal());
+            elements.authModal.addEventListener('click', e => e.target === elements.authModal && closeAuthModal());
             elements.authForm.addEventListener('submit', handleAuthSubmit);
             elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
-            elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
-            document.body.addEventListener('click', handleNavigation);
-        }
-        
-        function toggleMobileMenu() {
-            elements.mobileNav.classList.toggle('active');
-            elements.mobileNavBackdrop.classList.toggle('active');
+            elements.authSwitchLink.addEventListener('click', e => { e.preventDefault(); switchAuthMode(currentAuthMode === 'signin' ? 'signup' : 'signin'); });
         }
 
-        // --- NAVIGATION & VIEW LOGIC ---
-        function handleNavigation(e) {
-            let targetLink = e.target.closest('a');
-            if (!targetLink || !targetLink.getAttribute('href')?.startsWith('#')) return;
-            
-            e.preventDefault();
-            const targetId = targetLink.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
+        function handleGlobalClick(e) {
+            const target = e.target;
+            const navLink = target.closest('.nav-link');
+            const courseCard = target.closest('.course-card');
+            const ctaButton = target.closest('.cta-button, .enroll-button');
+            const backButton = target.closest('.back-button');
+            const userProfile = target.closest('#userProfile');
+            const searchResult = target.closest('.search-result-item');
 
-            if (elements.mobileNav.classList.contains('active')) {
-                toggleMobileMenu();
-            }
+            if (navLink) { e.preventDefault(); navigateTo(navLink.dataset.view, navLink.dataset.course); }
+            if (courseCard) { e.preventDefault(); navigateTo(courseCard.dataset.course); }
+            if (ctaButton) { e.preventDefault(); handleEnrollClick(ctaButton.dataset.course); }
+            if (backButton) { showView(currentCourseId || 'home-view'); }
+            if (userProfile) { currentUser ? handleLogout() : openAuthModal(); }
+            if (searchResult) { navigateTo(searchResult.dataset.target); closeSearch(); }
+        }
 
-            // This is a simplified view logic. For full single-page app behavior,
-            // you'd hide/show sections. For this version, we just scroll.
-            if (targetElement) {
-                 setTimeout(() => targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
-            } else if (targetId === '#home-view') {
-                 window.scrollTo({ top: 0, behavior: 'smooth' });
+        function navigateTo(viewId, courseId) {
+            if (courseId) {
+                showView(courseId);
+                const courseElement = document.getElementById(courseId);
+                if (courseElement) courseElement.scrollIntoView({ behavior: 'smooth' });
             } else {
-                // Here you would handle showing the course page or payment page
-                console.log("Navigate to dynamic view:", targetId);
-                // alert(`Logic to show page for ${targetId} would run here.`);
+                showView(viewId);
+                const section = document.querySelector(viewId);
+                if (section) section.scrollIntoView({ behavior: 'smooth' });
+            }
+            if(elements.mobileNav.classList.contains('active')) toggleMobileMenu();
+        }
+
+        function showView(viewId) {
+            window.scrollTo({ top: 0, behavior: 'auto' });
+            elements.views.forEach(v => v.classList.remove('active'));
+            const targetView = document.getElementById(viewId);
+            if (targetView) {
+                targetView.classList.add('active');
+                currentCourseId = courses.some(c => c.id === viewId) ? viewId : null;
+            } else {
+                document.getElementById('home-view').classList.add('active');
+                currentCourseId = null;
             }
         }
 
-        // --- AUTHENTICATION LOGIC ---
+        function handleEnrollClick(courseId) {
+            if (!currentUser) { openAuthModal(); return; }
+            if (isSubscribed) { alert("You already have full access!"); navigateTo(courseId); return; }
+            const course = courses.find(c => c.id === courseId);
+            if (course) { elements.paymentCourseTitle.textContent = `For: ${course.title}`; }
+            showView('payment-section');
+        }
+
+        // --- SEARCH ---
+        function toggleMobileMenu() { elements.mobileNav.classList.toggle('active'); elements.mobileNavBackdrop.classList.toggle('active'); }
+        function toggleMobileSearch() { elements.headerCenter.classList.toggle('mobile-active'); if (elements.headerCenter.classList.contains('mobile-active')) { elements.searchBackdrop.classList.add('active'); elements.searchInput.focus(); } else { closeSearch(); } }
+        function handleSearchInput(e) { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query)); displaySearchResults(filtered); } else { elements.searchResults.classList.remove('active'); } }, 300); }
+        function displaySearchResults(results) { elements.searchBackdrop.classList.add('active'); if (results.length > 0) { elements.searchResults.innerHTML = results.map(course => `<div class="search-result-item" data-target="${course.id}"><h4>${course.title}</h4></div>`).join(''); } else { elements.searchResults.innerHTML = `<div class="no-results-message">No courses found.</div>`; } elements.searchResults.classList.add('active'); }
+        function closeSearch() { elements.searchInput.value = ''; elements.searchResults.classList.remove('active'); elements.searchBackdrop.classList.remove('active'); elements.headerCenter.classList.remove('mobile-active'); }
+        
+        // --- AUTHENTICATION ---
         function openAuthModal() { elements.authModal.classList.add('active'); }
-        function closeAuthModal() { elements.authModal.classList.remove('active'); elements.authForm.reset(); }
-
-        async function handleAuthStateChange(user) {
-            if (user) {
-                const userDoc = await firebase.getDoc(firebase.doc(firebase.db, "users", user.uid));
-                currentUser = userDoc.exists() ? { ...user, ...userDoc.data() } : user;
-                isSubscribed = userDoc.exists() ? userDoc.data().subscription || false : false;
-            } else {
-                currentUser = null; isSubscribed = false;
-            }
-            updateUIForAuthState();
-        }
-
-        function updateUIForAuthState() {
-            if (currentUser) {
-                const displayName = currentUser.username || currentUser.displayName || 'Farmer';
-                elements.userName.textContent = displayName;
-                elements.userActionText.textContent = 'Logout';
-                if (currentUser.photoURL) {
-                    elements.userAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="${displayName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
-                } else {
-                    elements.userAvatar.innerHTML = displayName.charAt(0).toUpperCase();
-                }
-            } else {
-                elements.userName.textContent = 'Guest';
-                elements.userActionText.textContent = 'Login';
-                elements.userAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
-            }
-            updateCrownIcon();
-        }
-
-        function updateCrownIcon() {
-            const existingCrown = elements.userProfile.querySelector('.crown-icon');
-            if (isSubscribed && !existingCrown) {
-                const crown = document.createElement('span');
-                crown.className = 'crown-icon'; crown.innerHTML = '👑';
-                elements.userProfile.prepend(crown);
-            } else if (!isSubscribed && existingCrown) {
-                existingCrown.remove();
-            }
-        }
-
-        async function handleAuthSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById('authEmail').value;
-            const password = document.getElementById('authPassword').value;
-            const username = document.getElementById('authUsername').value;
-            elements.authSubmitBtn.disabled = true;
-
-            try {
-                if (currentAuthMode === 'signup') {
-                    if (!username) { alert("Please enter a username."); throw new Error("Username required"); }
-                    const userCred = await firebase.createUserWithEmailAndPassword(firebase.auth, email, password);
-                    await firebase.updateProfile(userCred.user, { displayName: username });
-                    await firebase.setDoc(firebase.doc(firebase.db, 'users', userCred.user.uid), { username, email: userCred.user.email, createdAt: new Date(), subscription: false });
-                } else {
-                    await firebase.signInWithEmailAndPassword(firebase.auth, email, password);
-                }
-                closeAuthModal();
-            } catch (error) { alert(`Error: ${error.message}`); }
-            finally { elements.authSubmitBtn.disabled = false; }
-        }
-
-        async function handleGoogleSignIn() {
-            try {
-                const result = await firebase.signInWithPopup(firebase.auth, firebase.googleProvider);
-                const user = result.user;
-                const userDocRef = firebase.doc(firebase.db, 'users', user.uid);
-                const userDoc = await firebase.getDoc(userDocRef);
-                if (!userDoc.exists()) {
-                    let username = prompt("Welcome! Please choose a username.", user.displayName.split(' ')[0] || '');
-                    if(username) await firebase.setDoc(userDocRef, { username, email: user.email, createdAt: new Date(), subscription: false });
-                }
-                closeAuthModal();
-            } catch (error) { alert(`Google Sign-In Error: ${error.message}`); }
-        }
-        
-        async function handleLogout() {
-            if (confirm("Are you sure you want to log out?")) {
-                await firebase.signOut(firebase.auth);
-            }
-        }
-
-        function switchAuthMode() {
-            currentAuthMode = currentAuthMode === 'signin' ? 'signup' : 'signin';
-            const isSignup = currentAuthMode === 'signup';
-            elements.authTitle.textContent = isSignup ? 'Create Account' : 'Welcome Back';
-            elements.authSubtitle.textContent = isSignup ? 'Join successful farmers' : 'Sign in to access your courses';
-            elements.authSubmitBtn.textContent = isSignup ? 'Create Account' : 'Sign In';
-            document.getElementById('authSwitchText').textContent = isSignup ? 'Already have an account?' : "Don't have an account?";
-            elements.authSwitchLink.textContent = isSignup ? 'Sign in' : 'Sign up';
-            elements.usernameGroup.classList.toggle('hidden', !isSignup);
-        }
+        function closeAuthModal() { elements.authModal.classList.remove('active'); }
+        async function handleAuthStateChange(user) { if (user) { const userDoc = await firebase.getDoc(firebase.doc(firebase.db, "users", user.uid)); currentUser = userDoc.exists() ? { ...user, ...userDoc.data() } : user; isSubscribed = userDoc.exists() ? userDoc.data().subscription || false : false; } else { currentUser = null; isSubscribed = false; } updateUIForAuthState(); }
+        function updateUIForAuthState() { if (currentUser) { const displayName = currentUser.username || currentUser.displayName || 'Farmer'; elements.userName.textContent = displayName; elements.userActionText.textContent = 'Logout'; if (currentUser.photoURL) { elements.userAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="${displayName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`; } else { elements.userAvatar.innerHTML = displayName.charAt(0).toUpperCase(); } } else { elements.userName.textContent = 'Guest'; elements.userActionText.textContent = 'Login'; elements.userAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`; } updateCrownIcon(); }
+        function updateCrownIcon() { const existingCrown = elements.userProfile.querySelector('.crown-icon'); if (isSubscribed && !existingCrown) { const crown = document.createElement('span'); crown.className = 'crown-icon'; crown.innerHTML = '👑'; elements.userProfile.prepend(crown); } else if (!isSubscribed && existingCrown) { existingCrown.remove(); } }
+        async function handleAuthSubmit(e) { e.preventDefault(); const email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value, username = document.getElementById('authUsername').value; elements.authSubmitBtn.disabled = true; try { if (currentAuthMode === 'signup') { if (!username) throw new Error("Username required"); const userCred = await firebase.createUserWithEmailAndPassword(firebase.auth, email, password); await firebase.updateProfile(userCred.user, { displayName: username }); await firebase.setDoc(firebase.doc(firebase.db, 'users', userCred.user.uid), { username, email: userCred.user.email, createdAt: new Date(), subscription: false }); } else { await firebase.signInWithEmailAndPassword(firebase.auth, email, password); } closeAuthModal(); } catch (error) { alert(`Error: ${error.message}`); } finally { elements.authSubmitBtn.disabled = false; } }
+        async function handleGoogleSignIn() { try { const result = await firebase.signInWithPopup(firebase.auth, firebase.googleProvider); const user = result.user; const userDocRef = firebase.doc(firebase.db, 'users', user.uid); const userDoc = await firebase.getDoc(userDocRef); if (!userDoc.exists()) { let username = prompt("Welcome! Please choose a username.", user.displayName.split(' ')[0] || ''); if (username) await firebase.setDoc(userDocRef, { username, email: user.email, createdAt: new Date(), subscription: false }); } closeAuthModal(); } catch (error) { alert(`Google Sign-In Error: ${error.message}`); } }
+        async function handleLogout() { if (confirm("Log out?")) { await firebase.signOut(firebase.auth); showView('home-view'); } }
+        function switchAuthMode(mode, initial = false) { if (!initial) currentAuthMode = mode; const isSignup = currentAuthMode === 'signup'; elements.authTitle.textContent = isSignup ? 'Create Account' : 'Welcome Back'; elements.authSubtitle.textContent = isSignup ? 'Join successful farmers' : 'Sign in to access your courses'; elements.authSubmitBtn.textContent = isSignup ? 'Create Account' : 'Sign In'; elements.authSwitchText.textContent = isSignup ? 'Already have an account?' : "Don't have an account?"; elements.authSwitchLink.textContent = isSignup ? 'Sign in' : 'Sign up'; elements.usernameGroup.classList.toggle('hidden', !isSignup); }
 
         init();
     });
     </script>
 </body>
 </html>
-```
