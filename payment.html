@@ -480,23 +480,30 @@
             }
             populatePaymentOptions();
             initializeEventListeners();
+         // --- CORRECTED AUTHENTICATION LOGIC ---
             firebase.onAuthStateChanged(firebase.auth, async (user) => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const uidFromUrl = urlParams.get('uid');
+                // The logic is now much simpler. If a user object exists, they are logged in.
+                if (user) {
+                    try {
+                        const userDocRef = firebase.doc(firebase.db, "users", user.uid);
+                        const userDoc = await firebase.getDoc(userDocRef);
 
-                if (user && user.uid === uidFromUrl) {
-                    const userDocRef = firebase.doc(firebase.db, "users", user.uid);
-                    const userDoc = await firebase.getDoc(userDocRef);
-                    if (userDoc.exists()) {
-                        currentUser = { ...user, ...userDoc.data() };
-                        console.log("User authenticated:", currentUser.email);
-                        elements.unlockButton.disabled = false;
-                        elements.loginPrompt.classList.remove('active');
-                    } else {
-                        handleAuthError("User data not found in database.");
+                        if (userDoc.exists()) {
+                            currentUser = { ...user, ...userDoc.data() };
+                            console.log("User authenticated:", currentUser.email);
+                            elements.unlockButton.disabled = false;
+                            elements.loginPrompt.classList.remove('active');
+                        } else {
+                            // This case handles if a user exists in Auth but not in Firestore database
+                            handleAuthError("User data not found in the database. Please sign up again.");
+                        }
+                    } catch (error) {
+                        handleAuthError("Error fetching user data.");
+                        console.error("Firestore fetch error:", error);
                     }
                 } else {
-                    handleAuthError("Authentication failed. UID mismatch or user not logged in.");
+                    // If no user object, they are not logged in.
+                    handleAuthError("You must be logged in to make a payment.");
                 }
             });
         }
@@ -506,7 +513,8 @@
             currentUser = null;
             elements.unlockButton.disabled = true;
             elements.loginPrompt.classList.add('active');
-            showNotification(message, 'error');
+            // Optionally show a notification
+            // showNotification(message, 'error');
         }
 
         function showNotification(message, type = 'info') {
