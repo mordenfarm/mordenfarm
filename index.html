@@ -1,574 +1,603 @@
 
-
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Farmer | Expert-Led Online Farming Courses</title>
-<meta name="description" content="Elevate your farming skills with expert-led online courses in broiler rearing, mushroom cultivation, fish farming, and more. Join Modern Farmer to increase your yield and profitability.">
-<meta name="keywords" content="farming courses, agriculture education, broiler chicken, road runner chicken, mushroom farming, fish farming, maize farming, modern agriculture, online learning">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Modern Farmer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
+    <style>
+        /* --- CSS RESET & ROOT VARIABLES --- */
+        :root {
+            --primary-color: #4CAF50; /* A professional green */
+            --primary-dark: #388E3C;
+            --secondary-color: #2c3e50; /* Dark blue-gray */
+            --background-light: #f4f7f6;
+            --background-dark: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #757575;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --border-radius: 8px;
+            --transition-speed: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-<script>
-  // This is a placeholder for your actual Firebase config
-  const firebaseConfig = {
-    apiKey: "%%FIREBASE_API_KEY%%",
-    authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
-    projectId: "%%FIREBASE_PROJECT_ID%%",
-    storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
-    messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
-    appId: "%%FIREBASE_APP_ID%%",
-    measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
-  };
-</script>
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling on the body */
+        }
 
-<script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-    try {
-        const app = initializeApp(firebaseConfig);
-        window.firebase = {
-            app, auth: getAuth(app), db: getFirestore(app), googleProvider: new GoogleAuthProvider(),
-            signInWithEmailAndPassword, createUserWithEmailAndPassword,
-            signInWithPopup, signOut, onAuthStateChanged, updateProfile,
-            doc, setDoc, getDoc, updateDoc
-        };
-        console.log("Firebase initialized successfully.");
-    } catch (error)
-    {
-        console.error("Firebase initialization failed. Please check your config.", error);
-        window.firebase = {};
-    }
-</script>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-light);
+            color: var(--text-primary);
+            font-size: 16px;
+        }
 
-<style>
-    :root {
-        --color-primary: #e53935; --color-primary-dark: #c62828;
-        --color-secondary: #43a047; --color-secondary-dark: #2e7d32;
-        --color-gold: #ffc107; --bg-dark: #121212; --bg-light: #1e1e1e;
-        --bg-card: #2a2a2a; --text-primary: #f5f5f5; --text-secondary: #b0b0b0;
-        --text-muted: #757575; --border-color: #424242;
-        --border-radius-sm: 8px; --border-radius-md: 16px;
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-        --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4); --shadow-primary: 0 4px 20px rgba(229, 57, 53, 0.25);
-        --font-primary: 'Inter', sans-serif; --font-display: 'Playfair Display', serif;
-        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-        font-family: var(--font-primary); line-height: 1.7;
-        background-color: var(--bg-dark); color: var(--text-primary);
-        overflow-x: hidden;
-        padding-top: 80px; /* Space for the fixed header */
-    }
-    .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 4rem 0; }
-    .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
-    a { text-decoration: none; color: var(--color-primary); }
+        /* --- LAYOUT & HEADER --- */
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+        }
 
-    /* HEADER & SEARCH */
-    .header {
-        position: fixed; top: 0; left: 0; width: 100%; height: 80px;
-        background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(10px);
-        z-index: 1000; display: flex; align-items: center; justify-content: space-between;
-        padding: 0 2rem; border-bottom: 1px solid var(--border-color);
-    }
-    .logo { display: flex; align-items: center; flex-shrink: 0; }
-    .logo img { height: 60px; width: auto; }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background-color: var(--background-dark);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+        }
 
-    .header-center { flex-grow: 1; display: flex; justify-content: center; padding: 0 2rem; }
-    .search-container { position: relative; width: 100%; max-width: 400px; }
-    .search-input { width: 100%; padding: 0.6rem 1rem; background: var(--bg-light); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 0.9rem; transition: var(--transition); }
-    .search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2); }
-    .search-results { position: absolute; top: 120%; left: 0; right: 0; background: var(--bg-light); border-radius: var(--border-radius-sm); box-shadow: var(--shadow-md); max-height: 400px; overflow-y: auto; z-index: 1001; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition); }
-    .search-results.active { opacity: 1; visibility: visible; transform: translateY(0); }
-    .search-result-item { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s; }
-    .search-result-item:last-child { border-bottom: none; }
-    .search-result-item:hover { background-color: rgba(229, 57, 53, 0.1); }
-    .no-results-message { padding: 1.5rem; text-align: center; color: var(--text-secondary); }
-    .search-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
-    .search-backdrop.active { display: block; }
-    .search-icon-mobile { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.3rem; cursor: pointer; }
-    
-    .header-right { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
-    .nav-menu { display: flex; list-style: none; gap: 1.5rem; align-items: center; }
-    .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0; position: relative; }
-    .nav-menu a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-primary); transition: var(--transition); }
-    .nav-menu a:hover, .nav-menu a.active { color: var(--text-primary); }
-    .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
-    
-    .dropdown { position: relative; }
-    .dropdown-content { display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%); background: var(--bg-light); min-width: 220px; box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease; z-index: 1001; overflow: hidden; border: 1px solid var(--border-color); }
-    .dropdown:hover .dropdown-content { display: block; opacity: 1; visibility: visible; top: 100%; }
-    .dropdown-content a { display: block; padding: 0.75rem 1.5rem; color: var(--text-secondary); white-space: nowrap; }
-    .dropdown-content a:hover { background: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
-    .dropdown-content a::after { display: none; }
-    
-    .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; }
-    .user-info { display: none; }
-    @media (min-width: 992px) { .user-info { display: flex; flex-direction: column; } }
-    .user-name { font-size: 0.9rem; font-weight: 600; }
-    .user-action-text { font-size: 0.8rem; color: var(--text-secondary); }
-    .crown-icon { position: absolute; top: -5px; left: -8px; font-size: 1.2rem; color: var(--color-gold); transform: rotate(-15deg); filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
-    
-    /* HAMBURGER MENU ICON STYLES */
-    .hamburger-container { display: none; z-index: 1002; }
-    .hamburger-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-    .hamburger-container { display: none; position: relative; cursor: pointer; font-size: 20px; user-select: none; }
-    .checkmark { position: relative; top: 0; left: 0; height: 1.3em; width: 1.3em; }
-    .checkmark span { width: 32px; height: 2px; background-color: white; position: absolute; transition: all 0.3s ease-in-out; }
-    .checkmark span:nth-child(1) { top: 10%; }
-    .checkmark span:nth-child(2) { top: 50%; }
-    .checkmark span:nth-child(3) { top: 90%; }
-    .hamburger-container input:checked + .checkmark span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
-    .hamburger-container input:checked + .checkmark span:nth-child(2) { top: 50%; transform: translateY(-50%) rotate(-45deg); }
-    .hamburger-container input:checked + .checkmark span:nth-child(3) { transform: translateX(-50px); opacity: 0; }
-    
-    .mobile-nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
-    .mobile-nav-backdrop.active { display: block; }
+        .header .logo img {
+            height: 45px;
+            width: auto;
+        }
 
-    @media (max-width: 1024px) {
-        .desktop-nav, .header-center { display: none; }
-        .search-icon-mobile, .hamburger-container { display: block; }
-        .header-center.mobile-active { display: flex; position: absolute; top: 80px; left: 0; width: 100%; background: var(--bg-dark); padding: 1rem; border-bottom: 1px solid var(--border-color); z-index: 1001;}
-        .mobile-nav { position: fixed; top: 0; right: -100%; width: min(75vw, 300px); height: 100vh; background: var(--bg-light); box-shadow: var(--shadow-lg); transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); padding-top: 100px; z-index: 999; overflow-y: auto; }
-        .mobile-nav.active { right: 0; }
-        .mobile-nav .nav-menu { flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
-        .mobile-nav .nav-menu li { width: 100%; }
-        .mobile-nav .nav-menu > li > a { display: block; padding: 1rem 2rem; width: 100%; font-size: 1.1rem; }
-        .mobile-nav a::after { display: none; }
-        .mobile-nav .dropdown-content { display: block; position: static; transform: none; box-shadow: none; background: var(--bg-dark); max-height: 0; overflow: hidden; opacity: 1; visibility: visible; transition: max-height 0.4s ease-in-out; padding-left: 1rem; border: none; min-width: auto; }
-        .mobile-nav .dropdown-content.show { max-height: 500px; }
-    }
+        .header .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-left: 1rem;
+            color: var(--secondary-color);
+        }
 
-    /* HERO SLIDER */
-    .hero-slider-container { width: 100%; height: calc(100vh - 80px); position: relative; overflow: hidden; }
-    .hero-slider-container .slide { position: relative; width: 100%; height: 100%; }
-    .hero-slider-container .slide .item { width: 200px; height: 300px; position: absolute; top: 50%; transform: translate(0, -50%); border-radius: 20px; box-shadow: 0 30px 50px #000; background-position: center; background-size: cover; display: inline-block; transition: 0.5s; }
-    .slide .item:nth-child(1), .slide .item:nth-child(2) { top: 0; left: 0; transform: none; border-radius: 0; width: 100%; height: 100%; }
-    .slide .item:nth-child(2)::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.2)); z-index: 1; }
-    .item .content { position: absolute; top: 50%; left: 100px; width: 90%; max-width: 500px; text-align: left; color: #eee; transform: translateY(-50%); font-family: var(--font-primary); display: none; z-index: 2; }
-    .slide .item:nth-child(2) .content { display: block; }
-    .content .name { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); text-transform: uppercase; font-weight: bold; opacity: 0; animation: animate 1s ease-in-out 1 forwards; }
-    .content .des { margin: 1rem 0 2rem; opacity: 0; font-size: 1.2rem; animation: animate 1s ease-in-out 0.3s 1 forwards; }
-    .content .cta-button { padding: 12px 24px; border: none; cursor: pointer; opacity: 0; border-radius: var(--border-radius-sm); background-color: var(--color-primary); color: white; font-weight: 600; text-transform: uppercase; font-size: 1rem; transition: var(--transition); animation: animate 1s ease-in-out 0.6s 1 forwards; }
-    .content .cta-button:hover { background-color: var(--color-primary-dark); transform: scale(1.05); }
-    @keyframes animate { from { opacity: 0; transform: translateY(100px); filter: blur(20px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
-    .slider-button { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10; }
-    .slider-button button { width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; background: rgba(0,0,0,0.5); color: #fff; font-size: 1.2rem; font-weight: bold; transition: 0.3s; }
-    .slider-button button:hover { background: var(--color-primary); border-color: var(--color-primary); transform: scale(1.1); }
-    @media (max-width: 768px) { .item .content { left: 2rem; } .content .name { font-size: 2.5rem; } }
+        .mobile-menu-toggle {
+            display: none; /* Hidden on desktop */
+            background: none;
+            border: none;
+            cursor: pointer;
+            z-index: 1001;
+            margin-left: auto;
+        }
 
-    /* SECTIONS & COURSE GRID */
-    .section-header { text-align: center; margin-bottom: 3rem; }
-    .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
-    h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; }
-    .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-    .course-card { background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color); overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition); cursor: pointer; display: flex; flex-direction: column;}
-    .course-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
-    .card-thumbnail { width: 100%; height: 200px; background-size: cover; background-position: center; }
-    .card-info { padding: 1.5rem; flex-grow: 1; } 
-    .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
-    .card-info h3 svg { width: 24px; height: 24px; color: var(--color-primary); flex-shrink: 0; }
-    .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+        /* --- SIDEBAR NAVIGATION --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            flex-shrink: 0;
+            background-color: var(--secondary-color);
+            color: white;
+            padding-top: var(--header-height);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: transform var(--transition-speed);
+            z-index: 999;
+            overflow-y: auto;
+        }
 
-    /* VIEW MANAGEMENT */
-    .view-section { display: none; animation: fadeIn 0.5s ease-in-out; }
-    .view-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .sidebar-header {
+            padding: 1.5rem 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    /* DYNAMIC COURSE PAGE */
-    .course-page { min-height: 100vh; }
-    .course-hero { background: var(--bg-card); padding: 4rem 2rem; text-align: center; border-bottom: 1px solid var(--border-color); }
-    .course-hero h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 1rem; color: var(--color-primary); }
-    .course-hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto; color: var(--text-secondary); }
-    .course-content { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
-    .course-section h3 { font-size: 1.8rem; margin-bottom: 1.5rem; border-left: 4px solid var(--color-primary); padding-left: 1rem;}
-    .module-list { list-style: none; }
-    .module-item { padding: 1rem; margin-bottom: 1rem; background: var(--bg-light); border-radius: var(--border-radius-sm); border: 1px solid var(--border-color); }
-    .enroll-button { display: inline-block; padding: 1rem 3rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: var(--transition); text-transform: uppercase; }
-    .enroll-button:hover { background: var(--color-primary-dark); transform: translateY(-2px); box-shadow: var(--shadow-primary); }
-    .back-button { display: inline-block; padding: 0.8rem 1.5rem; margin-bottom: 2rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; transition: var(--transition); border-radius: var(--border-radius-sm); }
-    .back-button:hover { background-color: var(--border-color); }
+        .sidebar-nav {
+            list-style: none;
+            padding: 1rem 0;
+        }
 
-    /* PAYMENT SECTION (No longer used by JS, but kept in HTML as requested) */
-    .payment-container { max-width: 600px; margin: 0 auto; padding: 3rem 2rem; min-height: 100vh; }
-    .payment-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2.5rem; border: 1px solid var(--border-color); }
-    .payment-header { text-align: center; margin-bottom: 2rem; }
-    .payment-amount { font-size: 2.5rem; color: var(--color-primary); font-weight: 700; }
-    .payment-form { display: flex; flex-direction: column; gap: 1.5rem; }
-    .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
-    .form-group label { font-weight: 600; font-size: 0.9rem; }
-    .form-input { padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); color: var(--text-primary); font-size: 1rem; }
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            font-weight: 500;
+        }
+        
+        .nav-item a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
 
-    /* TESTIMONIALS & CONTACT */
-    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-    .testimonial-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--border-color); }
-    .testimonial-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
-    .stars { color: var(--color-gold); margin-top: 1rem; }
-    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
-    
-    /* FOOTER */
-    .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
-    .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
-    .footer-section h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-primary); }
-    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
-    .footer-links a { color: var(--text-secondary); transition: var(--transition); }
-    .footer-links a:hover { color: var(--color-primary); padding-left: 5px; }
-    .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
-    .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-    @media (max-width: 768px) { .footer-bottom-content { flex-direction: column; text-align: center; } }
-    
-    /* AUTH MODAL */
-    .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
-    .auth-modal.active { opacity: 1; visibility: visible; }
-    .auth-container { background: var(--bg-light); border-radius: var(--border-radius-md); padding: 2.5rem; width: 90%; max-width: 420px; box-shadow: var(--shadow-lg); position: relative; transform: scale(0.95); transition: transform 0.3s ease-out; }
-    .auth-modal.active .auth-container { transform: scale(1); }
-    .auth-form { display: flex; flex-direction: column; gap: 1rem; }
-    .form-button { padding: 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; }
-    .google-button { background: #fff; color: #333; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
-    .auth-switch { text-align: center; margin-top: 1.5rem; color: var(--text-secondary); }
-    .close-button { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; }
-    .hidden { display: none; }
-</style>
+        .nav-item a.active {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 700;
+        }
+        
+        .nav-item a svg {
+            width: 22px;
+            height: 22px;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* --- MAIN CONTENT AREA --- */
+        .main-content {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: calc(var(--header-height) + 2rem) 2rem 2rem;
+            height: 100vh;
+            overflow-y: auto;
+            transition: margin-left var(--transition-speed);
+        }
+
+        #editor-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70vh;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        #editor-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1rem;
+            opacity: 0.6;
+        }
+        
+        #editor-placeholder h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+        }
+
+        /* --- CONTENT EDITOR STYLES --- */
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .editor-header h1 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary-color);
+        }
+
+        .editor-actions button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            margin-left: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Card Styles */
+        .notes-card {
+            background-color: var(--background-dark);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            background-color: #fafafa;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-toggle-icon {
+            transition: transform var(--transition-speed);
+            margin-right: 1rem;
+        }
+
+        .card-content.collapsed .card-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .card-title-input {
+            flex-grow: 1;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .card-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
+        }
+        .card-actions button:hover svg {
+            color: var(--primary-color);
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            max-height: 1000px; /* arbitrary large value */
+            opacity: 1;
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, padding 0.4s ease-in-out;
+        }
+        
+        .card-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+        }
+
+        .notes-textarea {
+            width: 100%;
+            min-height: 200px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color var(--transition-speed);
+        }
+
+        .notes-textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 992px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 1100; /* Above overlay */
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+                box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1099;
+                display: none;
+            }
+            .overlay.active {
+                display: block;
+            }
+
+            .editor-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1 class="visually-hidden">AlfaOctal Campus: Online Agriculture Courses</h1>
 
+    <div class="dashboard-container">
+        <header class="header">
+            <a href="#" class="logo">
+                <img src="https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png" alt="Modern Farmer Logo">
+            </a>
+            <span class="logo-text">Admin Panel</span>
+            <button class="mobile-menu-toggle" aria-label="Open menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                </svg>
+            </button>
+        </header>
 
-<div class="auth-modal" id="authModal">
-    <div class="auth-container">
-        <button class="close-button" id="closeAuthModal" aria-label="Close">&times;</button>
-        <div class="auth-header"><h2 class="auth-title" id="authTitle"></h2><p class="auth-subtitle" id="authSubtitle"></p></div>
-        <form class="auth-form" id="authForm" novalidate>
-            <div class="form-group hidden" id="usernameGroup"><input class="form-input" type="text" id="authUsername" placeholder="Enter your username"></div>
-            <div class="form-group"><input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required></div>
-            <div class="form-group"><input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required></div>
-            <button class="form-button" type="submit" id="authSubmitBtn"></button>
-            <button class="form-button google-button" type="button" id="googleSignInBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
-        </form>
-        <div class="auth-switch"><span id="authSwitchText"></span><a href="#" class="auth-switch-link" id="authSwitchLink"></a></div>
-    </div>
-</div>
-
-<div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-<div class="search-backdrop" id="searchBackdrop"></div>
-
-<header class="header">
-    <a href="#" class="logo nav-link" data-view="home-view">
-        <img src="images/logo.png" alt="AlfaOctal Campus Logo">
-    </a>
-    <div class="header-center" id="headerCenter">
-        <div class="search-container"><input type="search" class="search-input" id="searchInput" placeholder="Search courses..."><div class="search-results" id="searchResults"></div></div>
-    </div>
-    <div class="header-right">
-        <nav class="desktop-nav">
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link" data-view="home-view">HOME</a></li>
-                <li class="dropdown">
-                    <a href="#courses-section" class="nav-link" data-view="home-view">COURSES &#9662;</a>
-                    <div class="dropdown-content" id="desktopCoursesDropdown"></div>
-                </li>
-                <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
-                <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">Manage Courses</div>
+            <ul class="sidebar-nav" id="sidebar-nav">
+                <!-- Navigation items will be injected here by JavaScript -->
             </ul>
-        </nav>
-         <button class="search-icon-mobile" id="searchIconMobile" aria-label="Open Search"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg></button>
-        <div id="auth-section">
-            <div class="user-profile" id="userProfile" tabindex="0"><div class="user-avatar" id="userAvatar"></div><div class="user-info"><div class="user-name" id="userName"></div><div class="user-action-text" id="userActionText"></div></div></div>
-        </div>
-        <label class="hamburger-container">
-            <input type="checkbox" id="hamburger-checkbox">
-            <div class="checkmark">
-                <span></span>
-                <span></span>
-                <span></span>
+        </aside>
+
+        <main class="main-content" id="main-content">
+             <div id="editor-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2zm1 12h2V2h-2v12zm-3 0V7H7v7h2zm-4 0V9H2v5h2z"/>
+                </svg>
+                <h2>Welcome, Admin!</h2>
+                <p>Please select a course from the sidebar to begin managing its content.</p>
             </div>
-        </label>
+            <div id="content-editor-container" style="display: none;">
+                <!-- The dynamic editor for the selected course will be rendered here -->
+            </div>
+        </main>
     </div>
-</header>
+    <div class="overlay" id="overlay"></div>
 
-<nav class="mobile-nav" id="mobileNav">
-    <ul class="nav-menu">
-        <li><a href="#" class="nav-link" data-view="home-view">HOME</a></li>
-        <li class="dropdown">
-            <a href="#" id="mobileCoursesToggle">COURSES &#9662;</a>
-            <div class="dropdown-content" id="mobileCoursesDropdown"></div>
-        </li>
-        <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
-        <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
-    </ul>
-</nav>
-
-<main>
-    <!-- VIEWS ARE MANAGED BY JAVASCRIPT -->
-    <div id="home-view" class="view-section active">
-        <section class="hero-slider-container">
-            <div class="slide">
-                <!-- Slider items populated by JS -->
-            </div>
-            <div class="slider-button">
-                <button class="prev" aria-label="Previous Slide">◁</button>
-                <button class="next" aria-label="Next Slide">▷</button>
-            </div>
-        </section>
-        <section id="courses-section" class="container"><div class="section-header"><p class="subtitle">Our Catalog</p><h2>Featured Courses</h2></div><div class="course-grid"></div></section>
-        <section id="testimonials-section" class="container"><div class="section-header"><p class="subtitle">Success Stories</p><h2>What Our Students Say</h2></div><div class="testimonials-grid"></div></section>
-        <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
-    </div>
-
-    
-
-    <div id="course-pages-container"></div>
-</main>
-
-<footer class="footer">
-    <div class="container"><div class="footer-content"><div class="footer-section"><h3>About Us</h3><p>Empowering farmers with world-class agricultural education, combining traditional wisdom with modern techniques.</p></div><div class="footer-section"><h3>Courses</h3><ul class="footer-links" id="footer-course-links"></ul></div><div class="footer-section"><h3>Support</h3><ul class="footer-links"><li><a href="admin.html">Admin</a></li><li><a href="#">Help Center</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li></ul></div><div class="footer-section"><h3>Newsletter</h3><p>Get updates on new courses and farming tips.</p><form class="newsletter-form" id="newsletterForm"><input type="email" placeholder="Your email" required><button type="submit">Subscribe</button></form></div></div><div class="footer-bottom"><div class="container"><div class="footer-bottom-content"><p>&copy; 2025 Modern Farmer by ALFA OCTAL SYSTEMS.</p></div></div></div></div>
-</footer>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- STATE & DATA ---
-    let currentUser = null, isSubscribed = false, currentAuthMode = 'signin', currentCourseId = null;
-    const courses = [
-        { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', image: 'images/broiler-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', price: '9.99', description: 'We teach you how to finish a flock in just 7 weeks, showing you the secrets to maximizing profitability, managing feed costs, and keeping your birds safe and healthy.', modules: [{ title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }] },
-        { id: 'roadrunner-course-page', title: 'Indigenous Poultry Management', image: 'images/roadrunner-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Specialized management to raise premium Road Runner chickens.', price: '9.99', description: 'Move beyond basic poultry. Learn specialized, indigenous poultry management techniques to raise premium-quality Road Runner chickens for a profitable niche market.', modules: [{ title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }] },
-        { id: 'mushroom-course-page', title: 'Commercial Mushroom Cultivation', image: 'images/mushroom-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>', shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', price: '9.99', description: 'Learn the three essential steps: perfect substrate preparation, sterile spawning to prevent contamination, and simple climate control to guarantee a successful harvest.', modules: [{ title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }] },
-        { id: 'fish-course-page', title: 'Sustainable Fish Farming', image: 'images/fish-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5c0-4.4-3.6-8-8-8s-8 3.6-8 8c0 2.5 1.2 4.8 3.1 6.2.2.2.4.3.7.3h8.4c.3 0 .5-.1.7-.3 1.9-1.4 3.1-3.7 3.1-6.2z"/><path d="M5.5 12.5c.3-1 .8-1.8 1.5-2.5"/></svg>', shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', price: '9.99', description: 'Get the aquaculture basics right, with a special focus on managing Dissolved Oxygen (DO) levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', modules: [{ title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }] },
-        { id: 'maize-course-page', title: 'High-Performance Maize Farming', image: 'images/maize-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', price: '9.99', description: 'Discover the best techniques for timing your fertilizer, how to protect your crops during drought, and simple steps to maximize your yield every season.', modules: [{ title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }] },
-        { id: 'sorghum-course-page', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99', description: 'Master growing this tough, drought-resistant grain. We show you simple, effective pest control strategies and management techniques to ensure a reliable harvest.', modules: [{ title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }] },
-        { id: 'tobacco-course-page', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99', description: 'Focus on the high-value side of this crop. Learn the art of professional curing techniques and effective sucker control to produce premium, market-ready leaves.', modules: [{ title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }] }
-    ];
+
+    // --- DATA ---
+    const pages = {
+        'broiler-course-page': { name: 'Broiler Rearing', file: 'broiler-rearing.html' },
+        'roadrunner-course-page': { name: 'Roadrunner Rearing', file: 'roadrunner-rearing.html' },
+        'mushroom-course-page': { name: 'Mushroom Cultivation', file: 'mushroom-cultivation.html' },
+        'fish-course-page': { name: 'Fish Farming', file: 'fish-farming.html' },
+        'maize-course-page': { name: 'Maize Farming', file: 'maize-farming.html' },
+        'sorghum-course-page': { name: 'Sorghum Farming', file: 'sorghum-farming.html' },
+        'tobacco-course-page': { name: 'Tobacco Farming', file: 'tobacco-farming.html' }
+    };
+
+    // Placeholder for actual data. In a real app, this would be fetched from a database.
+    const courseContentData = {
+        'broiler-course-page': [
+            { id: Date.now() + 1, title: 'Introduction to Broiler Management', notes: 'This section covers the basics of setting up a broiler farm, including housing, equipment, and initial chick placement.' },
+            { id: Date.now() + 2, title: 'Week 1-2: Brooding & Early Care', notes: 'Critical temperature control, feed, and water management for the first two weeks to ensure a strong start for the flock.' },
+            { id: Date.now() + 3, title: 'Health and Disease Prevention', notes: 'A guide to common broiler diseases, vaccination schedules, and biosecurity measures to keep your birds healthy.' }
+        ]
+        // Other pages would have their data here
+    };
+
+    const icons = {
+        default: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>`,
+        broiler: `<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16"><path d="M12.33 11.03a.5.5 0 0 0 .2-.97c.22-.07.45-.14.68-.22 1.33-.45 2.22-1.39 2.22-2.58 0-1.6-1.52-2.8-3.03-2.8-1.1 0-2.02.6-2.45 1.42a.5.5 0 0 0 .9.43c.32-.64.95-1.05 1.55-1.05 1.05 0 2.23.97 2.23 2 0 .73-.55 1.26-1.23 1.5l-.06.02c-.44.15-.88.3-1.3.43-.45.15-.87.32-1.25.5-.9.4-1.26.9-1.26 1.48 0 .42.27.7.6.82a.5.5 0 0 0 .62-.33zM5.38 13.5a.5.5 0 0 0 .58-.41c.21-1.4.32-2.9.32-4.5V4.5a.5.5 0 0 0-1 0V8.5c0 1.6-.1 3.1-.3 4.58a.5.5 0 0 0 .4.42zM4 5.5a.5.5 0 0 0-1 0v3a.5.5 0 0 0 1 0v-3zM2 6.5a.5.5 0 0 0-1 0v2a.5.5 0 0 0 1 0v-2zM14 8.5a.5.5 0 0 0-1 0v1a.5.5 0 0 0 1 0v-1z"/></svg>`,
+    };
 
     // --- DOM ELEMENTS ---
-    const elements = {
-        views: document.querySelectorAll('.view-section'),
-        courseGrid: document.querySelector('.course-grid'),
-        coursePagesContainer: document.getElementById('course-pages-container'),
-        testimonialsGrid: document.querySelector('.testimonials-grid'),
-        contactGrid: document.querySelector('.contact-grid'),
-        searchInput: document.getElementById('searchInput'),
-        searchResults: document.getElementById('searchResults'),
-        searchIconMobile: document.getElementById('searchIconMobile'),
-        headerCenter: document.getElementById('headerCenter'),
-        searchBackdrop: document.getElementById('searchBackdrop'),
-        hamburgerCheckbox: document.getElementById('hamburger-checkbox'),
-        mobileNav: document.getElementById('mobileNav'),
-        mobileNavBackdrop: document.getElementById('mobileNavBackdrop'),
-        mobileCoursesToggle: document.getElementById('mobileCoursesToggle'),
-        mobileCoursesDropdown: document.getElementById('mobileNav').querySelector('.dropdown-content'),
-        desktopCoursesDropdown: document.querySelector('.desktop-nav .dropdown-content'),
-        footerCourseLinks: document.getElementById('footer-course-links'),
-        slider: document.querySelector('.slide'),
-        sliderNextBtn: document.querySelector('.slider-button .next'),
-        sliderPrevBtn: document.querySelector('.slider-button .prev'),
-        authModal: document.getElementById('authModal'), authForm: document.getElementById('authForm'), userProfile: document.getElementById('userProfile'), userAvatar: document.getElementById('userAvatar'), userName: document.getElementById('userName'), userActionText: document.getElementById('userActionText'), closeAuthModal: document.getElementById('closeAuthModal'), authTitle: document.getElementById('authTitle'), authSubtitle: document.getElementById('authSubtitle'), authSubmitBtn: document.getElementById('authSubmitBtn'), authSwitchLink: document.getElementById('authSwitchLink'), googleSignInBtn: document.getElementById('googleSignInBtn'), usernameGroup: document.getElementById('usernameGroup'), authSwitchText: document.getElementById('authSwitchText'),
-    };
-    let searchDebounceTimer;
+    const sidebarNav = document.getElementById('sidebar-nav');
+    const mainContent = document.getElementById('main-content');
+    const editorContainer = document.getElementById('content-editor-container');
+    const editorPlaceholder = document.getElementById('editor-placeholder');
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
 
     // --- INITIALIZATION ---
     function init() {
-        if (!window.firebase || !window.firebase.auth) { console.error("Firebase not configured."); return; }
-        populateStaticContent();
-        generateCoursePages();
-        initializeEventListeners();
-        firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
-        switchAuthMode(currentAuthMode, true);
+        populateSidebar();
+        attachEventListeners();
     }
 
-    // --- DYNAMIC CONTENT POPULATION ---
-    function populateStaticContent() {
-        elements.courseGrid.innerHTML = courses.map(course => `<a href="#" class="course-card" data-course="${course.id}"><div class="card-thumbnail" style="background-image: url('${course.image}');"></div><div class="card-info"><h3>${course.icon || ''}<span>${course.title}</span></h3><p>${course.shortDesc}</p></div></a>`).join('');
-        const dropdownHTML = courses.map(course => `<a href="#" class="nav-link" data-course="${course.id}">${course.title}</a>`).join('');
-        elements.desktopCoursesDropdown.innerHTML = dropdownHTML;
-        elements.mobileCoursesDropdown.innerHTML = dropdownHTML;
-        elements.footerCourseLinks.innerHTML = courses.map(c => `<li><a href="#" class="nav-link" data-course="${c.id}">${c.title}</a></li>`).join('');
-        elements.slider.innerHTML = courses.map(c => `<div class="item" style="background-image: url('${c.image}');"><div class="content"><div class="name">${c.title}</div><div class="des">${c.shortDesc}</div><button class="cta-button" data-course="${c.id}">Learn More</button></div></div>`).join('');
-    }
-
-    function generateCoursePages() {
-        elements.coursePagesContainer.innerHTML = courses.map(course => `
-            <div id="${course.id}" class="view-section course-page">
-                <div class="course-hero"><h1>${course.title}</h1><p>${course.shortDesc}</p></div>
-                <div class="course-content">
-                    <button class="back-button" data-view="home-view">&larr; Back to All Courses</button>
-                    <div class="course-section"><h3>About This Course</h3><p>${course.description}</p></div>
-                    <div class="course-section"><h3>What You'll Learn</h3><ul class="module-list">${course.modules.map(m => `<li class="module-item"><h4>${m.title}</h4><p>${m.desc}</p></li>`).join('')}</ul></div>
-                    <div class="course-section price-section" style="text-align:center;"><h3>Unlock Your Potential</h3><div class="price" style="font-size: 2.5rem; color: var(--color-gold); margin: 1rem 0;">$${course.price}</div><p>One-time payment for lifetime access.</p><button class="enroll-button" data-course="${course.id}" style="margin-top:1.5rem;">Enroll Now</button></div>
-                </div>
-            </div>`).join('');
-    }
-
-    // --- EVENT LISTENERS & NAVIGATION ---
-    function initializeEventListeners() {
-        document.body.addEventListener('click', handleGlobalClick);
-        elements.hamburgerCheckbox.addEventListener('change', toggleMobileMenu);
-        elements.mobileNavBackdrop.addEventListener('click', () => { elements.hamburgerCheckbox.checked = false; toggleMobileMenu(); });
-        elements.mobileCoursesToggle.addEventListener('click', e => { e.preventDefault(); elements.mobileCoursesDropdown.classList.toggle('show'); });
-        elements.searchInput.addEventListener('input', handleSearchInput);
-        elements.searchInput.addEventListener('focus', () => handleSearchInput({ target: elements.searchInput }));
-        elements.searchIconMobile.addEventListener('click', toggleMobileSearch);
-        elements.searchBackdrop.addEventListener('click', closeSearch);
-        elements.closeAuthModal.addEventListener('click', closeAuthModal);
-        elements.authModal.addEventListener('click', e => e.target === elements.authModal && closeAuthModal());
-        elements.authForm.addEventListener('submit', handleAuthSubmit);
-        elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
-        elements.authSwitchLink.addEventListener('click', e => { e.preventDefault(); switchAuthMode(currentAuthMode === 'signin' ? 'signup' : 'signin'); });
-        elements.sliderNextBtn.addEventListener('click', () => { elements.slider.appendChild(elements.slider.firstElementChild); });
-        elements.sliderPrevBtn.addEventListener('click', () => { elements.slider.insertBefore(elements.slider.lastElementChild, elements.slider.firstElementChild); });
-    }
-
-    function handleGlobalClick(e) {
-        const target = e.target;
-        const navLink = target.closest('.nav-link');
-        const courseCard = target.closest('.course-card');
-        const ctaButton = target.closest('.cta-button');
-        const enrollButton = target.closest('.enroll-button');
-        const backButton = target.closest('.back-button');
-        const userProfile = target.closest('#userProfile');
-        const searchResult = target.closest('.search-result-item');
-
-        if (navLink) { 
-            e.preventDefault(); 
-            const courseId = navLink.dataset.course;
-            if (courseId && currentUser && isSubscribed) {
-                redirectToCoursePage(courseId);
-            } else {
-                navigateTo(navLink.dataset.view, courseId);
-            }
+    // --- POPULATE UI ---
+    function populateSidebar() {
+        let navHTML = '';
+        for (const [id, page] of Object.entries(pages)) {
+            const iconKey = id.split('-')[0];
+            const icon = icons[iconKey] || icons.default;
+            navHTML += `
+                <li class="nav-item">
+                    <a href="#" data-page-id="${id}">
+                        ${icon}
+                        <span>${page.name}</span>
+                    </a>
+                </li>
+            `;
         }
-        if (courseCard) { 
-            e.preventDefault(); 
-            const courseId = courseCard.dataset.course;
-            if (currentUser && isSubscribed) {
-                redirectToCoursePage(courseId);
-            } else {
-                navigateTo(null, courseId);
-            }
-        }
-        if (ctaButton) { 
-            e.preventDefault(); 
-            const courseId = ctaButton.dataset.course;
-            if (currentUser && isSubscribed) {
-                redirectToCoursePage(courseId);
-            } else {
-                navigateTo(null, courseId);
-            }
-        }
-        if (enrollButton) { e.preventDefault(); handleEnrollClick(enrollButton.dataset.course); }
-        if (backButton) { navigateTo(backButton.dataset.view); }
-        if (userProfile) { currentUser ? handleLogout() : openAuthModal(); }
-        if (searchResult) { 
-            const courseId = searchResult.dataset.target;
-            if (currentUser && isSubscribed) {
-                redirectToCoursePage(courseId);
-            } else {
-                navigateTo(null, courseId);
-            }
-            closeSearch(); 
-        }
+        sidebarNav.innerHTML = navHTML;
     }
 
-    function navigateTo(viewId, courseId) {
-        let targetViewId = viewId || (courseId ? courseId : 'home-view');
-        showView(targetViewId);
+    // --- EVENT LISTENERS ---
+    function attachEventListeners() {
+        sidebarNav.addEventListener('click', handleSidebarClick);
+        mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+        overlay.addEventListener('click', toggleMobileMenu);
         
-        const targetElement = document.getElementById(targetViewId) || (viewId ? document.querySelector(viewId) : null);
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: 'smooth' });
-             // Special case to scroll to courses section when coming from a back button
-            if (viewId === 'home-view' && !courseId) {
-                document.getElementById('courses-section').scrollIntoView({behavior: 'smooth'});
-            }
-        }
+        // Use event delegation for dynamically created elements inside the editor
+        editorContainer.addEventListener('click', handleEditorActions);
+    }
+    
+    function handleSidebarClick(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
         
-        if (elements.mobileNav.classList.contains('active')) {
-            elements.hamburgerCheckbox.checked = false;
+        e.preventDefault();
+        
+        // Update active link style
+        document.querySelectorAll('#sidebar-nav .nav-item a').forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+        
+        const pageId = link.dataset.pageId;
+        renderEditor(pageId);
+
+        // Close mobile menu on selection
+        if (sidebar.classList.contains('active')) {
             toggleMobileMenu();
         }
     }
 
-    function showView(viewId) {
-        window.scrollTo({ top: 0, behavior: 'auto' });
-        elements.views.forEach(v => v.classList.remove('active'));
-        const targetView = document.getElementById(viewId);
-        if (targetView) {
-            targetView.classList.add('active');
-            currentCourseId = courses.some(c => c.id === viewId) ? viewId : null;
-        } else {
-            document.getElementById('home-view').classList.add('active');
-            currentCourseId = null;
-        }
+    function toggleMobileMenu() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
     }
-
-    function handleEnrollClick(courseId) {
-        if (!currentUser) { openAuthModal(); return; }
-        if (isSubscribed) { 
-            // Redirect subscribed users to actual course content
-            redirectToCoursePage(courseId);
-            return; 
-        }
-        const course = courses.find(c => c.id === courseId);
-        if (course) {
-            // Redirect to a dedicated payment page with course info
-            window.location.href = `payment.html?course=${encodeURIComponent(course.title)}&price=${course.price}`;
-        }
-    }
-
-    function redirectToCoursePage(courseId) {
-        // Map course IDs to their actual HTML pages
-        const coursePages = {
-            'broiler-course-page': 'broiler-rearing.html',
-            'roadrunner-course-page': 'roadrunner-rearing.html',
-            'mushroom-course-page': 'mushroom-cultivation.html',
-            'fish-course-page': 'fish-farming.html',
-            'maize-course-page': 'maize-farming.html',
-            'sorghum-course-page': 'sorghum-farming.html',
-            'tobacco-course-page': 'tobacco-farming.html'
-        };
-        
-        const targetPage = coursePages[courseId];
-        if (targetPage) {
-            window.location.href = targetPage;
-        } else {
-            console.error('Course page not found for:', courseId);
-        }
-    }
-
-    // --- MOBILE & SEARCH UI ---
-    function toggleMobileMenu() { 
-        const isActive = elements.hamburgerCheckbox.checked;
-        elements.mobileNav.classList.toggle('active', isActive);
-        elements.mobileNavBackdrop.classList.toggle('active', isActive);
-    }
-    function toggleMobileSearch() { elements.headerCenter.classList.toggle('mobile-active'); if (elements.headerCenter.classList.contains('mobile-active')) { elements.searchBackdrop.classList.add('active'); elements.searchInput.focus(); } else { closeSearch(); } }
-    function handleSearchInput(e) { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query)); displaySearchResults(filtered); } else { elements.searchResults.classList.remove('active'); } }, 300); }
-    function displaySearchResults(results) { elements.searchBackdrop.classList.add('active'); if (results.length > 0) { elements.searchResults.innerHTML = results.map(course => `<div class="search-result-item" data-target="${course.id}"><h4>${course.title}</h4></div>`).join(''); } else { elements.searchResults.innerHTML = `<div class="no-results-message">No courses found.</div>`; } elements.searchResults.classList.add('active'); }
-    function closeSearch() { elements.searchInput.value = ''; elements.searchResults.classList.remove('active'); elements.searchBackdrop.classList.remove('active'); elements.headerCenter.classList.remove('mobile-active'); }
     
-    // --- AUTHENTICATION ---
-    function openAuthModal() { elements.authModal.classList.add('active'); }
-    function closeAuthModal() { elements.authModal.classList.remove('active'); }
-    async function handleAuthStateChange(user) { if (user) { const userDoc = await firebase.getDoc(firebase.doc(firebase.db, "users", user.uid)); currentUser = userDoc.exists() ? { ...user, ...userDoc.data() } : user; isSubscribed = userDoc.exists() ? userDoc.data().subscription || false : false; } else { currentUser = null; isSubscribed = false; } updateUIForAuthState(); }
-    function updateUIForAuthState() { if (currentUser) { const displayName = currentUser.username || currentUser.displayName || 'Farmer'; elements.userName.textContent = displayName; elements.userActionText.textContent = 'Logout'; if (currentUser.photoURL) { elements.userAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="${displayName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`; } else { elements.userAvatar.innerHTML = displayName.charAt(0).toUpperCase(); } } else { elements.userName.textContent = 'Guest'; elements.userActionText.textContent = 'Login'; elements.userAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`; } updateCrownIcon(); }
-    function updateCrownIcon() { const existingCrown = elements.userProfile.querySelector('.crown-icon'); if (isSubscribed && !existingCrown) { const crown = document.createElement('span'); crown.className = 'crown-icon'; crown.innerHTML = '👑'; elements.userProfile.prepend(crown); } else if (!isSubscribed && existingCrown) { existingCrown.remove(); } }
-    async function handleAuthSubmit(e) { e.preventDefault(); const email = document.getElementById('authEmail').value, password = document.getElementById('authPassword').value, username = document.getElementById('authUsername').value; elements.authSubmitBtn.disabled = true; try { if (currentAuthMode === 'signup') { if (!username) throw new Error("Username required"); const userCred = await firebase.createUserWithEmailAndPassword(firebase.auth, email, password); await firebase.updateProfile(userCred.user, { displayName: username }); await firebase.setDoc(firebase.doc(firebase.db, 'users', userCred.user.uid), { username, email: userCred.user.email, createdAt: new Date(), subscription: false }); } else { await firebase.signInWithEmailAndPassword(firebase.auth, email, password); } closeAuthModal(); } catch (error) { alert(`Error: ${error.message}`); } finally { elements.authSubmitBtn.disabled = false; } }
-    async function handleGoogleSignIn() { try { const result = await firebase.signInWithPopup(firebase.auth, firebase.googleProvider); const user = result.user; const userDocRef = firebase.doc(firebase.db, 'users', user.uid); const userDoc = await firebase.getDoc(userDocRef); if (!userDoc.exists()) { let username = prompt("Welcome! Please choose a username.", user.displayName.split(' ')[0] || ''); if (username) await firebase.setDoc(userDocRef, { username, email: user.email, createdAt: new Date(), subscription: false }); } closeAuthModal(); } catch (error) { alert(`Google Sign-In Error: ${error.message}`); } }
-    async function handleLogout() { if (confirm("Log out?")) { await firebase.signOut(firebase.auth); showView('home-view'); } }
-    function switchAuthMode(mode, initial = false) { if (!initial) currentAuthMode = mode; const isSignup = currentAuthMode === 'signup'; elements.authTitle.textContent = isSignup ? 'Create Account' : 'Welcome Back'; elements.authSubtitle.textContent = isSignup ? 'Join successful farmers' : 'Sign in to access your courses'; elements.authSubmitBtn.textContent = isSignup ? 'Create Account' : 'Sign In'; elements.authSwitchText.textContent = isSignup ? 'Already have an account?' : "Don't have an account?"; elements.authSwitchLink.textContent = isSignup ? 'Sign in' : 'Sign up'; elements.usernameGroup.classList.toggle('hidden', !isSignup); }
+    function handleEditorActions(e) {
+        const target = e.target;
 
+        if (target.closest('.btn-add-new')) {
+            addNewCard();
+        }
+        if (target.closest('.btn-save-all')) {
+            saveAllChanges();
+        }
+        if (target.closest('.card-header')) {
+            toggleCard(target.closest('.notes-card'));
+        }
+        if (target.closest('.btn-delete-card')) {
+            deleteCard(target.closest('.notes-card'));
+        }
+    }
+    
+    // --- EDITOR LOGIC ---
+    function renderEditor(pageId) {
+        const page = pages[pageId];
+        if (!page) return;
+
+        editorPlaceholder.style.display = 'none';
+
+        const content = courseContentData[pageId] || [];
+
+        let cardsHTML = content.map(card => createCardHTML(card.id, card.title, card.notes)).join('');
+
+        editorContainer.innerHTML = `
+            <div class="editor-header">
+                <h1>Editing: ${page.name}</h1>
+                <div class="editor-actions">
+                    <button class="btn-primary btn-add-new">Add New Section</button>
+                    <button class="btn-primary btn-save-all">Save All Changes</button>
+                </div>
+            </div>
+            <div id="notes-card-list">
+                ${cardsHTML}
+            </div>
+        `;
+        editorContainer.dataset.currentPage = pageId;
+        editorContainer.style.display = 'block';
+    }
+
+    function createCardHTML(id, title = '', notes = '', isCollapsed = false) {
+        return `
+            <div class="notes-card" data-card-id="${id}">
+                <div class="card-header">
+                    <span class="card-toggle-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                           <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/>
+                        </svg>
+                    </span>
+                    <input type="text" class="card-title-input" value="${title}" placeholder="Enter section title...">
+                    <div class="card-actions">
+                        <button class="btn-delete-card" aria-label="Delete section">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" color="#e53935" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-content ${isCollapsed ? 'collapsed' : ''}">
+                    <textarea class="notes-textarea" placeholder="Enter your detailed notes for this section here...">${notes}</textarea>
+                </div>
+            </div>
+        `;
+    }
+
+    function addNewCard() {
+        const cardList = document.getElementById('notes-card-list');
+        const newCardId = Date.now();
+        const newCardHTML = createCardHTML(newCardId, 'New Section', '', false);
+        cardList.insertAdjacentHTML('beforeend', newCardHTML);
+        
+        // Scroll to the new card and focus its title
+        const newCardElement = cardList.lastElementChild;
+        newCardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newCardElement.querySelector('.card-title-input').focus();
+    }
+
+    function saveAllChanges() {
+        const currentPageId = editorContainer.dataset.currentPage;
+        if (!currentPageId) {
+            alert('Error: No page selected.');
+            return;
+        }
+
+        const cards = document.querySelectorAll('#notes-card-list .notes-card');
+        const updatedContent = [];
+        
+        cards.forEach(card => {
+            const id = card.dataset.cardId;
+            const title = card.querySelector('.card-title-input').value.trim();
+            const notes = card.querySelector('.notes-textarea').value.trim();
+            
+            if (title) { // Only save cards that have a title
+                updatedContent.push({ id, title, notes });
+            }
+        });
+
+        courseContentData[currentPageId] = updatedContent;
+        
+        // In a real application, you would now send this `courseContentData` object
+        // to your server/database via an API call (e.g., fetch, Axios).
+        console.log('Saving data for:', currentPageId);
+        console.log(JSON.stringify(courseContentData[currentPageId], null, 2));
+        
+        alert(`Content for "${pages[currentPageId].name}" has been saved successfully! (Check the console to see the data structure)`);
+    }
+    
+    function toggleCard(cardElement) {
+        const content = cardElement.querySelector('.card-content');
+        content.classList.toggle('collapsed');
+    }
+    
+    function deleteCard(cardElement) {
+        if (confirm('Are you sure you want to delete this section? This action cannot be undone.')) {
+            cardElement.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            cardElement.style.opacity = '0';
+            cardElement.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                cardElement.remove();
+            }, 300);
+        }
+    }
+    
+    // --- START THE APP ---
     init();
 });
 </script>
 </body>
 </html>
-
-
