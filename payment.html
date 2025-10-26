@@ -19,28 +19,26 @@
 
       <!-- Firebase SDKs -->
       <script type="module">
-          // These imports make Firebase functions available globally under the 'firebase' namespace
-          import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-          import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-          import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getFirestore, doc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-          // Initialize Firebase and attach to the window object for global access
-          try {
-              const app = initializeApp(firebaseConfig);
-              const auth = getAuth(app);
-              const db = getFirestore(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            const db = getFirestore(app);
 
-              window.firebase = {
-                  app, auth, db,
-                  onAuthStateChanged,
-                  doc, getDoc
-              };
-              console.log("Firebase initialized successfully on payment page.");
-          } catch (error) {
-              console.error("Firebase initialization failed. Please check your config.", error);
-              window.firebase = {};
-          }
-      </script>
+            window.firebase = {
+                app, auth, db,
+                onAuthStateChanged,
+                doc, getDoc, updateDoc // Added updateDoc for the success function
+            };
+            console.log("Firebase initialized successfully on payment page.");
+        } catch (error) {
+            console.error("Firebase initialization failed. Please check your config.", error);
+            window.firebase = {};
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- Modern CSS Variables --- */
