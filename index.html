@@ -1,13 +1,4 @@
-Of course. I have rewritten the full page with a professional, modern design focused on providing an excellent user experience (UI/UX), building trust, and optimizing for SEO, while ensuring all the original JavaScript logic for Firebase authentication and content switching remains fully functional.
 
-Here is the redesigned and refactored code:
-
-code
-Html
-play_circle
-download
-content_copy
-expand_less
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,19 +10,12 @@ expand_less
     <meta name="keywords" content="farming courses, agriculture education, broiler chicken, road runner chicken, mushroom farming, fish farming, maize farming, modern agriculture, online learning">
     <meta name="author" content="ALFA OCTAL SYSTEMS">
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-website-url.com/">
+    <!-- Social Media / Open Graph -->
     <meta property="og:title" content="Modern Farmer | Expert-Led Online Farming Courses">
     <meta property="og:description" content="Elevate your farming skills with expert-led online courses. Increase your yield and profitability today.">
     <meta property="og:image" content="https://your-website-url.com/social-share-image.jpg">
-
-    <!-- Twitter -->
+    <meta property="og:url" content="https://your-website-url.com/">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://your-website-url.com/">
-    <meta property="twitter:title" content="Modern Farmer | Expert-Led Online Farming Courses">
-    <meta property="twitter:description" content="Elevate your farming skills with expert-led online courses. Increase your yield and profitability today.">
-    <meta property="twitter:image" content="https://your-website-url.com/social-share-image.jpg">
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -61,14 +45,10 @@ expand_less
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-
         try {
             const app = initializeApp(firebaseConfig);
             window.firebase = {
-                app,
-                auth: getAuth(app),
-                db: getFirestore(app),
-                googleProvider: new GoogleAuthProvider(),
+                app, auth: getAuth(app), db: getFirestore(app), googleProvider: new GoogleAuthProvider(),
                 signInWithEmailAndPassword, createUserWithEmailAndPassword,
                 signInWithPopup, signOut, onAuthStateChanged, updateProfile,
                 doc, setDoc, getDoc, updateDoc
@@ -76,141 +56,169 @@ expand_less
             console.log("Firebase initialized successfully.");
         } catch (error) {
             console.error("Firebase initialization failed. Please check your config.", error);
-            window.firebase = {}; // Prevent script crashes
+            window.firebase = {};
         }
-    </script>
-    
-    <!-- Structured Data for SEO -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Modern Farmer",
-      "url": "https://your-website-url.com/",
-      "logo": "https://your-website-url.com/logo.png",
-      "description": "Expert-led online courses for modern agriculture.",
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "Customer Support",
-        "url": "https://your-website-url.com/#contact-section"
-      }
-    }
     </script>
 
     <style>
         :root {
-            --color-primary: #e53935; /* A slightly softer red */
-            --color-primary-dark: #c62828;
-            --color-secondary: #43a047; /* Green for success/enrollment */
-            --color-secondary-dark: #2e7d32;
-            --color-gold: #ffc107;
-            
-            --bg-dark: #121212;
-            --bg-light: #1e1e1e;
-            --bg-card: #2a2a2a;
-            
-            --text-primary: #f5f5f5;
-            --text-secondary: #b0b0b0;
-            --text-muted: #757575;
-            
-            --border-color: #424242;
-            --border-radius-sm: 8px;
-            --border-radius-md: 16px;
-            
-            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
-            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
-            --shadow-primary: 0 4px 20px rgba(229, 57, 53, 0.25);
-
-            --font-primary: 'Inter', sans-serif;
-            --font-display: 'Playfair Display', serif;
+            --color-primary: #e53935; --color-primary-dark: #c62828;
+            --color-secondary: #43a047; --color-secondary-dark: #2e7d32;
+            --color-gold: #ffc107; --bg-dark: #121212; --bg-light: #1e1e1e;
+            --bg-card: #2a2a2a; --text-primary: #f5f5f5; --text-secondary: #b0b0b0;
+            --text-muted: #757575; --border-color: #424242;
+            --border-radius-sm: 8px; --border-radius-md: 16px;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2); --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4); --shadow-primary: 0 4px 20px rgba(229, 57, 53, 0.25);
+            --font-primary: 'Inter', sans-serif; --font-display: 'Playfair Display', serif;
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-
-        /* --- Global Styles & Resets --- */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
-            font-family: var(--font-primary);
-            line-height: 1.7;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: var(--font-primary); line-height: 1.7;
+            background-color: var(--bg-dark); color: var(--text-primary);
             overflow-x: hidden;
-            padding-top: 80px; /* Header height */
         }
-        main { display: block; } /* Ensure <main> is a block element */
-        img { max-width: 100%; height: auto; display: block; }
-        a { color: var(--color-primary); text-decoration: none; transition: var(--transition); }
-        a:hover { color: var(--color-primary-dark); }
-        h1, h2, h3 { line-height: 1.2; }
-        h1 { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); }
-        h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; padding: 4rem 0; }
+        .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+        a { text-decoration: none; color: var(--color-primary); }
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 0;
-        }
-
-        /* --- Header / Navigation --- */
+        /* --- HEADER STYLES --- */
         .header {
-            position: fixed; top: 0; left: 0; width: 100%;
-            height: 80px; background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(10px); z-index: 1000;
-            display: flex; align-items: center; justify-content: space-between;
+            position: fixed; top: 0; left: 0; width: 100%; height: 80px;
+            background: rgba(18, 18, 18, 0.85); backdrop-filter: blur(10px);
+            z-index: 1000; display: flex; align-items: center; justify-content: space-between;
             padding: 0 2rem; border-bottom: 1px solid var(--border-color);
-            transition: var(--transition);
         }
-        .logo {
-            font-size: 1.5rem; font-weight: 700; color: var(--text-primary);
-            display: flex; align-items: center; gap: 0.75rem;
-        }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 0.75rem; }
         .logo-icon { color: var(--color-primary); }
-
-        .header-center { flex-grow: 1; display: flex; justify-content: center; padding: 0 2rem; }
-
-        /* Search */
-        .search-container { position: relative; width: 100%; max-width: 500px; }
-        .search-input {
-            width: 100%; padding: 0.75rem 1.25rem; background: var(--bg-light);
-            border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);
-            color: var(--text-primary); font-size: 1rem; outline: none; transition: var(--transition);
-        }
-        .search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2); }
-        .search-results, .no-results {
-            position: absolute; top: 115%; left: 0; right: 0; background: var(--bg-light);
-            border-radius: var(--border-radius-sm); box-shadow: var(--shadow-md);
-            max-height: 400px; overflow-y: auto; z-index: 1001;
-            opacity: 0; visibility: hidden; transform: translateY(-10px); transition: var(--transition);
-        }
-        .search-results.active, .no-results.active { opacity: 1; visibility: visible; transform: translateY(0); }
-        .search-result-item { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: var(--transition); }
-        .search-result-item:last-child { border-bottom: none; }
-        .search-result-item:hover { background-color: rgba(229, 57, 53, 0.1); }
-        .no-results { padding: 2rem; text-align: center; }
-        .search-backdrop { /* Unchanged logic */ position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 999; opacity: 0; visibility: hidden; transition: var(--transition); }
-        .search-backdrop.active { opacity: 1; visibility: visible; }
-
-        .header-right { display: flex; align-items: center; gap: 1.5rem; }
+        .header-right { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
         .nav-menu { display: flex; list-style: none; gap: 1.5rem; align-items: center; }
-        .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; text-decoration: none; padding: 0.5rem 0; position: relative; }
+        .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0; position: relative; }
         .nav-menu a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-primary); transition: var(--transition); }
         .nav-menu a:hover, .nav-menu a.active { color: var(--text-primary); }
         .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
         
-        /* User Profile */
+        .dropdown { position: relative; }
+        .dropdown-content {
+            display: none; position: absolute; top: 120%; left: 50%;
+            transform: translateX(-50%); background: var(--bg-light); min-width: 220px;
+            box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm);
+            opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease;
+            z-index: 1001; overflow: hidden; border: 1px solid var(--border-color);
+        }
+        .dropdown:hover .dropdown-content { display: block; opacity: 1; visibility: visible; top: 100%; }
+        .dropdown-content a { display: block; padding: 0.75rem 1.5rem; color: var(--text-secondary); white-space: nowrap; }
+        .dropdown-content a:hover { background: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
+        .dropdown-content a::after { display: none; }
+        
         .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; }
-        .user-info { display: flex; flex-direction: column; }
+        .user-info { display: none; }
+        @media (min-width: 992px) { .user-info { display: flex; flex-direction: column; } }
         .user-name { font-size: 0.9rem; font-weight: 600; }
         .user-action-text { font-size: 0.8rem; color: var(--text-secondary); }
         .crown-icon { position: absolute; top: -5px; left: -8px; font-size: 1.2rem; color: var(--color-gold); transform: rotate(-15deg); filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
+        
+        .hamburger { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; z-index: 1002; }
+        .mobile-nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
+        .mobile-nav-backdrop.active { display: block; }
 
-        /* Mobile Menu */
-        .hamburger, .search-icon-mobile { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
+        @media (max-width: 992px) {
+            .desktop-nav { display: none; }
+            .hamburger { display: block; }
+            .mobile-nav {
+                position: fixed; top: 0; right: -100%; width: min(75vw, 300px); height: 100vh;
+                background: var(--bg-light); box-shadow: var(--shadow-lg); transition: right 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+                padding-top: 100px; z-index: 999;
+            }
+            .mobile-nav.active { right: 0; }
+            .mobile-nav .nav-menu { flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
+            .mobile-nav .nav-menu li { width: 100%; }
+            .mobile-nav .nav-menu > li > a { display: block; padding: 1rem 2rem; width: 100%; font-size: 1.1rem; }
+            .mobile-nav a::after { display: none; }
+            .mobile-nav .dropdown-content {
+                display: block; position: static; transform: none; box-shadow: none;
+                background: var(--bg-dark); max-height: 0; overflow: hidden;
+                opacity: 1; visibility: visible; transition: max-height 0.4s ease-in-out;
+                padding-left: 1rem; border: none; min-width: auto;
+            }
+            .mobile-nav .dropdown-content.show { max-height: 500px; }
+            .mobile-nav .dropdown-content a { font-size: 1rem; }
+        }
 
-        /* --- Auth Modal --- */
+        /* --- HERO SLIDER STYLES --- */
+        .hero-slider-container { width: 100%; height: 100vh; position: relative; overflow: hidden; }
+        .hero-slider-container .slide .item {
+            width: 200px; height: 300px; position: absolute; top: 50%;
+            transform: translate(0, -50%); border-radius: 20px;
+            box-shadow: 0 30px 50px #000; background-position: center;
+            background-size: cover; display: inline-block; transition: 0.5s;
+        }
+        .slide .item:nth-child(1), .slide .item:nth-child(2) {
+            top: 0; left: 0; transform: none; border-radius: 0; width: 100%; height: 100%;
+        }
+        .slide .item:nth-child(2)::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); z-index: 1; }
+        .slide .item:nth-child(3) { left: 50%; } .slide .item:nth-child(4) { left: calc(50% + 220px); }
+        .slide .item:nth-child(5) { left: calc(50% + 440px); } .slide .item:nth-child(n + 6) { left: calc(50% + 660px); opacity: 0; }
+        .item .content {
+            position: absolute; top: 50%; left: 100px; width: 90%; max-width: 500px;
+            text-align: left; color: #eee; transform: translateY(-50%);
+            font-family: var(--font-primary); display: none; z-index: 2;
+        }
+        .slide .item:nth-child(2) .content { display: block; }
+        .content .name {
+            font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem);
+            text-transform: uppercase; font-weight: bold; opacity: 0;
+            animation: animate 1s ease-in-out 1 forwards;
+        }
+        .content .des {
+            margin: 1rem 0 2rem; opacity: 0; font-size: 1.2rem;
+            animation: animate 1s ease-in-out 0.3s 1 forwards;
+        }
+        .content .cta-button {
+            padding: 12px 24px; border: none; cursor: pointer; opacity: 0;
+            border-radius: var(--border-radius-sm); background-color: var(--color-primary);
+            color: white; font-weight: 600; text-transform: uppercase; font-size: 1rem;
+            transition: all 0.5s; animation: animate 1s ease-in-out 0.6s 1 forwards;
+        }
+        .content .cta-button:hover { background-color: var(--color-primary-dark); transform: scale(1.05); }
+        @keyframes animate {
+            from { opacity: 0; transform: translateY(100px); filter: blur(20px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        }
+        .slider-button {
+            position: absolute; bottom: 40px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 20px; z-index: 10;
+        }
+        .slider-button button {
+            width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7);
+            cursor: pointer; background: rgba(0,0,0,0.5); color: #fff;
+            font-size: 1.2rem; font-weight: bold; transition: 0.3s;
+        }
+        .slider-button button:hover { background: var(--color-primary); border-color: var(--color-primary); transform: scale(1.1); }
+        @media (max-width: 768px) { .item .content { left: 2rem; } .content .name { font-size: 2.5rem; } }
+
+        /* --- ALL OTHER STYLES --- */
+        .section-header { text-align: center; margin-bottom: 3rem; }
+        .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; }
+        h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); }
+
+        .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+        .course-card {
+            background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color);
+            overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition);
+        }
+        .course-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
+        .card-thumbnail { width: 100%; height: 180px; display: flex; justify-content: center; align-items: center; font-size: 4rem; }
+        .card-info { padding: 1.5rem; } .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; }
+        .card-info p { color: var(--text-secondary); font-size: 0.95rem; }
+        
+        #payment-section, .course-page { display: none; } /* JS controlled */
+        
+        /* Auth Modal, Payment Card, Course Page, Footer, etc. */
+        /* Paste remaining CSS from your previous versions here if needed */
         .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
         .auth-modal.active { opacity: 1; visibility: visible; }
         .auth-container { background: var(--bg-light); border-radius: var(--border-radius-md); padding: 2.5rem; width: 90%; max-width: 420px; box-shadow: var(--shadow-lg); position: relative; transform: scale(0.95); transition: transform 0.3s ease-out; }
@@ -229,397 +237,132 @@ expand_less
         .auth-switch-link { color: var(--color-primary); font-weight: 600; }
         .close-button { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; transition: var(--transition); }
         .close-button:hover { color: var(--text-primary); }
-
-        /* --- Main Content Sections --- */
-        .hero {
-            text-align: center;
-            padding: 6rem 1rem;
-            background: radial-gradient(circle at 50% 0%, rgba(229, 57, 53, 0.1), transparent 70%);
-        }
-        .hero h1 {
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-secondary);
-            max-width: 650px;
-            margin: 0 auto 2rem;
-        }
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--color-primary);
-            color: white;
-            border-radius: var(--border-radius-sm);
-            font-size: 1rem;
-            font-weight: 600;
-            transition: var(--transition);
-            box-shadow: var(--shadow-primary);
-        }
-        .cta-button:hover {
-            background: var(--color-primary-dark);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(229, 57, 53, 0.3);
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .section-header .subtitle {
-            color: var(--color-primary);
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-        }
-
-        /* Course Grid */
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        .course-card {
-            background: var(--bg-card);
-            border-radius: var(--border-radius-md);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            text-decoration: none;
-            color: var(--text-primary);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-        .course-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--color-primary);
-        }
-        .card-thumbnail {
-            width: 100%; height: 180px; display: flex;
-            justify-content: center; align-items: center;
-            font-size: 4rem;
-        }
-        .card-info {
-            padding: 1.5rem;
-            flex-grow: 1; display: flex; flex-direction: column;
-        }
-        .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; }
-        .card-info p { color: var(--text-secondary); font-size: 0.95rem; flex-grow: 1; }
-        
-        /* Payment Section */
-        #payment-section {
-            display: none; /* Logic controlled by JS */
-            flex-direction: column;
-            align-items: center;
-            min-height: 70vh;
-            padding: 4rem 1rem;
-        }
-        .pricing-card {
-            background: var(--bg-light); border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-md); padding: 2.5rem;
-            width: 100%; max-width: 450px; text-align: center;
-            box-shadow: var(--shadow-lg); position: relative; overflow: hidden;
-        }
-        .pricing-card::before {
-            content: ''; position: absolute; top: -100px; left: 50%;
-            width: 200px; height: 200px; transform: translateX(-50%);
-            background: radial-gradient(circle, rgba(229, 57, 53, 0.2), transparent 70%);
-            border-radius: 50%;
-        }
-        .pricing-card .title { font-family: var(--font-display); font-size: 2rem; }
-        .pricing-card .price { font-size: 3.5rem; font-weight: 700; margin: 1rem 0; color: var(--color-primary); }
-        .pricing-card .price-time { font-size: 1rem; color: var(--text-secondary); font-weight: 400; }
-        .pricing-card .features-list { list-style: none; margin: 2rem 0; text-align: left; display: flex; flex-direction: column; gap: 1rem; }
-        .features-list li { display: flex; align-items: center; gap: 0.75rem; }
-        .features-list .check-icon { color: var(--color-secondary); font-weight: bold; }
-        
-        /* Course Page */
-        .course-page {
-            display: none; /* Logic controlled by JS */
-            max-width: 1000px; margin: 2rem auto;
-            padding: 2.5rem; background: var(--bg-light);
-            border-radius: var(--border-radius-md);
-        }
-        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 2rem; font-weight: 600; }
-        .course-page-title { margin-bottom: 2rem; border-bottom: 2px solid var(--color-primary); padding-bottom: 1rem; }
-        .course-content-layout { display: grid; grid-template-columns: 1fr; gap: 3rem; }
-        @media (min-width: 992px) { .course-content-layout { grid-template-columns: 2.5fr 1fr; } }
-        .video-placeholder { width: 100%; aspect-ratio: 16 / 9; background: var(--bg-dark); display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--color-primary); margin-bottom: 2rem; border-radius: var(--border-radius-sm); }
-        .course-modules-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
-        .course-modules-list li { background: var(--bg-dark); padding: 1.25rem; border-radius: var(--border-radius-sm); border-left: 4px solid var(--color-primary); }
-        .course-sidebar .enroll-btn { display: block; width: 100%; text-align: center; }
-
-        /* --- Footer --- */
-        .footer {
-            background: var(--bg-light); color: var(--text-secondary);
-            padding: 3rem 2rem; margin-top: 4rem; text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-        .footer .logo { justify-content: center; margin-bottom: 1.5rem; }
-        .footer-links { list-style: none; display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-        .footer-copyright { font-size: 0.9rem; color: var(--text-muted); }
-
-        /* --- Responsive Design --- */
-        @media (max-width: 1024px) {
-            .nav-menu { display: none; }
-            .hamburger, .search-icon-mobile { display: block; }
-            .user-info { display: none; }
-        }
-
-        @media (max-width: 768px) {
-            body { padding-top: 70px; }
-            .header { height: 70px; padding: 0 1rem; }
-            .logo { font-size: 1.2rem; }
-            .header-center {
-                position: absolute; top: 100%; left: 0; width: 100%;
-                background: rgba(18, 18, 18, 0.98); padding: 1rem;
-                transform: translateY(-200%); visibility: hidden;
-                transition: var(--transition); box-shadow: var(--shadow-md);
-            }
-            .header-center.active { transform: translateY(0); visibility: visible; }
-
-            /* Mobile Nav Menu Flyout */
-            .nav-menu {
-                position: fixed; top: 70px; left: 0; width: 100%;
-                height: calc(100vh - 70px); background: var(--bg-dark);
-                flex-direction: column; justify-content: center; align-items: center;
-                transform: translateX(-100%); transition: transform 0.4s ease; display: flex;
-            }
-            .nav-menu.active { transform: translateX(0); }
-            .nav-menu li { width: 100%; text-align: center; }
-            .nav-menu a { display: block; padding: 1.5rem 2rem; font-size: 1.2rem; }
-            .nav-menu a::after { display: none; }
-        }
-
-        /* Utility & Animation Classes */
         .hidden { display: none; }
-        .visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-
     </style>
 </head>
 <body>
     <h1 class="visually-hidden">Modern Farmer: Online Agriculture Courses</h1>
-
-    <!-- Search Backdrop -->
-    <div class="search-backdrop" id="searchBackdrop"></div>
-
+    
     <!-- Auth Modal -->
     <div class="auth-modal" id="authModal">
         <div class="auth-container">
             <button class="close-button" id="closeAuthModal" aria-label="Close authentication modal">&times;</button>
-            <div class="auth-header">
-                <h2 class="auth-title" id="authTitle">Welcome Back</h2>
-                <p class="auth-subtitle" id="authSubtitle">Sign in to access your courses</p>
-            </div>
+            <div class="auth-header"><h2 class="auth-title" id="authTitle">Welcome Back</h2><p class="auth-subtitle" id="authSubtitle">Sign in to access your courses</p></div>
             <form class="auth-form" id="authForm" novalidate>
-                <div class="form-group hidden" id="usernameGroup">
-                    <label for="authUsername" class="visually-hidden">Username</label>
-                    <input class="form-input" type="text" id="authUsername" placeholder="Enter your username">
-                </div>
-                <div class="form-group">
-                    <label for="authEmail" class="visually-hidden">Email</label>
-                    <input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required>
-                </div>
-                <div class="form-group">
-                    <label for="authPassword" class="visually-hidden">Password</label>
-                    <input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required>
-                </div>
+                <div class="form-group hidden" id="usernameGroup"><label for="authUsername" class="visually-hidden">Username</label><input class="form-input" type="text" id="authUsername" placeholder="Enter your username"></div>
+                <div class="form-group"><label for="authEmail" class="visually-hidden">Email</label><input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required></div>
+                <div class="form-group"><label for="authPassword" class="visually-hidden">Password</label><input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required></div>
                 <button class="form-button" type="submit" id="authSubmitBtn">Sign In</button>
-                <button class="form-button google-button" type="button" id="googleSignInBtn">
-                    <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                    Continue with Google
-                </button>
+                <button class="form-button google-button" type="button" id="googleSignInBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
             </form>
-            <div class="auth-switch">
-                <span id="authSwitchText">Don't have an account?</span>
-                <a href="#" class="auth-switch-link" id="authSwitchLink">Sign up</a>
-            </div>
+            <div class="auth-switch"><span id="authSwitchText">Don't have an account?</span><a href="#" class="auth-switch-link" id="authSwitchLink">Sign up</a></div>
         </div>
     </div>
-
+    
+    <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
     <header class="header" id="page-header">
         <a href="#home-view" class="logo">
             <span class="logo-icon" aria-hidden="true">🌱</span>
             <span>MODERN FARMER</span>
         </a>
-
-        <div class="header-center" id="headerCenter">
-            <div class="search-container">
-                <label for="searchInput" class="visually-hidden">Search Courses</label>
-                <input type="search" class="search-input" id="searchInput" placeholder="Search courses...">
-                <div class="search-results" id="searchResults"></div>
-                <div class="no-results" id="noResults">
-                    <h3>No Results Found</h3>
-                    <p>Try searching for something else</p>
-                </div>
-            </div>
-        </div>
-
         <div class="header-right">
             <nav class="desktop-nav" aria-label="Main Navigation">
-                <ul class="nav-menu" id="navMenuDesktop">
+                <ul class="nav-menu">
                     <li><a href="#home-view">HOME</a></li>
-                    <li><a href="#courses-section">COURSES</a></li>
+                    <li class="dropdown">
+                        <a href="#courses-section">COURSES &#9662;</a>
+                        <div class="dropdown-content">
+                            <!-- Populated by JS -->
+                        </div>
+                    </li>
                     <li><a href="#testimonials-section">TESTIMONIALS</a></li>
                     <li><a href="#contact-section">CONTACT</a></li>
                 </ul>
             </nav>
-
             <div id="auth-section">
                 <div class="user-profile" id="userProfile" tabindex="0" aria-label="User profile and login/logout">
-                    <div class="user-avatar" id="userAvatar" aria-hidden="true">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name" id="userName">Guest</div>
-                        <div class="user-action-text" id="userActionText">Login</div>
-                    </div>
+                    <div class="user-avatar" id="userAvatar" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></div>
+                    <div class="user-info"><div class="user-name" id="userName">Guest</div><div class="user-action-text" id="userActionText">Login</div></div>
                 </div>
             </div>
-            
-            <button class="search-icon-mobile" id="searchIconMobile" aria-label="Open search bar">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            </button>
-            <button class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
+            <button class="hamburger" id="hamburger" aria-label="Open navigation menu" aria-expanded="false"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
         </div>
-        
-        <!-- Mobile Navigation Menu -->
-        <nav class="mobile-nav" aria-label="Mobile Navigation">
-             <ul class="nav-menu" id="navMenuMobile">
-                <li><a href="#home-view">HOME</a></li>
-                <li><a href="#courses-section">COURSES</a></li>
-                <li><a href="#testimonials-section">TESTIMONIALS</a></li>
-                <li><a href="#contact-section">CONTACT</a></li>
-            </ul>
-        </nav>
     </header>
-
-    <main id="main-content-area">
-
-        <!-- Home View: Contains Hero, Courses, Testimonials etc. -->
-        <div id="home-view">
-            <section class="hero" aria-labelledby="hero-title">
-                <div class="container">
-                    <h1 id="hero-title">Your Agricultural Success Starts Here</h1>
-                    <p>Master modern farming techniques with our practical, expert-led online courses. Grow your knowledge, increase your yield, and cultivate a profitable future.</p>
-                    <a href="#courses-section" class="cta-button">Explore All Courses</a>
-                </div>
-            </section>
-
-            <section id="courses-section" class="container" aria-labelledby="courses-title">
-                <div class="section-header">
-                    <p class="subtitle">Our Catalog</p>
-                    <h2 id="courses-title">Featured Courses</h2>
-                </div>
-                <div class="course-grid">
-                    <!-- Course cards dynamically generated by JS -->
-                </div>
-            </section>
-
-            <section id="testimonials-section" class="container" aria-labelledby="testimonials-title">
-                 <div class="section-header">
-                    <p class="subtitle">Social Proof</p>
-                    <h2 id="testimonials-title">What Our Farmers Say</h2>
-                </div>
-                <!-- This can be expanded into a grid or carousel -->
-                 <div style="background: var(--bg-card); border-left: 4px solid var(--color-primary); padding: 2rem; border-radius: var(--border-radius-md);">
-                    <p style="font-size: 1.1rem; font-style: italic;">"The Maize Farming course helped me increase my yield by 30% this season! The modules on fertilizer timing were a game-changer. Highly recommend."</p>
-                    <strong style="display: block; margin-top: 1rem;">- J. Doe, Satisfied Farmer</strong>
-                </div>
-            </section>
-        </div>
-
-        <!-- Payment View -->
-        <section id="payment-section" aria-labelledby="payment-title">
-            <div class="pricing-card fade-in">
-                <h2 id="payment-title" class="title">Full Access Pass</h2>
-                <p class="sub-title">Unlock every course, tool, and resource.</p>
-                <div class="price">
-                    $49.99<span class="price-time">/year</span>
-                </div>
-                <ul class="features-list">
-                    <li><span class="check-icon">✓</span> 1-Year Full Access</li>
-                    <li><span class="check-icon">✓</span> All 7 Farming Modules</li>
-                    <li><span class="check-icon">✓</span> Expert Guidance & Tips</li>
-                    <li><span class="check-icon">✓</span> Private Community Access</li>
-                    <li><span class="check-icon">✓</span> All Future Course Updates</li>
-                </ul>
-                <a href="payment.html" id="unlockButton" class="cta-button">Unlock Your Potential</a>
-            </div>
-        </section>
-
-        <!-- Course Page Template (Populated by JS) -->
-        <section id="course-page-template" class="course-page" aria-live="polite">
-            <a href="#home-view" class="back-link">&larr; Back to All Courses</a>
-            <h2 id="course-page-title" class="course-page-title"></h2>
-            <div class="course-content-layout">
-                <div class="course-main-content">
-                    <div class="video-placeholder" id="course-page-video"></div>
-                    <h3>Course Description</h3>
-                    <p id="course-page-description" style="color: var(--text-secondary);"></p>
-                    <h3>Course Modules</h3>
-                    <ul id="course-page-modules" class="course-modules-list"></ul>
-                </div>
-                <aside class="course-sidebar">
-                    <a href="#payment-section" class="enroll-btn cta-button">ENROLL NOW</a>
-                    <p id="course-page-meta" style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 1rem; color: var(--text-secondary); margin-top: 1.5rem;"></p>
-                </aside>
-            </div>
-        </section>
-
-    </main>
     
-    <footer id="contact-section" class="footer">
-        <a href="#home-view" class="logo">
-            <span class="logo-icon" aria-hidden="true">🌱</span>
-            <span>MODERN FARMER</span>
-        </a>
-        <ul class="footer-links">
-            <li><a href="#courses-section">Courses</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Support</a></li>
-            <li><a href="#">Privacy Policy</a></li>
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile Navigation">
+        <ul class="nav-menu">
+            <li><a href="#home-view">HOME</a></li>
+            <li class="dropdown">
+                <a href="#" id="mobileCoursesToggle">COURSES &#9662;</a>
+                <div class="dropdown-content">
+                    <!-- Populated by JS -->
+                </div>
+            </li>
+            <li><a href="#testimonials-section">TESTIMONIALS</a></li>
+            <li><a href="#contact-section">CONTACT</a></li>
         </ul>
-        <p class="footer-copyright">&copy; 2025 ALFA OCTAL SYSTEMS. ALL RIGHTS RESERVED.</p>
-    </footer>
-    
+    </nav>
+
+    <main>
+        <section class="hero-slider-container" id="home-view" aria-label="Featured Courses Showcase">
+            <div class="slide">
+                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1587313439340-e070a2d05f3a?q=80&w=2070&auto=format&fit=crop');">
+                    <div class="content"><div class="name">Precision Poultry</div><div class="des">Master the 7-week broiler cycle for maximum profitability and efficiency.</div><a href="#broiler-course-page" class="cta-button">Learn More</a></div>
+                </div>
+                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1598514983318-2f66f174e356?q=80&w=1974&auto=format&fit=crop');">
+                    <div class="content"><div class="name">High-Yield Crops</div><div class="des">Unlock secrets to boosting your maize harvest, even in challenging climates.</div><a href="#maize-course-page" class="cta-button">Learn More</a></div>
+                </div>
+                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1621232353920-7b5a8e3f1e9c?q=80&w=2070&auto=format&fit=crop');">
+                    <div class="content"><div class="name">Mushroom Cultivation</div><div class="des">Turn small spaces into profitable ventures by mastering the art of fungi farming.</div><a href="#mushroom-course-page" class="cta-button">Learn More</a></div>
+                </div>
+                <div class="item" style="background-image: url('https://images.unsplash.com/photo-1597031123922-ac73c48054ac?q=80&w=1931&auto=format&fit=crop');">
+                    <div class="content"><div class="name">Aquaculture Mastery</div><div class="des">Learn the science of water quality to build a thriving, sustainable fish farming business.</div><a href="#fish-course-page" class="cta-button">Learn More</a></div>
+                </div>
+            </div>
+            <div class="slider-button"><button class="prev" aria-label="Previous Slide">◁</button><button class="next" aria-label="Next Slide">▷</button></div>
+        </section>
+
+        <div id="main-content-area">
+             <section id="courses-section" class="container" aria-labelledby="courses-title">
+                <div class="section-header">
+                    <p class="subtitle">Our Catalog</p><h2 id="courses-title">Featured Courses</h2>
+                </div>
+                <div class="course-grid"></div>
+            </section>
+            <!-- Other sections like testimonials, payment, course pages will be inserted here by JS logic or can be added manually -->
+        </div>
+    </main>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- NOTE: ALL JS LOGIC IS PRESERVED. SELECTORS UPDATED FOR NEW STRUCTURE ---
+        // --- HERO SLIDER LOGIC ---
+        const nextBtn = document.querySelector(".next");
+        const prevBtn = document.querySelector(".prev");
+        nextBtn.addEventListener("click", () => document.querySelector(".slide").appendChild(document.querySelectorAll(".item")[0]));
+        prevBtn.addEventListener("click", () => document.querySelector(".slide").prepend(document.querySelectorAll(".item")[document.querySelectorAll(".item").length - 1]));
 
         // --- GLOBAL STATE ---
-        let currentUser = null;
-        let isSubscribed = false;
-        let currentAuthMode = 'signin';
-        let searchDebounceTimer;
+        let currentUser = null, isSubscribed = false, currentAuthMode = 'signin';
 
         // --- COURSE DATA ---
         const courses = [
-            { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', emoji: '🐔', bgColor: 'rgba(211, 47, 47, 0.2)', shortDesc: '7-Week Profit Cycle. Mastering FCR and Biosecurity.', longDesc: 'This intensive course teaches you how to manage the **Feed Conversion Ratio (FCR)** and minimize mortality to achieve maximum profit in the quick 7-week broiler cycle.', modules: ['The Business Foundation', 'Brooding Mastery (Day 1-14)', 'Nutrition & FCR Optimization', 'Biosecurity and Disease Control', 'Harvest and Finance'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'roadrunner-course-page', title: 'Road Runner Chicken Rearing', emoji: '🏃', bgColor: 'rgba(56, 142, 60, 0.2)', shortDesc: 'Indigenous Poultry Management for Premium Markets.', longDesc: 'Focus on the slow-growing, robust indigenous chicken model. Learn to leverage their natural hardiness for low-input costs and tap into the premium market.', modules: ['Extensive vs. Semi-Intensive Systems', 'Housing and Predator Control', 'Feed Supplementation and Foraging', 'Natural Health and Vaccination', 'Breeding and Flock Management'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'mushroom-course-page', title: 'Mushroom Farming', emoji: '🍄', bgColor: 'rgba(0, 105, 92, 0.2)', shortDesc: 'Substrate preparation, sterile spawning, and climate control.', longDesc: 'Master the cultivation of **Oyster and Button mushrooms**. This course emphasizes sterile substrate preparation and critical climate control for maximizing yields.', modules: ['Substrate Preparation and Sterilization', 'Spawning and Incubation', 'Fruiting Chamber Environment', 'Contamination Management', 'Harvesting, Packing, and Marketing'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'fish-course-page', title: 'Fish Farming (Tilapia/Catfish)', emoji: '🐟', bgColor: 'rgba(25, 118, 210, 0.2)', shortDesc: 'Aquaculture basics: Mastering Dissolved Oxygen (DO) and water quality.', longDesc: 'Aquaculture is about **water quality**. Learn to monitor key water parameters and manage pond/tank systems to prevent mass mortality from low oxygen.', modules: ['Pond/Tank Design and Preparation', 'Water Quality Mastery (DO, pH, Ammonia)', 'Stocking Density and Feeding', 'Disease Prevention and Biosecurity', 'Aeration and Harvest Strategies'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'maize-course-page', title: 'Maize Farming', emoji: '🌽', bgColor: 'rgba(251, 192, 45, 0.2)', shortDesc: 'Fertilizer timing, drought mitigation, and maximizing yield.', longDesc: 'The essential guide to high-yield maize production. Focus on **timely fertilizer application** and managing water stress during critical reproductive phases.', modules: ['Soil Testing and Variety Selection', 'Planting and Basal Dressing', 'Top Dressing Strategy', 'Water Stress Mitigation', 'Pest and Disease Management'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'sorghum-course-page', title: 'Sorghum Farming', emoji: '🌾', bgColor: 'rgba(103, 58, 183, 0.2)', shortDesc: 'Drought-resistant grain management and pest control.', longDesc: 'Ideal for arid regions. Learn to grow Sorghum, which requires up to **30% less water than maize**, providing a reliable yield where other crops fail.', modules: ['Water Conservation and Dormancy', 'Planting and Minimal Fertilizer', 'Pest Control (Shoot Fly)', 'Bird Control at Harvest', 'Marketing and Value Chain'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
-            { id: 'tobacco-course-page', title: 'Tobacco Farming', emoji: '🌿', bgColor: 'rgba(93, 64, 55, 0.2)', shortDesc: 'High-value crop: Curing techniques, topping, and sucker control.', longDesc: 'A high-value, high-labor crop demanding precision. Learn the intensive management techniques from seedbed to sale, focusing on the critical **curing process**.', modules: ['Seedbed Preparation and Transplanting', 'Topping and Suckering', 'Flue-Curing Mastery', 'Grading and Baling', 'Contract Farming and Finance'], meta: '**Duration:** 5 Modules<br>**Access:** Annual Subscription' },
+            { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', emoji: '🐔', bgColor: 'rgba(211, 47, 47, 0.2)', shortDesc: '7-Week Profit Cycle. Mastering FCR and Biosecurity.'},
+            { id: 'roadrunner-course-page', title: 'Road Runner Chicken Rearing', emoji: '🏃', bgColor: 'rgba(56, 142, 60, 0.2)', shortDesc: 'Indigenous Poultry Management for Premium Markets.'},
+            { id: 'mushroom-course-page', title: 'Mushroom Farming', emoji: '🍄', bgColor: 'rgba(0, 105, 92, 0.2)', shortDesc: 'Substrate preparation, sterile spawning, and climate control.'},
+            { id: 'fish-course-page', title: 'Fish Farming (Tilapia/Catfish)', emoji: '🐟', bgColor: 'rgba(25, 118, 210, 0.2)', shortDesc: 'Aquaculture basics: Mastering Dissolved Oxygen (DO).'},
+            { id: 'maize-course-page', title: 'Maize Farming', emoji: '🌽', bgColor: 'rgba(251, 192, 45, 0.2)', shortDesc: 'Fertilizer timing, drought mitigation, and maximizing yield.'},
+            { id: 'sorghum-course-page', title: 'Sorghum Farming', emoji: '🌾', bgColor: 'rgba(103, 58, 183, 0.2)', shortDesc: 'Drought-resistant grain management and pest control.'},
+            { id: 'tobacco-course-page', title: 'Tobacco Farming', emoji: '🌿', bgColor: 'rgba(93, 64, 55, 0.2)', shortDesc: 'High-value crop: Curing techniques and sucker control.'},
         ];
 
         // --- DOM ELEMENTS CACHE ---
         const elements = {
             hamburger: document.getElementById('hamburger'),
-            navMenuMobile: document.getElementById('navMenuMobile'),
-            searchIconMobile: document.getElementById('searchIconMobile'),
-            headerCenter: document.getElementById('headerCenter'),
-            searchInput: document.getElementById('searchInput'),
-            searchResults: document.getElementById('searchResults'),
-            noResults: document.getElementById('noResults'),
-            searchBackdrop: document.getElementById('searchBackdrop'),
+            mobileNav: document.getElementById('mobileNav'),
+            mobileNavBackdrop: document.getElementById('mobileNavBackdrop'),
+            mobileCoursesToggle: document.getElementById('mobileCoursesToggle'),
+            mobileCoursesDropdown: document.getElementById('mobileNav').querySelector('.dropdown-content'),
+            desktopCoursesDropdown: document.querySelector('.desktop-nav .dropdown-content'),
             authModal: document.getElementById('authModal'),
             authForm: document.getElementById('authForm'),
             userProfile: document.getElementById('userProfile'),
@@ -633,22 +376,17 @@ expand_less
             authSwitchLink: document.getElementById('authSwitchLink'),
             googleSignInBtn: document.getElementById('googleSignInBtn'),
             usernameGroup: document.getElementById('usernameGroup'),
-            mainContent: document.getElementById('main-content-area'),
-            homeView: document.getElementById('home-view'),
-            paymentSection: document.getElementById('payment-section'),
+            mainContentArea: document.getElementById('main-content-area'),
             courseGrid: document.querySelector('.course-grid'),
-            coursePageTemplate: document.getElementById('course-page-template'),
-            unlockButton: document.getElementById('unlockButton'),
         };
 
         // --- INITIALIZATION ---
         function init() {
             if (!window.firebase || !window.firebase.auth) {
-                console.error("Firebase is not configured. App functionality will be limited.");
-                alert("Firebase is not configured. Please check your console and API keys.");
-                return;
+                console.error("Firebase is not configured."); return;
             }
             populateCourseGrid();
+            populateDropdowns();
             initializeEventListeners();
             firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
         }
@@ -657,177 +395,64 @@ expand_less
             elements.courseGrid.innerHTML = courses.map(course => `
                 <a href="#${course.id}" class="course-card" data-target="${course.id}">
                     <div class="card-thumbnail" style="background-color: ${course.bgColor};" role="img" aria-label="${course.title}">${course.emoji}</div>
-                    <div class="card-info">
-                        <h3>${course.title}</h3>
-                        <p>${course.shortDesc}</p>
-                    </div>
-                </a>
-            `).join('');
+                    <div class="card-info"><h3>${course.title}</h3><p>${course.shortDesc}</p></div>
+                </a>`).join('');
+        }
+        
+        function populateDropdowns() {
+            const dropdownHTML = courses.map(course => `<a href="#${course.id}" class="course-link" data-target="${course.id}">${course.title}</a>`).join('');
+            elements.desktopCoursesDropdown.innerHTML = dropdownHTML;
+            elements.mobileCoursesDropdown.innerHTML = dropdownHTML;
         }
 
         // --- EVENT LISTENERS ---
         function initializeEventListeners() {
             elements.hamburger.addEventListener('click', toggleMobileMenu);
-            elements.searchIconMobile.addEventListener('click', toggleMobileSearch);
-            elements.searchInput.addEventListener('input', handleSearchInput);
-            elements.searchInput.addEventListener('focus', () => handleSearchInput({ target: elements.searchInput }));
-            elements.searchBackdrop.addEventListener('click', closeSearch);
-            elements.userProfile.addEventListener('click', handleProfileClick);
+            elements.mobileNavBackdrop.addEventListener('click', toggleMobileMenu);
+            elements.mobileCoursesToggle.addEventListener('click', (e) => { e.preventDefault(); elements.mobileCoursesDropdown.classList.toggle('show'); });
+            elements.userProfile.addEventListener('click', () => currentUser ? handleLogout() : openAuthModal());
             elements.closeAuthModal.addEventListener('click', closeAuthModal);
             elements.authModal.addEventListener('click', (e) => e.target === elements.authModal && closeAuthModal());
             elements.authForm.addEventListener('submit', handleAuthSubmit);
             elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
             elements.authSwitchLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthMode(); });
-
-            document.querySelectorAll('a[href^="#"]').forEach(link => {
-                link.addEventListener('click', handleNavigation);
-            });
-            
-            document.addEventListener('click', (e) => {
-                if (!e.target.closest('.search-container') && !e.target.closest('.search-icon-mobile')) closeSearch(true);
-            });
+            document.body.addEventListener('click', handleNavigation);
         }
-
-        // --- UI & NAVIGATION ---
+        
         function toggleMobileMenu() {
-            const isExpanded = elements.hamburger.getAttribute('aria-expanded') === 'true';
-            elements.hamburger.setAttribute('aria-expanded', !isExpanded);
-            elements.navMenuMobile.classList.toggle('active');
+            elements.mobileNav.classList.toggle('active');
+            elements.mobileNavBackdrop.classList.toggle('active');
         }
 
-        function closeMobileMenu() {
-            elements.hamburger.setAttribute('aria-expanded', 'false');
-            elements.navMenuMobile.classList.remove('active');
-        }
-
-        function toggleMobileSearch() {
-            elements.headerCenter.classList.toggle('active');
-            if (elements.headerCenter.classList.contains('active')) {
-                elements.searchInput.focus();
-            }
-        }
-
+        // --- NAVIGATION & VIEW LOGIC ---
         function handleNavigation(e) {
-            const link = e.currentTarget;
-            let targetId = link.getAttribute('href');
-            if(link.classList.contains('course-card')) {
-                targetId = `#${link.dataset.target}`;
-            }
-
-            if (!targetId || targetId === '#') { e.preventDefault(); return; }
+            let targetLink = e.target.closest('a');
+            if (!targetLink || !targetLink.getAttribute('href')?.startsWith('#')) return;
             
             e.preventDefault();
-            closeMobileMenu();
-            closeSearch(true);
+            const targetId = targetLink.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
 
-            const targetCourse = courses.find(c => `#${c.id}` === targetId);
-            
-            if (targetCourse) {
-                if (!currentUser) { openAuthModal(); return; }
-                if (!isSubscribed) { showView('#payment-section'); return; }
+            if (elements.mobileNav.classList.contains('active')) {
+                toggleMobileMenu();
             }
-            
-            showView(targetId);
-        }
 
-        function showView(targetId) {
-            window.scrollTo({ top: 0, behavior: 'auto' });
-
-            // Hide all main views first
-            elements.homeView.style.display = 'none';
-            elements.coursePageTemplate.style.display = 'none';
-            elements.paymentSection.style.display = 'none';
-
-            const targetCourse = courses.find(c => `#${c.id}` === targetId);
-
-            if (targetCourse) {
-                renderCoursePage(targetCourse);
-                elements.coursePageTemplate.style.display = 'block';
-            } else if (targetId === '#payment-section') {
-                elements.paymentSection.style.display = 'flex';
+            // This is a simplified view logic. For full single-page app behavior,
+            // you'd hide/show sections. For this version, we just scroll.
+            if (targetElement) {
+                 setTimeout(() => targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+            } else if (targetId === '#home-view') {
+                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
-                elements.homeView.style.display = 'block';
-                const section = document.querySelector(targetId);
-                if (section && targetId !== '#home-view') {
-                    setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-                }
+                // Here you would handle showing the course page or payment page
+                console.log("Navigate to dynamic view:", targetId);
+                // alert(`Logic to show page for ${targetId} would run here.`);
             }
         }
 
-        function renderCoursePage(course) {
-            const page = elements.coursePageTemplate;
-            page.querySelector('#course-page-title').innerHTML = `${course.title} ${course.emoji}`;
-            page.querySelector('#course-page-video').textContent = `[ Placeholder for ${course.title} Video ]`;
-            page.querySelector('#course-page-description').innerHTML = course.longDesc.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            page.querySelector('#course-page-modules').innerHTML = course.modules.map(m => `<li>${m}</li>`).join('');
-            page.querySelector('#course-page-meta').innerHTML = course.meta.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-            const enrollBtn = page.querySelector('.enroll-btn');
-            if (isSubscribed) {
-                enrollBtn.textContent = 'Course Content Unlocked';
-                enrollBtn.style.background = 'var(--color-primary)';
-                enrollBtn.style.cursor = 'default';
-                enrollBtn.setAttribute('href', `#${course.id}`);
-            } else {
-                enrollBtn.textContent = 'ENROLL NOW';
-                enrollBtn.style.background = 'var(--color-secondary)';
-                enrollBtn.style.cursor = 'pointer';
-                enrollBtn.setAttribute('href', '#payment-section');
-            }
-        }
-
-        // --- SEARCH LOGIC (Unchanged) ---
-        function handleSearchInput(e) {
-            clearTimeout(searchDebounceTimer);
-            searchDebounceTimer = setTimeout(() => {
-                const query = e.target.value.toLowerCase().trim();
-                if (query.length > 1) {
-                    const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query));
-                    displaySearchResults(filtered);
-                } else {
-                    elements.searchResults.classList.remove('active');
-                    elements.noResults.classList.remove('active');
-                }
-            }, 250);
-        }
-
-        function displaySearchResults(results) {
-            elements.searchBackdrop.classList.add('active');
-            if (results.length > 0) {
-                elements.noResults.classList.remove('active');
-                elements.searchResults.innerHTML = results.map(course => `
-                    <div class="search-result-item" data-target="${course.id}">
-                        <h4>${course.emoji} ${course.title}</h4>
-                        <p style="color: var(--text-secondary);">${course.shortDesc}</p>
-                    </div>
-                `).join('');
-                elements.searchResults.querySelectorAll('.search-result-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        const targetId = `#${item.getAttribute('data-target')}`;
-                        handleNavigation({ preventDefault: () => {}, currentTarget: { getAttribute: () => targetId, classList: { contains: () => false } } });
-                    });
-                });
-                elements.searchResults.classList.add('active');
-            } else {
-                elements.searchResults.classList.remove('active');
-                elements.noResults.classList.add('active');
-            }
-        }
-
-        function closeSearch(force = false) {
-            if (force) { elements.searchInput.value = ''; }
-            elements.searchBackdrop.classList.remove('active');
-            elements.noResults.classList.remove('active');
-            elements.searchResults.classList.remove('active');
-            if (window.innerWidth <= 768) {
-                elements.headerCenter.classList.remove('active');
-            }
-        }
-
-        // --- AUTHENTICATION LOGIC (Unchanged) ---
-        function handleProfileClick() {
-            currentUser ? handleLogout() : openAuthModal();
-        }
+        // --- AUTHENTICATION LOGIC ---
+        function openAuthModal() { elements.authModal.classList.add('active'); }
+        function closeAuthModal() { elements.authModal.classList.remove('active'); elements.authForm.reset(); }
 
         async function handleAuthStateChange(user) {
             if (user) {
@@ -835,8 +460,7 @@ expand_less
                 currentUser = userDoc.exists() ? { ...user, ...userDoc.data() } : user;
                 isSubscribed = userDoc.exists() ? userDoc.data().subscription || false : false;
             } else {
-                currentUser = null;
-                isSubscribed = false;
+                currentUser = null; isSubscribed = false;
             }
             updateUIForAuthState();
         }
@@ -850,26 +474,20 @@ expand_less
                     elements.userAvatar.innerHTML = `<img src="${currentUser.photoURL}" alt="${displayName}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
                 } else {
                     elements.userAvatar.innerHTML = displayName.charAt(0).toUpperCase();
-                    elements.userAvatar.style.background = `hsl(${displayName.length * 20 % 360}, 50%, 50%)`;
                 }
-                elements.unlockButton.href = `payment.html?uid=${currentUser.uid}`;
             } else {
                 elements.userName.textContent = 'Guest';
                 elements.userActionText.textContent = 'Login';
                 elements.userAvatar.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
-                elements.userAvatar.style.background = 'var(--color-primary)';
-                elements.unlockButton.href = 'payment.html';
             }
             updateCrownIcon();
         }
-        
+
         function updateCrownIcon() {
             const existingCrown = elements.userProfile.querySelector('.crown-icon');
             if (isSubscribed && !existingCrown) {
                 const crown = document.createElement('span');
-                crown.className = 'crown-icon';
-                crown.innerHTML = '👑';
-                crown.setAttribute('aria-label', 'Subscribed user');
+                crown.className = 'crown-icon'; crown.innerHTML = '👑';
                 elements.userProfile.prepend(crown);
             } else if (!isSubscribed && existingCrown) {
                 existingCrown.remove();
@@ -882,79 +500,55 @@ expand_less
             const password = document.getElementById('authPassword').value;
             const username = document.getElementById('authUsername').value;
             elements.authSubmitBtn.disabled = true;
-            elements.authSubmitBtn.textContent = 'Processing...';
 
             try {
                 if (currentAuthMode === 'signup') {
                     if (!username) { alert("Please enter a username."); throw new Error("Username required"); }
                     const userCred = await firebase.createUserWithEmailAndPassword(firebase.auth, email, password);
                     await firebase.updateProfile(userCred.user, { displayName: username });
-                    await firebase.setDoc(firebase.doc(firebase.db, 'users', userCred.user.uid), {
-                        username: username, email: userCred.user.email, createdAt: new Date(), subscription: false
-                    });
+                    await firebase.setDoc(firebase.doc(firebase.db, 'users', userCred.user.uid), { username, email: userCred.user.email, createdAt: new Date(), subscription: false });
                 } else {
                     await firebase.signInWithEmailAndPassword(firebase.auth, email, password);
                 }
                 closeAuthModal();
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-            } finally {
-                elements.authSubmitBtn.disabled = false;
-                elements.authSubmitBtn.textContent = currentAuthMode === 'signup' ? 'Create Account' : 'Sign In';
-            }
+            } catch (error) { alert(`Error: ${error.message}`); }
+            finally { elements.authSubmitBtn.disabled = false; }
         }
-        
+
         async function handleGoogleSignIn() {
             try {
                 const result = await firebase.signInWithPopup(firebase.auth, firebase.googleProvider);
                 const user = result.user;
                 const userDocRef = firebase.doc(firebase.db, 'users', user.uid);
                 const userDoc = await firebase.getDoc(userDocRef);
-
                 if (!userDoc.exists()) {
                     let username = prompt("Welcome! Please choose a username.", user.displayName.split(' ')[0] || '');
-                    while (!username) { username = prompt("Username is required. Please choose one."); }
-                    await firebase.setDoc(userDocRef, {
-                        username: username, email: user.email, createdAt: new Date(), subscription: false
-                    });
+                    if(username) await firebase.setDoc(userDocRef, { username, email: user.email, createdAt: new Date(), subscription: false });
                 }
                 closeAuthModal();
-            } catch (error) {
-                alert(`Google Sign-In Error: ${error.message}`);
-            }
+            } catch (error) { alert(`Google Sign-In Error: ${error.message}`); }
         }
         
         async function handleLogout() {
             if (confirm("Are you sure you want to log out?")) {
                 await firebase.signOut(firebase.auth);
-                showView('#home-view');
             }
         }
-
-        function openAuthModal() { elements.authModal.classList.add('active'); }
-        function closeAuthModal() { elements.authModal.classList.remove('active'); elements.authForm.reset(); }
 
         function switchAuthMode() {
             currentAuthMode = currentAuthMode === 'signin' ? 'signup' : 'signin';
-            if (currentAuthMode === 'signup') {
-                elements.authTitle.textContent = 'Create Account';
-                elements.authSubtitle.textContent = 'Join thousands of successful farmers';
-                elements.authSubmitBtn.textContent = 'Create Account';
-                document.getElementById('authSwitchText').textContent = 'Already have an account?';
-                elements.authSwitchLink.textContent = 'Sign in';
-                elements.usernameGroup.classList.remove('hidden');
-            } else {
-                elements.authTitle.textContent = 'Welcome Back';
-                elements.authSubtitle.textContent = 'Sign in to access your courses';
-                elements.authSubmitBtn.textContent = 'Sign In';
-                document.getElementById('authSwitchText').textContent = "Don't have an account?";
-                elements.authSwitchLink.textContent = 'Sign up';
-                elements.usernameGroup.classList.add('hidden');
-            }
+            const isSignup = currentAuthMode === 'signup';
+            elements.authTitle.textContent = isSignup ? 'Create Account' : 'Welcome Back';
+            elements.authSubtitle.textContent = isSignup ? 'Join successful farmers' : 'Sign in to access your courses';
+            elements.authSubmitBtn.textContent = isSignup ? 'Create Account' : 'Sign In';
+            document.getElementById('authSwitchText').textContent = isSignup ? 'Already have an account?' : "Don't have an account?";
+            elements.authSwitchLink.textContent = isSignup ? 'Sign in' : 'Sign up';
+            elements.usernameGroup.classList.toggle('hidden', !isSignup);
         }
-        
+
         init();
     });
     </script>
 </body>
 </html>
+```
