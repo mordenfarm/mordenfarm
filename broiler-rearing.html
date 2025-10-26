@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broiler Chicken Rearing Course | AlfaOctal Campus</title>
+    <meta name="description" content="A detailed course page for mastering the art and science of broiler chicken rearing, ready to be populated with content from a Firebase backend.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK Integration -->
+    <script>
+        // IMPORTANT: Replace these with your actual Firebase project configuration credentials.
+        // This is necessary for the page to connect to your database and fetch content.
+        const firebaseConfig = {
+          apiKey: "%%FIREBASE_API_KEY%%",
+          authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+          projectId: "%%FIREBASE_PROJECT_ID%%",
+          storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+          messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+          appId: "%%FIREBASE_APP_ID%%"
+        };
+    </script>
+    <script type="module">
+        // Initialize Firebase and make Firestore functions available globally
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app); // Make Firestore instance globally available as 'db'
+            window.doc = doc;             // Make 'doc' function available
+            window.getDoc = getDoc;           // Make 'getDoc' function available
+            console.log("Firebase Initialized for Course Page.");
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+        }
+    </script>
+
+    <style>
+        /* --- Core Design System Variables --- */
+        :root {
+            --color-primary: #e53935;
+            --color-primary-dark: #c62828;
+            --bg-dark: #121212;
+            --bg-light: #1e1e1e;
+            --bg-card: #2a2a2a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #b0b0b0;
+            --border-color: #424242;
+            --border-radius-md: 16px;
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.4);
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* --- Global Styles & Resets --- */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-primary);
+            line-height: 1.7;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 3rem 0;
+        }
+        a {
+            text-decoration: none;
+            color: var(--color-primary);
+            transition: var(--transition);
+        }
+        a:hover { color: var(--color-primary-dark); }
+
+        /* --- Loading Spinner --- */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--border-color);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Error Message Styling --- */
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--bg-card);
+            border-left: 5px solid var(--color-primary);
+            border-radius: 8px;
+            color: var(--text-secondary);
+        }
+
+        /* --- Main Header --- */
+        .main-header {
+            background-color: var(--bg-light);
+            padding: 1rem 5%;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-header .logo {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--text-primary);
+        }
+        .main-header .back-link {
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .main-header .back-link:hover {
+            background-color: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+        }
+
+        /* --- Course Hero Section --- */
+        .course-hero {
+            padding: 4rem 5%;
+            background-color: var(--bg-light);
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .course-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .course-hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* --- Main Content Area --- */
+        .course-content {
+            display: none; /* Hidden until data is loaded */
+        }
+        .content-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--border-color);
+        }
+        .content-section h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .content-section h2 svg {
+            width: 28px;
+            height: 28px;
+            color: var(--color-primary);
+        }
+        .content-section p, .content-section li {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        /* --- Key Modules List --- */
+        .modules-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .module-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .module-item:last-child { border-bottom: none; }
+        .module-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background-color: var(--bg-light);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+        }
+        .module-icon svg {
+            width: 22px;
+            height: 22px;
+        }
+        .module-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+            color: var(--text-primary);
+        }
+
+        /* --- Notes & Video Grid --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .note-card, .video-card {
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .note-card:hover, .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(229, 57, 53, 0.15);
+            border-color: var(--color-primary);
+        }
+        .note-card-content {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .note-card-icon {
+            font-size: 2.5rem;
+            color: var(--color-primary);
+            margin-bottom: 1rem;
+        }
+        .note-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .download-button {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            background-color: var(--color-primary);
+            color: var(--text-primary);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .download-button:hover { background-color: var(--color-primary-dark); }
+
+        .video-thumbnail {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            background-color: #000;
+        }
+        .video-thumbnail iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-card-info {
+            padding: 1rem;
+        }
+        .video-card-info h3 { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo">AlfaOctal Campus</div>
+        <a href="index.html" class="back-link">← Back to Courses</a>
+    </header>
+
+    <main>
+        <div id="loader" class="loader-container">
+            <div class="loader"></div>
+        </div>
+
+        <div id="error-container" style="display: none;" class="container">
+             <div class="error-message">
+                <h2>Content Not Found</h2>
+                <p>We couldn't load the course content at this moment. It might not be published yet. Please check back later or contact support.</p>
+            </div>
+        </div>
+
+        <div id="course-content-wrapper" class="course-content">
+            <section class="course-hero">
+                <h1 id="course-title"></h1>
+                <p id="course-subtitle"></p>
+            </section>
+
+            <div class="container">
+                <section id="description-section" class="content-section">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        About This Course
+                    </h2>
+                    <p id="course-description"></p>
+                </section>
+
+                <section id="modules-section" class="content-section">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                        Key Modules
+                    </h2>
+                    <ul id="modules-list-container" class="modules-list">
+                        <!-- Modules will be dynamically inserted here -->
+                    </ul>
+                </section>
+
+                <section id="notes-section" class="content-section">
+                     <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        Downloadable Notes
+                    </h2>
+                    <div id="notes-grid-container" class="grid-container">
+                       <!-- Note cards will be dynamically inserted here -->
+                    </div>
+                </section>
+
+                <section id="videos-section" class="content-section">
+                    <h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
+                        Video Gallery
+                    </h2>
+                    <div id="videos-grid-container" class="grid-container">
+                        <!-- Video cards will be dynamically inserted here -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM element references
+            const loader = document.getElementById('loader');
+            const errorContainer = document.getElementById('error-container');
+            const contentWrapper = document.getElementById('course-content-wrapper');
+
+            // --- DATA FETCHING ---
+            async function fetchCourseData() {
+                // Check if Firebase is initialized
+                if (!window.db) {
+                    console.error("Firestore is not initialized.");
+                    showError();
+                    return;
+                }
+
+                try {
+                    // Define the path to the document in Firestore.
+                    // The admin panel will need to save data to this EXACT path.
+                    const courseDocRef = window.doc(window.db, "courses", "broilerRearing");
+                    const docSnap = await window.getDoc(courseDocRef);
+
+                    if (docSnap.exists()) {
+                        // If the document exists, render its data
+                        renderCourseData(docSnap.data());
+                        showContent();
+                    } else {
+                        // If no document is found at that path
+                        console.log("No such document!");
+                        showError();
+                    }
+                } catch (error) {
+                    console.error("Error fetching course data:", error);
+                    showError();
+                }
+            }
+
+            // --- UI RENDERING ---
+            function renderCourseData(data) {
+                // Populate Hero Section
+                document.getElementById('course-title').textContent = data.title || 'Course Title';
+                document.getElementById('course-subtitle').textContent = data.subtitle || 'Course Subtitle';
+
+                // Populate Description
+                // Using innerHTML to render any basic HTML tags (like <br>) from the admin panel's text editor
+                document.getElementById('course-description').innerHTML = data.description || 'No description available.';
+
+                // Populate Modules
+                const modulesContainer = document.getElementById('modules-list-container');
+                modulesContainer.innerHTML = ''; // Clear existing content
+                if (data.modules && data.modules.length > 0) {
+                    data.modules.forEach(module => {
+                        const moduleEl = document.createElement('li');
+                        moduleEl.className = 'module-item';
+                        moduleEl.innerHTML = `
+                            <div class="module-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            </div>
+                            <div class="module-info">
+                                <h3>${module.title || 'Module Title'}</h3>
+                                <p>${module.description || 'Module description.'}</p>
+                            </div>`;
+                        modulesContainer.appendChild(moduleEl);
+                    });
+                } else {
+                    modulesContainer.innerHTML = '<p>No modules have been added yet.</p>';
+                }
+
+                // Populate Notes
+                const notesContainer = document.getElementById('notes-grid-container');
+                notesContainer.innerHTML = '';
+                if (data.notes && data.notes.length > 0) {
+                    data.notes.forEach(note => {
+                        const noteEl = document.createElement('div');
+                        noteEl.className = 'note-card';
+                        noteEl.innerHTML = `
+                            <div class="note-card-content">
+                                <div class="note-card-icon">📄</div>
+                                <h3>${note.title || 'Note Title'}</h3>
+                                <a href="${note.url}" class="download-button" target="_blank" rel="noopener noreferrer">Download PDF</a>
+                            </div>`;
+                        notesContainer.appendChild(noteEl);
+                    });
+                } else {
+                    notesContainer.innerHTML = '<p>No downloadable notes have been added yet.</p>';
+                }
+
+                // Populate Videos
+                const videosContainer = document.getElementById('videos-grid-container');
+                videosContainer.innerHTML = '';
+                if (data.videos && data.videos.length > 0) {
+                    data.videos.forEach(video => {
+                        // Convert standard YouTube URL to embeddable URL
+                        const embedUrl = video.url.replace("watch?v=", "embed/");
+                        const videoEl = document.createElement('div');
+                        videoEl.className = 'video-card';
+                        videoEl.innerHTML = `
+                            <div class="video-thumbnail">
+                                <iframe src="${embedUrl}" title="${video.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                            <div class="video-card-info">
+                                <h3>${video.title || 'Video Title'}</h3>
+                            </div>`;
+                        videosContainer.appendChild(videoEl);
+                    });
+                } else {
+                    videosContainer.innerHTML = '<p>No videos have been added yet.</p>';
+                }
+            }
+
+            // --- UI STATE MANAGEMENT ---
+            function showLoader() {
+                loader.style.display = 'flex';
+                errorContainer.style.display = 'none';
+                contentWrapper.style.display = 'none';
+            }
+            function showError() {
+                loader.style.display = 'none';
+                errorContainer.style.display = 'block';
+                contentWrapper.style.display = 'none';
+            }
+            function showContent() {
+                loader.style.display = 'none';
+                errorContainer.style.display = 'none';
+                contentWrapper.style.display = 'block';
+            }
+
+            // --- INITIALIZE ---
+            showLoader();
+            fetchCourseData();
+        });
+    </script>
+</body>
+</html>
