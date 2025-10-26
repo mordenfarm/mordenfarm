@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MODERN FARMER - Secure Payment</title>
+    <title>ALFAOCTAL CAMPUS - Secure Payment</title>
 
     <script>
         const firebaseConfig = {
@@ -362,7 +362,7 @@
     <section id="payment-section">
         <div class="pricing-card-attractive" id="pricingCard">
             <span class="title">Full Access Pass</span>
-            <p class="pricing">$49.99 <span class="pricing-time">/ year</span></p>
+            <p class="pricing">$9.99 <span class="pricing-time">/ year</span></p>
             <ul class="list">
                 <li>✓ 1-Year Full Access</li>
                 <li>✓ All Farming Modules</li>
@@ -404,7 +404,7 @@
                             <div id="payment-form-content">
                                 <!-- Dynamic content (form inputs or info panel) -->
                             </div>
-                            <button class="form-button" type="submit" id="submitPaymentBtn">Pay $49.99</button>
+                            <button class="form-button" type="submit" id="submitPaymentBtn">Pay $9.99</button>
                             <div class="loadingspinner" id="paymentLoader">
                                 <div id="square1"></div><div id="square2"></div><div id="square3"></div>
                                 <div id="square4"></div><div id="square5"></div>
@@ -423,7 +423,7 @@
             <div style="font-size: 4rem; color: var(--secondary-color); margin-bottom: 1rem;">✓</div>
             <h2 class="payment-modal-title" style="margin: 1rem 0;">Payment Successful!</h2>
             <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                Thank you! You now have full access to all courses. Welcome to Modern Farmer.
+                Thank you! You now have full access to all courses. Welcome to ALFAOCTAL CAMPUS.
             </p>
             <p id="redirectMessage" style="margin-top: 1.5rem; font-weight: 600; color: var(--primary-color);"></p>
         </div>
@@ -623,7 +623,7 @@
                         />
                         <label class="form-label" for="payment-input-field">${method.input.label}</label>
                     </div>`;
-                elements.submitPaymentBtn.textContent = 'Pay $49.99';
+                elements.submitPaymentBtn.textContent = 'Pay $9.99';
             } else if (method.input.type === 'redirect') {
                 contentHTML = `<div class="info-panel">${method.input.content}</div>`;
                 elements.submitPaymentBtn.textContent = 'Proceed to Secure Gateway';
