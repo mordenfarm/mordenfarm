@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define the files to process
-FILES=("index.html" "payment.html")
+FILES=("index.html" "payment.html" "notes.html")
 
 # Loop through each file and replace the placeholders
 for FILE in "${FILES[@]}"; do

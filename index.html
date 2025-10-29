@@ -18,13 +18,13 @@
 <script>
   // This is a placeholder for your actual Firebase config
   const firebaseConfig = {
-    apiKey: "%%FIREBASE_API_KEY%%",
-    authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
-    projectId: "%%FIREBASE_PROJECT_ID%%",
-    storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
-    messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
-    appId: "%%FIREBASE_APP_ID%%",
-    measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
+    apiKey: "dummy_key",
+    authDomain: "dummy_domain",
+    projectId: "dummy_id",
+    storageBucket: "dummy_bucket",
+    messagingSenderId: "dummy_sender",
+    appId: "dummy_app",
+    measurementId: "dummy_measurement"
   };
 </script>
 
@@ -96,21 +96,21 @@
     .search-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
     .search-backdrop.active { display: block; }
     .search-icon-mobile { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.3rem; cursor: pointer; }
-    
+
     .header-right { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
     .nav-menu { display: flex; list-style: none; gap: 1.5rem; align-items: center; }
     .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0; position: relative; }
     .nav-menu a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-primary); transition: var(--transition); }
     .nav-menu a:hover, .nav-menu a.active { color: var(--text-primary); }
     .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
-    
+
     .dropdown { position: relative; }
     .dropdown-content { display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%); background: var(--bg-light); min-width: 220px; box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease; z-index: 1001; overflow: hidden; border: 1px solid var(--border-color); }
     .dropdown:hover .dropdown-content { display: block; opacity: 1; visibility: visible; top: 100%; }
     .dropdown-content a { display: block; padding: 0.75rem 1.5rem; color: var(--text-secondary); white-space: nowrap; }
     .dropdown-content a:hover { background: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
     .dropdown-content a::after { display: none; }
-    
+
     .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; }
     .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; }
     .user-info { display: none; }
@@ -118,7 +118,7 @@
     .user-name { font-size: 0.9rem; font-weight: 600; }
     .user-action-text { font-size: 0.8rem; color: var(--text-secondary); }
     .crown-icon { position: absolute; top: -5px; left: -8px; font-size: 1.2rem; color: var(--color-gold); transform: rotate(-15deg); filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
-    
+
     /* HAMBURGER MENU ICON STYLES */
     .hamburger-container { display: none; z-index: 1002; }
     .hamburger-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -131,7 +131,7 @@
     .hamburger-container input:checked + .checkmark span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
     .hamburger-container input:checked + .checkmark span:nth-child(2) { top: 50%; transform: translateY(-50%) rotate(-45deg); }
     .hamburger-container input:checked + .checkmark span:nth-child(3) { transform: translateX(-50px); opacity: 0; }
-    
+
     .mobile-nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
     .mobile-nav-backdrop.active { display: block; }
 
@@ -175,7 +175,7 @@
     .course-card { background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color); overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition); cursor: pointer; display: flex; flex-direction: column;}
     .course-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
     .card-thumbnail { width: 100%; height: 200px; background-size: cover; background-position: center; }
-    .card-info { padding: 1.5rem; flex-grow: 1; } 
+    .card-info { padding: 1.5rem; flex-grow: 1; }
     .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
     .card-info h3 svg { width: 24px; height: 24px; color: var(--color-primary); flex-shrink: 0; }
     .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
@@ -216,7 +216,7 @@
     .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
     .stars { color: var(--color-gold); margin-top: 1rem; }
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
-    
+
     /* FOOTER */
     .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
     .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
@@ -227,7 +227,7 @@
     .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
     .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     @media (max-width: 768px) { .footer-bottom-content { flex-direction: column; text-align: center; } }
-    
+
     /* AUTH MODAL */
     .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
     .auth-modal.active { opacity: 1; visibility: visible; }
@@ -326,7 +326,7 @@
         <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
     </div>
 
-    
+
 
     <div id="course-pages-container"></div>
 </main>
@@ -436,28 +436,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const userProfile = target.closest('#userProfile');
         const searchResult = target.closest('.search-result-item');
 
-        if (navLink) { 
-            e.preventDefault(); 
+        if (navLink) {
+            e.preventDefault();
             const courseId = navLink.dataset.course;
-            if (courseId && currentUser && isSubscribed) {
+            if (courseId && currentUser) {
                 redirectToCoursePage(courseId);
             } else {
                 navigateTo(navLink.dataset.view, courseId);
             }
         }
-        if (courseCard) { 
-            e.preventDefault(); 
+        if (courseCard) {
+            e.preventDefault();
             const courseId = courseCard.dataset.course;
-            if (currentUser && isSubscribed) {
+            if (currentUser) {
                 redirectToCoursePage(courseId);
             } else {
                 navigateTo(null, courseId);
             }
         }
-        if (ctaButton) { 
-            e.preventDefault(); 
+        if (ctaButton) {
+            e.preventDefault();
             const courseId = ctaButton.dataset.course;
-            if (currentUser && isSubscribed) {
+            if (currentUser) {
                 redirectToCoursePage(courseId);
             } else {
                 navigateTo(null, courseId);
@@ -466,21 +466,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (enrollButton) { e.preventDefault(); handleEnrollClick(enrollButton.dataset.course); }
         if (backButton) { navigateTo(backButton.dataset.view); }
         if (userProfile) { currentUser ? handleLogout() : openAuthModal(); }
-        if (searchResult) { 
+        if (searchResult) {
             const courseId = searchResult.dataset.target;
-            if (currentUser && isSubscribed) {
+            if (currentUser) {
                 redirectToCoursePage(courseId);
             } else {
                 navigateTo(null, courseId);
             }
-            closeSearch(); 
+            closeSearch();
         }
     }
 
     function navigateTo(viewId, courseId) {
         let targetViewId = viewId || (courseId ? courseId : 'home-view');
         showView(targetViewId);
-        
+
         const targetElement = document.getElementById(targetViewId) || (viewId ? document.querySelector(viewId) : null);
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth' });
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('courses-section').scrollIntoView({behavior: 'smooth'});
             }
         }
-        
+
         if (elements.mobileNav.classList.contains('active')) {
             elements.hamburgerCheckbox.checked = false;
             toggleMobileMenu();
@@ -511,40 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleEnrollClick(courseId) {
         if (!currentUser) { openAuthModal(); return; }
-        if (isSubscribed) { 
-            // Redirect subscribed users to actual course content
-            redirectToCoursePage(courseId);
-            return; 
-        }
-        const course = courses.find(c => c.id === courseId);
-        if (course) {
-            // Redirect to a dedicated payment page with course info
-            window.location.href = `payment.html?course=${encodeURIComponent(course.title)}&price=${course.price}`;
-        }
+
+        redirectToCoursePage(courseId);
     }
 
     function redirectToCoursePage(courseId) {
-        // Map course IDs to their actual HTML pages
-        const coursePages = {
-            'broiler-course-page': 'broiler-rearing.html',
-            'roadrunner-course-page': 'roadrunner-rearing.html',
-            'mushroom-course-page': 'mushroom-cultivation.html',
-            'fish-course-page': 'fish-farming.html',
-            'maize-course-page': 'maize-farming.html',
-            'sorghum-course-page': 'sorghum-farming.html',
-            'tobacco-course-page': 'tobacco-farming.html'
-        };
-        
-        const targetPage = coursePages[courseId];
-        if (targetPage) {
-            window.location.href = targetPage;
-        } else {
-            console.error('Course page not found for:', courseId);
-        }
+        window.location.href = `notes.html?course=${courseId}`;
     }
 
     // --- MOBILE & SEARCH UI ---
-    function toggleMobileMenu() { 
+    function toggleMobileMenu() {
         const isActive = elements.hamburgerCheckbox.checked;
         elements.mobileNav.classList.toggle('active', isActive);
         elements.mobileNavBackdrop.classList.toggle('active', isActive);
@@ -553,7 +529,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleSearchInput(e) { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query)); displaySearchResults(filtered); } else { elements.searchResults.classList.remove('active'); } }, 300); }
     function displaySearchResults(results) { elements.searchBackdrop.classList.add('active'); if (results.length > 0) { elements.searchResults.innerHTML = results.map(course => `<div class="search-result-item" data-target="${course.id}"><h4>${course.title}</h4></div>`).join(''); } else { elements.searchResults.innerHTML = `<div class="no-results-message">No courses found.</div>`; } elements.searchResults.classList.add('active'); }
     function closeSearch() { elements.searchInput.value = ''; elements.searchResults.classList.remove('active'); elements.searchBackdrop.classList.remove('active'); elements.headerCenter.classList.remove('mobile-active'); }
-    
+
     // --- AUTHENTICATION ---
     function openAuthModal() { elements.authModal.classList.add('active'); }
     function closeAuthModal() { elements.authModal.classList.remove('active'); }
@@ -570,4 +546,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
