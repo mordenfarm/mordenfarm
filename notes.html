@@ -14,36 +14,7 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Firebase SDK Integration -->
-    <script>
-        const firebaseConfig = {
-            apiKey: "dummy_key",
-            authDomain: "dummy_domain",
-            databaseURL: "%%FIREBASE_DATABASE_URL%%",
-            projectId: "dummy_id",
-            storageBucket: "dummy_bucket",
-            messagingSenderId: "dummy_sender",
-            appId: "dummy_app",
-            measurementId: "dummy_measurement"
-        };
-    </script>
-    <script type="module">
-        // Initialize Firebase and make Firestore functions available globally
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        try {
-            const app = initializeApp(firebaseConfig);
-            window.auth = getAuth(app);
-            window.onAuthStateChanged = onAuthStateChanged;
-            window.db = getFirestore(app); // Make Firestore instance globally available as 'db'
-            window.doc = doc;             // Make 'doc' function available
-            window.getDoc = getDoc;           // Make 'getDoc' function available
-            console.log("Firebase Initialized for Course Page.");
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-        }
-    </script>
+    <script type="module" src="public/js/firebase-config.js"></script>
 
     <style>
         /* --- Core Design System Variables --- */

@@ -15,38 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
-<script>
-  // This is a placeholder for your actual Firebase config
-  const firebaseConfig = {
-    apiKey: "dummy_key",
-    authDomain: "dummy_domain",
-    projectId: "dummy_id",
-    storageBucket: "dummy_bucket",
-    messagingSenderId: "dummy_sender",
-    appId: "dummy_app",
-    measurementId: "dummy_measurement"
-  };
-</script>
-
-<script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-    try {
-        const app = initializeApp(firebaseConfig);
-        window.firebase = {
-            app, auth: getAuth(app), db: getFirestore(app), googleProvider: new GoogleAuthProvider(),
-            signInWithEmailAndPassword, createUserWithEmailAndPassword,
-            signInWithPopup, signOut, onAuthStateChanged, updateProfile,
-            doc, setDoc, getDoc, updateDoc
-        };
-        console.log("Firebase initialized successfully.");
-    } catch (error)
-    {
-        console.error("Firebase initialization failed. Please check your config.", error);
-        window.firebase = {};
-    }
-</script>
+<script type="module" src="public/js/firebase-config.js"></script>
 
 <style>
     :root {
