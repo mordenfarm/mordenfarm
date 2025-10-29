@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course View | AlfaOctal Campus</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Firebase SDK Integration -->
+    <script>
+        // Secure Firebase configuration using placeholders
+        const firebaseConfig = {
+            apiKey: "%%FIREBASE_API_KEY%%",
+            authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+            projectId: "%%FIREBASE_PROJECT_ID%%",
+            storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+            messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+            appId: "%%FIREBASE_APP_ID%%",
+            measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
+        };
+    </script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
+        try {
+            const app = initializeApp(firebaseConfig);
+            window.firebase = {
+                app,
+                auth: getAuth(app),
+                db: getFirestore(app),
+                onAuthStateChanged,
+                doc, getDoc
+            };
+            console.log("Firebase Initialized for Course View.");
+        } catch (error) {
+            console.error("Firebase initialization failed:", error);
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-primary: #e53935;
+            --color-gold: #ffc107;
+            --bg-dark: #121212;
+            --bg-light: #1e1e1e;
+            --bg-card: #2a2a2a;
+            --text-primary: #f5f5f5;
+            --text-secondary: #b0b0b0;
+            --border-color: #424242;
+            --border-radius: 8px;
+            --font-primary: 'Inter', sans-serif;
+            --font-display: 'Playfair Display', serif;
+            --transition: all 0.3s ease;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .header {
+            background: var(--bg-light);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .header img { height: 50px; }
+        .back-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .back-link:hover { color: var(--color-primary); }
+
+        .course-hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .course-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--text-primary);
+        }
+        .course-hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 1rem auto 0;
+        }
+
+        .main-content {
+            width: 90%;
+            max-width: 900px;
+            margin: 3rem auto;
+        }
+
+        .content-section { margin-bottom: 3rem; }
+        .content-section h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--color-primary);
+            padding-left: 1rem;
+        }
+
+        /* Notes Section */
+        .note-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .note-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem;
+            cursor: pointer;
+            user-select: none;
+            background-color: var(--bg-card);
+        }
+        .note-card-header h3 { font-size: 1.2rem; }
+        .note-card-header .toggle-icon { transition: transform 0.3s ease; }
+        .note-card-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+            padding: 0 1.25rem;
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+        }
+        .note-card.is-open .note-card-body {
+            max-height: 2000px; /* Large value */
+            padding: 1.25rem;
+        }
+        .note-card.is-open .toggle-icon { transform: rotate(180deg); }
+        .note-card-body p { margin-bottom: 1rem; }
+
+        /* Video Section */
+        .video-list { list-style: none; }
+        .video-item {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .video-info { padding: 1rem 1.5rem; }
+        .video-info h4 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .video-embed-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+        }
+        .video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        
+        .loading, .access-denied {
+            text-align: center;
+            padding: 5rem 1rem;
+            font-size: 1.5rem;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <a href="index.html">
+            <img src="images/logo.png" alt="AlfaOctal Campus Logo">
+        </a>
+        <a href="index.html" class="back-link">&larr; Back to All Courses</a>
+    </header>
+
+    <main>
+        <div class="course-hero">
+            <h1 id="course-title-main">Loading Course...</h1>
+            <p id="course-subtitle"></p>
+        </div>
+
+        <div id="main-content" class="main-content hidden">
+            <section class="content-section" id="description-section">
+                <h2>About This Course</h2>
+                <div id="course-description"></div>
+            </section>
+            
+            <section class="content-section hidden" id="notes-section">
+                <h2>Course Notes</h2>
+                <div id="notes-container"></div>
+            </section>
+
+            <section class="content-section hidden" id="videos-section">
+                <h2>Video Gallery</h2>
+                <ul id="videos-list" class="video-list"></ul>
+            </section>
+        </div>
+
+        <div id="loading-message" class="loading">
+            <p>Verifying access and loading content...</p>
+        </div>
+    </main>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const elements = {
+            title: document.getElementById('course-title-main'),
+            subtitle: document.getElementById('course-subtitle'),
+            description: document.getElementById('course-description'),
+            notesContainer: document.getElementById('notes-container'),
+            notesSection: document.getElementById('notes-section'),
+            videosList: document.getElementById('videos-list'),
+            videosSection: document.getElementById('videos-section'),
+            mainContent: document.getElementById('main-content'),
+            loadingMessage: document.getElementById('loading-message'),
+        };
+
+        let courseId = null;
+
+        function init() {
+            if (!window.firebase || !window.firebase.auth) {
+                setTimeout(init, 100);
+                return;
+            }
+            const urlParams = new URLSearchParams(window.location.search);
+            courseId = urlParams.get('course');
+            if (!courseId) {
+                displayError("No course specified.");
+                return;
+            }
+
+            window.firebase.onAuthStateChanged(window.firebase.auth, async user => {
+                if (user) {
+                    const userDocRef = window.firebase.doc(window.firebase.db, "users", user.uid);
+                    const userDoc = await window.firebase.getDoc(userDocRef);
+                    if (userDoc.exists() && userDoc.data().subscription) {
+                        loadCourseContent();
+                    } else {
+                        displayError("Access denied. A valid subscription is required. Redirecting...", true);
+                    }
+                } else {
+                    displayError("You must be logged in to view this content. Redirecting...", true);
+                }
+            });
+        }
+
+        async function loadCourseContent() {
+            try {
+                const courseDocRef = window.firebase.doc(window.firebase.db, "courses", courseId);
+                const docSnap = await window.firebase.getDoc(courseDocRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    renderCourse(data);
+                    elements.loadingMessage.classList.add('hidden');
+                    elements.mainContent.classList.remove('hidden');
+                } else {
+                    displayError("Course not found.");
+                }
+            } catch (error) {
+                console.error("Error loading course:", error);
+                displayError("Failed to load course content.");
+            }
+        }
+
+        function renderCourse(data) {
+            document.title = `${data.title || 'Course'} | AlfaOctal Campus`;
+            elements.title.textContent = data.title || 'No Title';
+            elements.subtitle.textContent = data.subtitle || '';
+            elements.description.innerHTML = (data.description || 'No description available.').replace(/\n/g, '<br>');
+
+            // Render Notes
+            if (data.notes && data.notes.length > 0) {
+                elements.notesContainer.innerHTML = data.notes.map(note => `
+                    <div class="note-card">
+                        <div class="note-card-header">
+                            <h3>${note.title}</h3>
+                            <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                        </div>
+                        <div class="note-card-body">
+                            ${note.content.replace(/\n/g, '<br>')}
+                        </div>
+                    </div>
+                `).join('');
+                elements.notesSection.classList.remove('hidden');
+                elements.notesContainer.addEventListener('click', (e) => {
+                    const header = e.target.closest('.note-card-header');
+                    if (header) {
+                        header.parentElement.classList.toggle('is-open');
+                    }
+                });
+            }
+
+            // Render Videos
+            if (data.videos && data.videos.length > 0) {
+                elements.videosList.innerHTML = data.videos.map(video => `
+                    <li class="video-item" data-video-url="${video.url}">
+                        <div class="video-info">
+                            <h4>${video.title}</h4>
+                        </div>
+                        <div class="video-embed-container"></div>
+                    </li>
+                `).join('');
+                elements.videosSection.classList.remove('hidden');
+                
+                document.querySelectorAll('.video-item').forEach(item => {
+                    const videoUrl = item.dataset.videoUrl;
+                    const embedContainer = item.querySelector('.video-embed-container');
+                    const videoId = getYouTubeID(videoUrl);
+                    if (videoId) {
+                       embedContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                    } else {
+                       embedContainer.innerHTML = `<p style="padding: 1rem;">Invalid YouTube URL</p>`;
+                    }
+                });
+            }
+        }
+        
+        function getYouTubeID(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function displayError(message, redirect = false) {
+            elements.mainContent.classList.add('hidden');
+            elements.loadingMessage.innerHTML = `<div class="access-denied"><p>${message}</p></div>`;
+            elements.loadingMessage.classList.remove('hidden');
+            if (redirect) {
+                setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+            }
+        }
+
+        init();
+    });
+    </script>
+</body>
+</html>
