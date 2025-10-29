@@ -96,21 +96,21 @@
     .search-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
     .search-backdrop.active { display: block; }
     .search-icon-mobile { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.3rem; cursor: pointer; }
-    
+
     .header-right { display: flex; align-items: center; gap: 1.5rem; margin-left: auto; }
     .nav-menu { display: flex; list-style: none; gap: 1.5rem; align-items: center; }
     .nav-menu a { color: var(--text-secondary); font-weight: 600; font-size: 0.9rem; padding: 0.5rem 0; position: relative; }
     .nav-menu a::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--color-primary); transition: var(--transition); }
     .nav-menu a:hover, .nav-menu a.active { color: var(--text-primary); }
     .nav-menu a:hover::after, .nav-menu a.active::after { width: 100%; }
-    
+
     .dropdown { position: relative; }
     .dropdown-content { display: none; position: absolute; top: 120%; left: 50%; transform: translateX(-50%); background: var(--bg-light); min-width: 220px; box-shadow: var(--shadow-md); border-radius: var(--border-radius-sm); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, top 0.3s ease; z-index: 1001; overflow: hidden; border: 1px solid var(--border-color); }
     .dropdown:hover .dropdown-content { display: block; opacity: 1; visibility: visible; top: 100%; }
     .dropdown-content a { display: block; padding: 0.75rem 1.5rem; color: var(--text-secondary); white-space: nowrap; }
     .dropdown-content a:hover { background: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
     .dropdown-content a::after { display: none; }
-    
+
     .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; }
     .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; }
     .user-info { display: none; }
@@ -118,7 +118,7 @@
     .user-name { font-size: 0.9rem; font-weight: 600; }
     .user-action-text { font-size: 0.8rem; color: var(--text-secondary); }
     .crown-icon { position: absolute; top: -5px; left: -8px; font-size: 1.2rem; color: var(--color-gold); transform: rotate(-15deg); filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
-    
+
     /* HAMBURGER MENU ICON STYLES */
     .hamburger-container { display: none; z-index: 1002; }
     .hamburger-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
@@ -131,7 +131,7 @@
     .hamburger-container input:checked + .checkmark span:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
     .hamburger-container input:checked + .checkmark span:nth-child(2) { top: 50%; transform: translateY(-50%) rotate(-45deg); }
     .hamburger-container input:checked + .checkmark span:nth-child(3) { transform: translateX(-50px); opacity: 0; }
-    
+
     .mobile-nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 998; }
     .mobile-nav-backdrop.active { display: block; }
 
@@ -175,7 +175,7 @@
     .course-card { background: var(--bg-card); border-radius: var(--border-radius-md); border: 1px solid var(--border-color); overflow: hidden; text-decoration: none; color: var(--text-primary); transition: var(--transition); cursor: pointer; display: flex; flex-direction: column;}
     .course-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-lg); border-color: var(--color-primary); }
     .card-thumbnail { width: 100%; height: 200px; background-size: cover; background-position: center; }
-    .card-info { padding: 1.5rem; flex-grow: 1; } 
+    .card-info { padding: 1.5rem; flex-grow: 1; }
     .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
     .card-info h3 svg { width: 24px; height: 24px; color: var(--color-primary); flex-shrink: 0; }
     .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
@@ -216,7 +216,7 @@
     .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
     .stars { color: var(--color-gold); margin-top: 1rem; }
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
-    
+
     /* FOOTER */
     .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
     .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
@@ -227,7 +227,7 @@
     .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
     .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
     @media (max-width: 768px) { .footer-bottom-content { flex-direction: column; text-align: center; } }
-    
+
     /* AUTH MODAL */
     .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
     .auth-modal.active { opacity: 1; visibility: visible; }
@@ -326,7 +326,7 @@
         <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
     </div>
 
-    
+
 
     <div id="course-pages-container"></div>
 </main>
@@ -338,29 +338,15 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- STATE & DATA ---
     let currentUser = null, isSubscribed = false, currentAuthMode = 'signin', currentCourseId = null;
-    let courses = [];
-    const initialCourses = [
-        { id: 'broiler-rearing', title: 'Broiler Chicken Rearing', image: 'images/broiler-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', price: '9.99', description: 'We teach you how to finish a flock in just 7 weeks, showing you the secrets to maximizing profitability, managing feed costs, and keeping your birds safe and healthy.', modules: [{ title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }] },
-        { id: 'roadrunner-rearing', title: 'Indigenous Poultry Management', image: 'images/roadrunner-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Specialized management to raise premium Road Runner chickens.', price: '9.99', description: 'Move beyond basic poultry. Learn specialized, indigenous poultry management techniques to raise premium-quality Road Runner chickens for a profitable niche market.', modules: [{ title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }] },
-        { id: 'mushroom-cultivation', title: 'Commercial Mushroom Cultivation', image: 'images/mushroom-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>', shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', price: '9.99', description: 'Learn the three essential steps: perfect substrate preparation, sterile spawning to prevent contamination, and simple climate control to guarantee a successful harvest.', modules: [{ title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }] },
-        { id: 'fish-farming', title: 'Sustainable Fish Farming', image: 'images/fish-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5c0-4.4-3.6-8-8-8s-8 3.6-8 8c0 2.5 1.2 4.8 3.1 6.2.2.2.4.3.7.3h8.4c.3 0 .5-.1.7-.3 1.9-1.4 3.1-3.7 3.1-6.2z"/><path d="M5.5 12.5c.3-1 .8-1.8 1.5-2.5"/></svg>', shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', price: '9.99', description: 'Get the aquaculture basics right, with a special focus on managing Dissolved Oxygen (DO) levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', modules: [{ title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }] },
-        { id: 'maize-farming', title: 'High-Performance Maize Farming', image: 'images/maize-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', price: '9.99', description: 'Discover the best techniques for timing your fertilizer, how to protect your crops during drought, and simple steps to maximize your yield every season.', modules: [{ title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }] },
-        { id: 'sorghum-farming', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99', description: 'Master growing this tough, drought-resistant grain. We show you simple, effective pest control strategies and management techniques to ensure a reliable harvest.', modules: [{ title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }] },
-        { id: 'tobacco-farming', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99', description: 'Focus on the high-value side of this crop. Learn the art of professional curing techniques and effective sucker control to produce premium, market-ready leaves.', modules: [{ title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }] }
+    const courses = [
+        { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', image: 'images/broiler-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', price: '9.99', description: 'We teach you how to finish a flock in just 7 weeks, showing you the secrets to maximizing profitability, managing feed costs, and keeping your birds safe and healthy.', modules: [{ title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }] },
+        { id: 'roadrunner-course-page', title: 'Indigenous Poultry Management', image: 'images/roadrunner-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Specialized management to raise premium Road Runner chickens.', price: '9.99', description: 'Move beyond basic poultry. Learn specialized, indigenous poultry management techniques to raise premium-quality Road Runner chickens for a profitable niche market.', modules: [{ title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }] },
+        { id: 'mushroom-course-page', title: 'Commercial Mushroom Cultivation', image: 'images/mushroom-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>', shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', price: '9.99', description: 'Learn the three essential steps: perfect substrate preparation, sterile spawning to prevent contamination, and simple climate control to guarantee a successful harvest.', modules: [{ title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }] },
+        { id: 'fish-course-page', title: 'Sustainable Fish Farming', image: 'images/fish-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5c0-4.4-3.6-8-8-8s-8 3.6-8 8c0 2.5 1.2 4.8 3.1 6.2.2.2.4.3.7.3h8.4c.3 0 .5-.1.7-.3 1.9-1.4 3.1-3.7 3.1-6.2z"/><path d="M5.5 12.5c.3-1 .8-1.8 1.5-2.5"/></svg>', shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', price: '9.99', description: 'Get the aquaculture basics right, with a special focus on managing Dissolved Oxygen (DO) levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', modules: [{ title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }] },
+        { id: 'maize-course-page', title: 'High-Performance Maize Farming', image: 'images/maize-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', price: '9.99', description: 'Discover the best techniques for timing your fertilizer, how to protect your crops during drought, and simple steps to maximize your yield every season.', modules: [{ title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }] },
+        { id: 'sorghum-course-page', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99', description: 'Master growing this tough, drought-resistant grain. We show you simple, effective pest control strategies and management techniques to ensure a reliable harvest.', modules: [{ title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }] },
+        { id: 'tobacco-course-page', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99', description: 'Focus on the high-value side of this crop. Learn the art of professional curing techniques and effective sucker control to produce premium, market-ready leaves.', modules: [{ title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }] }
     ];
-
-    async function fetchCourses() {
-        const { db, collection, getDocs } = window.firebase;
-        const coursesCollectionRef = collection(db, 'courses');
-        try {
-            const querySnapshot = await getDocs(coursesCollectionRef);
-            courses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            return courses;
-        } catch (error) {
-            console.error("Error fetching courses:", error);
-            return []; // Return an empty array on error
-        }
-    }
 
     // --- DOM ELEMENTS ---
     const elements = {
@@ -389,37 +375,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let searchDebounceTimer;
 
     // --- INITIALIZATION ---
-    async function init() {
+    function init() {
         if (!window.firebase || !window.firebase.auth) { console.error("Firebase not configured."); return; }
-        await seedDatabaseIfNeeded();
-        courses = await fetchCourses();
         populateStaticContent();
         generateCoursePages();
         initializeEventListeners();
         firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
         switchAuthMode(currentAuthMode, true);
-    }
-
-    async function seedDatabaseIfNeeded() {
-        const { db, collection, getDocs, writeBatch, doc } = window.firebase;
-        const coursesCollectionRef = collection(db, 'courses');
-        try {
-            const querySnapshot = await getDocs(coursesCollectionRef);
-            if (querySnapshot.empty) {
-                console.log("Courses collection is empty. Seeding database...");
-                const batch = writeBatch(db);
-                initialCourses.forEach(course => {
-                    const courseDocRef = doc(db, 'courses', course.id);
-                    batch.set(courseDocRef, course);
-                });
-                await batch.commit();
-                console.log("Database seeded successfully with initial course data.");
-            } else {
-                console.log("Courses collection already exists. No seeding needed.");
-            }
-        } catch (error) {
-            console.error("Error checking or seeding courses collection:", error);
-        }
     }
 
     // --- DYNAMIC CONTENT POPULATION ---
@@ -439,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="course-content">
                     <button class="back-button" data-view="home-view">&larr; Back to All Courses</button>
                     <div class="course-section"><h3>About This Course</h3><p>${course.description}</p></div>
-                    <div class="course-section"><h3>What You'll Learn</h3><ul class="module-list">${course.modules.map(m => `<li class="module-item"><h4>${m.title}</h4><p>${m.desc}</p></li>`).join('')}</ul></div>
+                    <div class="course-section"><h3>What You'll Learn</h3><ul class="module-list">${(course.modules || []).map(m => `<li class="module-item"><h4>${m.title}</h4><p>${m.desc}</p></li>`).join('')}</ul></div>
                     <div class="course-section price-section" style="text-align:center;"><h3>Unlock Your Potential</h3><div class="price" style="font-size: 2.5rem; color: var(--color-gold); margin: 1rem 0;">$${course.price}</div><p>One-time payment for lifetime access.</p><button class="enroll-button" data-course="${course.id}" style="margin-top:1.5rem;">Enroll Now</button></div>
                 </div>
             </div>`).join('');
@@ -474,8 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const userProfile = target.closest('#userProfile');
         const searchResult = target.closest('.search-result-item');
 
-        if (navLink) { 
-            e.preventDefault(); 
+        if (navLink) {
+            e.preventDefault();
             const courseId = navLink.dataset.course;
             if (courseId && currentUser && isSubscribed) {
                 redirectToCoursePage(courseId);
@@ -483,8 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 navigateTo(navLink.dataset.view, courseId);
             }
         }
-        if (courseCard) { 
-            e.preventDefault(); 
+        if (courseCard) {
+            e.preventDefault();
             const courseId = courseCard.dataset.course;
             if (currentUser && isSubscribed) {
                 redirectToCoursePage(courseId);
@@ -492,8 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 navigateTo(null, courseId);
             }
         }
-        if (ctaButton) { 
-            e.preventDefault(); 
+        if (ctaButton) {
+            e.preventDefault();
             const courseId = ctaButton.dataset.course;
             if (currentUser && isSubscribed) {
                 redirectToCoursePage(courseId);
@@ -504,21 +466,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (enrollButton) { e.preventDefault(); handleEnrollClick(enrollButton.dataset.course); }
         if (backButton) { navigateTo(backButton.dataset.view); }
         if (userProfile) { currentUser ? handleLogout() : openAuthModal(); }
-        if (searchResult) { 
+        if (searchResult) {
             const courseId = searchResult.dataset.target;
             if (currentUser && isSubscribed) {
                 redirectToCoursePage(courseId);
             } else {
                 navigateTo(null, courseId);
             }
-            closeSearch(); 
+            closeSearch();
         }
     }
 
     function navigateTo(viewId, courseId) {
         let targetViewId = viewId || (courseId ? courseId : 'home-view');
         showView(targetViewId);
-        
+
         const targetElement = document.getElementById(targetViewId) || (viewId ? document.querySelector(viewId) : null);
         if (targetElement) {
             targetElement.scrollIntoView({ behavior: 'smooth' });
@@ -527,7 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('courses-section').scrollIntoView({behavior: 'smooth'});
             }
         }
-        
+
         if (elements.mobileNav.classList.contains('active')) {
             elements.hamburgerCheckbox.checked = false;
             toggleMobileMenu();
@@ -549,40 +511,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleEnrollClick(courseId) {
         if (!currentUser) { openAuthModal(); return; }
-        if (isSubscribed) { 
-            // Redirect subscribed users to actual course content
+        if (isSubscribed) {
             redirectToCoursePage(courseId);
-            return; 
+            return;
         }
         const course = courses.find(c => c.id === courseId);
         if (course) {
-            // Redirect to a dedicated payment page with course info
-            window.location.href = `payment.html?course=${encodeURIComponent(course.title)}&price=${course.price}`;
+            // Pass a clean ID to the payment page
+            const cleanId = course.id.replace('.html', '').replace('-course-page', '');
+            window.location.href = `payment.html?courseId=${encodeURIComponent(cleanId)}&price=${course.price}`;
         }
     }
 
     function redirectToCoursePage(courseId) {
-        // Map course IDs to their actual HTML pages
-        const coursePages = {
-            'broiler-rearing': 'broiler-rearing.html',
-            'roadrunner-rearing': 'roadrunner-rearing.html',
-            'mushroom-cultivation': 'mushroom-cultivation.html',
-            'fish-farming': 'fish-farming.html',
-            'maize-farming': 'maize-farming.html',
-            'sorghum-farming': 'sorghum-farming.html',
-            'tobacco-farming': 'tobacco-farming.html'
-        };
-        
-        const targetPage = coursePages[courseId];
-        if (targetPage) {
-            window.location.href = targetPage;
+        if (courseId) {
+            // Clean up the ID to ensure it's a valid parameter, removing potential file extensions
+            const cleanCourseId = courseId.replace('.html', '').replace('-course-page', '');
+            window.location.href = `course.html?id=${encodeURIComponent(cleanCourseId)}`;
         } else {
-            console.error('Course page not found for:', courseId);
+            console.error('Course ID is missing, cannot redirect.');
         }
     }
 
     // --- MOBILE & SEARCH UI ---
-    function toggleMobileMenu() { 
+    function toggleMobileMenu() {
         const isActive = elements.hamburgerCheckbox.checked;
         elements.mobileNav.classList.toggle('active', isActive);
         elements.mobileNavBackdrop.classList.toggle('active', isActive);
@@ -591,7 +543,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleSearchInput(e) { clearTimeout(searchDebounceTimer); searchDebounceTimer = setTimeout(() => { const query = e.target.value.toLowerCase().trim(); if (query.length > 1) { const filtered = courses.filter(c => c.title.toLowerCase().includes(query) || c.shortDesc.toLowerCase().includes(query)); displaySearchResults(filtered); } else { elements.searchResults.classList.remove('active'); } }, 300); }
     function displaySearchResults(results) { elements.searchBackdrop.classList.add('active'); if (results.length > 0) { elements.searchResults.innerHTML = results.map(course => `<div class="search-result-item" data-target="${course.id}"><h4>${course.title}</h4></div>`).join(''); } else { elements.searchResults.innerHTML = `<div class="no-results-message">No courses found.</div>`; } elements.searchResults.classList.add('active'); }
     function closeSearch() { elements.searchInput.value = ''; elements.searchResults.classList.remove('active'); elements.searchBackdrop.classList.remove('active'); elements.headerCenter.classList.remove('mobile-active'); }
-    
+
     // --- AUTHENTICATION ---
     function openAuthModal() { elements.authModal.classList.add('active'); }
     function closeAuthModal() { elements.authModal.classList.remove('active'); }
@@ -608,4 +560,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
