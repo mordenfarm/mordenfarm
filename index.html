@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,12 +111,46 @@
     .dropdown-content a::after { display: none; }
     
     .user-profile { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; position: relative; }
-    .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; background: var(--color-primary); overflow: hidden; border: 2px solid var(--border-color); }
     .user-info { display: none; }
     @media (min-width: 992px) { .user-info { display: flex; flex-direction: column; } }
     .user-name { font-size: 0.9rem; font-weight: 600; }
     .user-action-text { font-size: 0.8rem; color: var(--text-secondary); }
-    .crown-icon { position: absolute; top: -5px; left: -8px; font-size: 1.2rem; color: var(--color-gold); transform: rotate(-15deg); filter: drop-shadow(0 0 3px rgba(0,0,0,0.8)); }
+
+    /* --- CROWN IMPLEMENTATION --- */
+    .crown-icon {
+        position: absolute;
+        top: -16px; /* Adjust to sit on top */
+        left: 50%;
+        transform: translateX(-50%) rotate(-10deg);
+        font-size: 1.8rem;
+        color: var(--color-gold);
+        pointer-events: none;
+        z-index: 10;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        
+        /* For the shiny animation */
+        overflow: hidden;
+        display: inline-block;
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+        background-clip: text;
+        background-image: linear-gradient(45deg, #ffd700, #f0c50a, #fff, #f0c50a, #ffd700);
+    }
+    .crown-icon::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -150%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+        animation: shine 3s infinite linear;
+    }
+    @keyframes shine {
+        0% { left: -150%; }
+        100% { left: 150%; }
+    }
     
     /* HAMBURGER MENU ICON STYLES */
     .hamburger-container { display: none; z-index: 1002; }
@@ -165,7 +200,7 @@
     .slider-button button:hover { background: var(--color-primary); border-color: var(--color-primary); transform: scale(1.1); }
     @media (max-width: 768px) { .item .content { left: 2rem; } .content .name { font-size: 2.5rem; } }
 
-    /* SECTIONS & COURSE GRID */
+    /* SECTIONS, HEADERS & COURSE GRID */
     .section-header { text-align: center; margin-bottom: 3rem; }
     .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
     h2 { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 1rem; }
@@ -178,6 +213,45 @@
     .card-info h3 svg { width: 24px; height: 24px; color: var(--color-primary); flex-shrink: 0; }
     .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
 
+    /* --- NEW ABOUT US SECTION --- */
+    #about-us-section { background-color: var(--bg-light); border-radius: var(--border-radius-md); padding: 4rem 2rem; }
+    .about-us-content { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    .about-us-image img { width: 100%; height: auto; border-radius: var(--border-radius-md); box-shadow: var(--shadow-lg); }
+    .about-us-text h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--color-primary); }
+    .about-us-text p { margin-bottom: 1rem; color: var(--text-secondary); }
+    @media (max-width: 992px) { .about-us-content { grid-template-columns: 1fr; } .about-us-image { order: -1; margin-bottom: 2rem; } }
+
+
+    /* --- REDESIGNED TESTIMONIALS SECTION --- */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+    .testimonial-card {
+        background: var(--bg-card);
+        border-radius: var(--border-radius-md);
+        padding: 2.5rem 2rem;
+        border: 1px solid var(--border-color);
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .testimonial-card::before {
+        content: '“';
+        position: absolute;
+        top: 1rem;
+        left: 1.5rem;
+        font-size: 6rem;
+        color: rgba(229, 57, 53, 0.1);
+        font-family: var(--font-display);
+        line-height: 1;
+        z-index: 0;
+    }
+    .testimonial-body { position: relative; z-index: 1; font-style: italic; color: var(--text-secondary); margin-bottom: 1.5rem; }
+    .testimonial-footer { position: relative; z-index: 1; display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
+    .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; flex-shrink: 0; }
+    .testimonial-author-info .author-name { font-weight: 600; color: var(--text-primary); }
+    .testimonial-author-info .author-course { font-size: 0.85rem; color: var(--text-muted); }
+    .stars { color: var(--color-gold); margin-top: auto; padding-top: 1rem; }
+    
     /* VIEW MANAGEMENT */
     .view-section { display: none; animation: fadeIn 0.5s ease-in-out; }
     .view-section.active { display: block; }
@@ -197,15 +271,10 @@
     .back-button { display: inline-block; padding: 0.8rem 1.5rem; margin-bottom: 2rem; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; transition: var(--transition); border-radius: var(--border-radius-sm); }
     .back-button:hover { background-color: var(--border-color); }
 
-    /* TESTIMONIALS & CONTACT */
-    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-    .testimonial-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--border-color); }
-    .testimonial-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-    .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
-    .stars { color: var(--color-gold); margin-top: 1rem; }
+    /* CONTACT SECTION */
     .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
     
-    /* FOOTER */
+    /* FOOTER & NEWSLETTER */
     .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
     .footer-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 3rem; margin-bottom: 3rem; }
     .footer-section h3 { font-size: 1.2rem; margin-bottom: 1.5rem; color: var(--color-primary); }
@@ -214,34 +283,65 @@
     .footer-links a:hover { color: var(--color-primary); padding-left: 5px; }
     .footer-bottom { padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-secondary); font-size: 0.9rem; }
     .footer-bottom-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    
+    /* --- REDESIGNED NEWSLETTER FORM --- */
+    .newsletter-form { display: flex; margin-top: 1rem; }
+    .newsletter-form input {
+        flex-grow: 1; border: 1px solid var(--border-color); background: var(--bg-dark); color: var(--text-primary); padding: 0.75rem;
+        border-radius: var(--border-radius-sm) 0 0 var(--border-radius-sm); border-right: none; transition: var(--transition);
+    }
+    .newsletter-form input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.2); }
+    .newsletter-form button {
+        padding: 0.75rem 1.2rem; border: none; background: var(--color-primary); color: white; cursor: pointer;
+        border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0; font-weight: 600; transition: var(--transition);
+    }
+    .newsletter-form button:hover { background: var(--color-primary-dark); }
     @media (max-width: 768px) { .footer-bottom-content { flex-direction: column; text-align: center; } }
     
-    /* AUTH MODAL */
+    /* AUTH MODAL & INPUTS */
     .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: var(--transition); }
     .auth-modal.active { opacity: 1; visibility: visible; }
     .auth-container { background: var(--bg-light); border-radius: var(--border-radius-md); padding: 2.5rem; width: 90%; max-width: 420px; box-shadow: var(--shadow-lg); position: relative; transform: scale(0.95); transition: transform 0.3s ease-out; }
     .auth-modal.active .auth-container { transform: scale(1); }
-    .auth-form { display: flex; flex-direction: column; gap: 1rem; }
-    .form-button { padding: 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; }
+    .auth-form { display: flex; flex-direction: column; gap: 1.2rem; }
+    
+    /* --- REDESIGNED AUTH INPUTS --- */
+    .form-group { position: relative; }
+    .form-input {
+        width: 100%; padding: 1rem; background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: var(--border-radius-sm);
+        color: var(--text-primary); font-size: 1rem; transition: var(--transition);
+    }
+    .form-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2); }
+    .form-input::placeholder { color: var(--text-muted); }
+
+    .form-button { padding: 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--border-radius-sm); font-size: 1rem; font-weight: 600; cursor: pointer; transition: var(--transition); }
+    .form-button:hover { background: var(--color-primary-dark); }
     .google-button { background: #fff; color: #333; display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+    .google-button:hover { background: #f1f1f1; }
+
     .auth-switch { text-align: center; margin-top: 1.5rem; color: var(--text-secondary); }
+    .auth-switch-link { color: var(--color-primary); font-weight: 600; }
     .close-button { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-secondary); font-size: 1.8rem; cursor: pointer; }
     .hidden { display: none; }
 </style>
 </head>
 <body>
-<h1 class="visually-hidden">AlfaOctal Campus: Online Agriculture Courses</h1>
+<h1 class="visually-hidden">Modern Farmer: Online Agriculture Courses</h1>
 
 
 <div class="auth-modal" id="authModal">
     <div class="auth-container">
         <button class="close-button" id="closeAuthModal" aria-label="Close">&times;</button>
-        <div class="auth-header"><h2 class="auth-title" id="authTitle"></h2><p class="auth-subtitle" id="authSubtitle"></p></div>
+        <div class="auth-header" style="text-align: center; margin-bottom: 1.5rem;">
+            <h2 id="authTitle" style="font-family: var(--font-display); font-size: 2rem;"></h2>
+            <p id="authSubtitle" style="color: var(--text-secondary);"></p>
+        </div>
         <form class="auth-form" id="authForm" novalidate>
             <div class="form-group hidden" id="usernameGroup"><input class="form-input" type="text" id="authUsername" placeholder="Enter your username"></div>
             <div class="form-group"><input class="form-input" type="email" id="authEmail" placeholder="Enter your email" required></div>
             <div class="form-group"><input class="form-input" type="password" id="authPassword" placeholder="Enter your password" required></div>
             <button class="form-button" type="submit" id="authSubmitBtn"></button>
+            <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem;">or</div>
             <button class="form-button google-button" type="button" id="googleSignInBtn"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg> Continue with Google</button>
         </form>
         <div class="auth-switch"><span id="authSwitchText"></span><a href="#" class="auth-switch-link" id="authSwitchLink"></a></div>
@@ -253,7 +353,7 @@
 
 <header class="header">
     <a href="index.html" class="logo">
-        <img src="images/logo.png" alt="AlfaOctal Campus Logo">
+        <img src="images/logo.png" alt="Modern Farmer Logo">
     </a>
     <div class="header-center" id="headerCenter">
         <div class="search-container"><input type="search" class="search-input" id="searchInput" placeholder="Search courses..."><div class="search-results" id="searchResults"></div></div>
@@ -266,7 +366,8 @@
                     <a href="#courses-section" class="nav-link" data-view="home-view">COURSES &#9662;</a>
                     <div class="dropdown-content" id="desktopCoursesDropdown"></div>
                 </li>
-                <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
+                 <li><a href="#about-us-section" class="nav-link" data-view="home-view">ABOUT</a></li>
+                <li><a href="#testimonials-section" class="nav-link" data-view="home-view">SUCCESS STORIES</a></li>
                 <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
             </ul>
         </nav>
@@ -292,7 +393,8 @@
             <a href="#" id="mobileCoursesToggle">COURSES &#9662;</a>
             <div class="dropdown-content" id="mobileCoursesDropdown"></div>
         </li>
-        <li><a href="#testimonials-section" class="nav-link" data-view="home-view">TESTIMONIALS</a></li>
+        <li><a href="#about-us-section" class="nav-link" data-view="home-view">ABOUT</a></li>
+        <li><a href="#testimonials-section" class="nav-link" data-view="home-view">SUCCESS STORIES</a></li>
         <li><a href="#contact-section" class="nav-link" data-view="home-view">CONTACT</a></li>
     </ul>
 </nav>
@@ -309,8 +411,38 @@
                 <button class="next" aria-label="Next Slide">▷</button>
             </div>
         </section>
+
         <section id="courses-section" class="container"><div class="section-header"><p class="subtitle">Our Catalog</p><h2>Featured Courses</h2></div><div class="course-grid"></div></section>
-        <section id="testimonials-section" class="container"><div class="section-header"><p class="subtitle">Success Stories</p><h2>What Our Students Say</h2></div><div class="testimonials-grid"></div></section>
+        
+        <!-- NEW ABOUT US SECTION -->
+        <section id="about-us-section" class="container">
+            <div class="section-header">
+                <p class="subtitle">Our Story</p>
+                <h2>Cultivating the Future of Farming</h2>
+            </div>
+            <div class="about-us-content">
+                <div class="about-us-text">
+                    <h3>Who We Are</h3>
+                    <p>Modern Farmer is a digital campus dedicated to revolutionizing agricultural education. We were founded by a team of seasoned agronomists, technologists, and educators who believe that knowledge is the most critical tool for any farmer.</p>
+                    <h3>Our Mission</h3>
+                    <p>Our mission is to empower farmers everywhere—from small-scale homesteaders to large commercial growers—with accessible, expert-led, and practical online courses. We bridge the gap between traditional wisdom and modern innovation to help you increase yields, boost profitability, and practice sustainable agriculture.</p>
+                </div>
+                <div class="about-us-image">
+                    <img src="images/about-us.png" alt="A modern farmer inspecting crops with a tablet">
+                </div>
+            </div>
+        </section>
+
+        <section id="testimonials-section" class="container">
+            <div class="section-header">
+                <p class="subtitle">Success Stories</p>
+                <h2>What Our Students Say</h2>
+            </div>
+            <div class="testimonials-grid">
+                <!-- Testimonials populated by JS -->
+            </div>
+        </section>
+
         <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
     </div>
 
@@ -318,7 +450,42 @@
 </main>
 
 <footer class="footer">
-    <div class="container"><div class="footer-content"><div class="footer-section"><h3>About Us</h3><p>Empowering farmers with world-class agricultural education, combining traditional wisdom with modern techniques.</p></div><div class="footer-section"><h3>Courses</h3><ul class="footer-links" id="footer-course-links"></ul></div><div class="footer-section"><h3>Support</h3><ul class="footer-links"><li><a href="admin.html">Admin</a></li><li><a href="#">Help Center</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Privacy Policy</a></li></ul></div><div class="footer-section"><h3>Newsletter</h3><p>Get updates on new courses and farming tips.</p><form class="newsletter-form" id="newsletterForm"><input type="email" placeholder="Your email" required><button type="submit">Subscribe</button></form></div></div><div class="footer-bottom"><div class="container"><div class="footer-bottom-content"><p>&copy; 2025 Modern Farmer by ALFA OCTAL SYSTEMS.</p></div></div></div></div>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Empowering farmers with world-class agricultural education, combining traditional wisdom with modern techniques.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Courses</h3>
+                <ul class="footer-links" id="footer-course-links"></ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="admin.html">Admin</a></li>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Get updates on new courses and farming tips.</p>
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="footer-bottom-content">
+                    <p>&copy; 2025 Modern Farmer by ALFA OCTAL SYSTEMS.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </footer>
 
 <script>
@@ -334,11 +501,17 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 'sorghumFarming', dbId: 'sorghumFarming', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99' },
         { id: 'tobaccoFarming', dbId: 'tobaccoFarming', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99' }
     ];
+    const testimonials = [
+        { name: 'John Doe', course: 'Broiler Chicken Rearing', text: "This course transformed my small-scale broiler business. My profits have doubled thanks to the expert tips on feed and health management. A must-take for any serious poultry farmer!", avatarInitial: 'J' },
+        { name: 'Sipho Ndlovu', course: 'High-Performance Maize Farming', text: "I was skeptical about online farming courses, but Modern Farmer proved me wrong. The maize farming module on fertilizer timing was a game-changer for my yield. Highly recommended!", avatarInitial: 'S' },
+        { name: 'Emily White', course: 'Commercial Mushroom Cultivation', text: "The step-by-step guides for mushroom cultivation are incredibly detailed and easy to follow. I’ve successfully started my own small-scale mushroom farm and am already selling to local markets.", avatarInitial: 'E' }
+    ];
 
     // --- DOM ELEMENTS ---
     const elements = {
         views: document.querySelectorAll('.view-section'),
         courseGrid: document.querySelector('.course-grid'),
+        testimonialsGrid: document.querySelector('.testimonials-grid'),
         coursePagesContainer: document.getElementById('course-pages-container'),
         searchInput: document.getElementById('searchInput'),
         searchResults: document.getElementById('searchResults'),
@@ -358,6 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         authModal: document.getElementById('authModal'), authForm: document.getElementById('authForm'), userProfile: document.getElementById('userProfile'), userAvatar: document.getElementById('userAvatar'), userName: document.getElementById('userName'), userActionText: document.getElementById('userActionText'), closeAuthModal: document.getElementById('closeAuthModal'), authTitle: document.getElementById('authTitle'), authSubtitle: document.getElementById('authSubtitle'), authSubmitBtn: document.getElementById('authSubmitBtn'), authSwitchLink: document.getElementById('authSwitchLink'), googleSignInBtn: document.getElementById('googleSignInBtn'), usernameGroup: document.getElementById('usernameGroup'), authSwitchText: document.getElementById('authSwitchText'),
     };
     let searchDebounceTimer;
+    let heroSliderInterval; // Variable to hold the interval ID
 
     // --- INITIALIZATION ---
     function init() {
@@ -365,6 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
         populateStaticContent();
         generateCoursePreviewPages();
         initializeEventListeners();
+        startHeroSliderAutoSwitch(); // Start the auto-switching
         firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
         switchAuthMode(currentAuthMode, true);
     }
@@ -372,6 +547,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- DYNAMIC CONTENT POPULATION ---
     function populateStaticContent() {
         elements.courseGrid.innerHTML = courses.map(course => `<a href="#" class="course-card" data-course-id="${course.id}"><div class="card-thumbnail" style="background-image: url('${course.image}');"></div><div class="card-info"><h3>${course.icon || ''}<span>${course.title}</span></h3><p>${course.shortDesc}</p></div></a>`).join('');
+        
+        elements.testimonialsGrid.innerHTML = testimonials.map(t => `
+            <div class="testimonial-card">
+                <p class="testimonial-body">${t.text}</p>
+                <div class="testimonial-footer">
+                    <div class="testimonial-avatar">${t.avatarInitial}</div>
+                    <div class="testimonial-author-info">
+                        <div class="author-name">${t.name}</div>
+                        <div class="author-course">${t.course}</div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+
         const dropdownHTML = courses.map(course => `<a href="#" class="nav-link" data-view="${course.id}">${course.title}</a>`).join('');
         elements.desktopCoursesDropdown.innerHTML = dropdownHTML;
         elements.mobileCoursesDropdown.innerHTML = dropdownHTML;
@@ -405,9 +594,29 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.authForm.addEventListener('submit', handleAuthSubmit);
         elements.googleSignInBtn.addEventListener('click', handleGoogleSignIn);
         elements.authSwitchLink.addEventListener('click', e => { e.preventDefault(); switchAuthMode(currentAuthMode === 'signin' ? 'signup' : 'signin'); });
-        elements.sliderNextBtn.addEventListener('click', () => { elements.slider.appendChild(elements.slider.firstElementChild); });
-        elements.sliderPrevBtn.addEventListener('click', () => { elements.slider.insertBefore(elements.slider.lastElementChild, elements.slider.firstElementChild); });
+        
+        // Modified slider button listeners
+        elements.sliderNextBtn.addEventListener('click', () => {
+            elements.slider.appendChild(elements.slider.firstElementChild);
+            resetSliderInterval();
+        });
+        elements.sliderPrevBtn.addEventListener('click', () => {
+            elements.slider.insertBefore(elements.slider.lastElementChild, elements.slider.firstElementChild);
+            resetSliderInterval();
+        });
     }
+    
+    // --- HERO SLIDER AUTO-SWITCH LOGIC ---
+    function startHeroSliderAutoSwitch() {
+        heroSliderInterval = setInterval(() => {
+            elements.sliderNextBtn.click();
+        }, 4000); // 4 seconds
+    }
+    function resetSliderInterval() {
+        clearInterval(heroSliderInterval);
+        startHeroSliderAutoSwitch();
+    }
+
 
     function handleGlobalClick(e) {
         const target = e.target;
@@ -506,7 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function redirectToCoursePage(courseDbId) {
-        // *** KEY CHANGE: Redirect to a single view page with a URL parameter ***
         if (courseDbId) {
             window.location.href = `course-view.html?course=${courseDbId}`;
         } else {
@@ -557,4 +765,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
