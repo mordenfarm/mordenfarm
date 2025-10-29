@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Details | AlfaOctal Campus</title>
-    <meta name="description" content="A detailed course page for mastering various farming techniques, with content dynamically loaded from a Firebase backend.">
+    <title>Course Notes | AlfaOctal Campus</title>
+    <meta name="description" content="Course notes page for mastering various farming techniques.">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,34 +14,7 @@
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- Firebase SDK Integration -->
-    <script>
-        // IMPORTANT: Replace these with your actual Firebase project configuration credentials.
-        const firebaseConfig = {
-            apiKey: "AIzaSyAru65x_Fgt8EY1inQ2irGaEjTCc23mFGM",
-            authDomain: "mordern-farm.firebaseapp.com",
-            databaseURL: "https://mordern-farm-default-rtdb.firebaseio.com",
-            projectId: "mordern-farm",
-            storageBucket: "mordern-farm.firebasestorage.app",
-            messagingSenderId: "43708737487",
-            appId: "1:43708737487:web:9409206d743d2c625454ba",
-            measurementId: "G-P5LSG9GCFS"
-        };
-    </script>
-    <script type="module">
-        // Initialize Firebase and make Firestore functions available globally
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        try {
-            const app = initializeApp(firebaseConfig);
-            window.db = getFirestore(app); // Make Firestore instance globally available as 'db'
-            window.doc = doc;             // Make 'doc' function available
-            window.getDoc = getDoc;           // Make 'getDoc' function available
-            console.log("Firebase Initialized for Course Page.");
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-        }
-    </script>
+    <script type="module" src="public/js/firebase-config.js"></script>
 
     <style>
         /* --- Core Design System Variables --- */
@@ -265,23 +238,11 @@
             </section>
 
             <div class="container">
-                <section id="description-section" class="content-section">
-                    <h2><i class="fa-solid fa-circle-info"></i> About This Course</h2>
-                    <p id="course-description"></p>
-                </section>
-
                 <section id="notes-section" class="content-section">
                     <h2><i class="fa-solid fa-book-open"></i> Course Notes</h2>
                     <ul id="notes-list-container" class="notes-list">
                         <!-- Course notes will be dynamically inserted here -->
                     </ul>
-                </section>
-
-                <section id="videos-section" class="content-section">
-                    <h2><i class="fa-solid fa-video"></i> Video Gallery</h2>
-                    <div id="videos-grid-container" class="grid-container">
-                        <!-- Video cards will be dynamically inserted here -->
-                    </div>
                 </section>
             </div>
         </div>
@@ -328,9 +289,6 @@
                 // Populate Hero Section
                 document.getElementById('course-title').textContent = data.title || 'Course Title Not Set';
                 document.getElementById('course-subtitle').textContent = data.subtitle || 'An engaging subtitle about the course.';
-
-                // Populate Description
-                document.getElementById('course-description').textContent = data.description || 'No description available.';
                 
                 // Populate Notes
                 const notesContainer = document.getElementById('notes-list-container');
@@ -347,29 +305,6 @@
                     });
                 } else {
                     notesContainer.innerHTML = '<p>No notes have been added for this course yet.</p>';
-                }
-
-                // Populate Videos
-                const videosContainer = document.getElementById('videos-grid-container');
-                videosContainer.innerHTML = '';
-                if (data.videos && data.videos.length > 0) {
-                    data.videos.forEach(video => {
-                        const embedUrl = getYouTubeEmbedUrl(video.url);
-                        if (!embedUrl) return; // Skip if URL is invalid
-
-                        const videoEl = document.createElement('div');
-                        videoEl.className = 'video-card';
-                        videoEl.innerHTML = `
-                            <div class="video-thumbnail">
-                                <iframe src="${embedUrl}" title="${video.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                            <div class="video-card-info">
-                                <h3>${video.title || 'Untitled Video'}</h3>
-                            </div>`;
-                        videosContainer.appendChild(videoEl);
-                    });
-                } else {
-                    videosContainer.innerHTML = '<p>No videos have been added for this course yet.</p>';
                 }
             }
             
@@ -413,15 +348,24 @@
             // --- INITIALIZE ---
             function init() {
                 showLoader();
-                const urlParams = new URLSearchParams(window.location.search);
-                const courseId = urlParams.get('course'); // e.g., ?course=broilerRearing
 
-                if (courseId) {
-                    // Delay fetching slightly to ensure Firebase SDK is ready
-                    setTimeout(() => fetchCourseData(courseId), 200);
-                } else {
-                    showError("No Course Specified", "Please provide a course ID in the URL. Example: ?course=broilerRearing");
-                }
+                window.onAuthStateChanged(window.auth, user => {
+                    if (user) {
+                        // User is signed in, proceed to fetch course data
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const courseId = urlParams.get('course'); // e.g., ?course=broilerRearing
+
+                        if (courseId) {
+                            fetchCourseData(courseId);
+                        } else {
+                            showError("No Course Specified", "Please provide a course ID in the URL. Example: ?course=broilerRearing");
+                        }
+                    } else {
+                        // No user is signed in, redirect to the home page
+                        console.log("No user signed in. Redirecting...");
+                        window.location.href = 'index.html';
+                    }
+                });
             }
             
             init();
