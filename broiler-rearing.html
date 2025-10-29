@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Details | AlfaOctal Campus</title>
+    <title>Course Details | Modern Farmer</title>
     <meta name="description" content="A detailed course page for mastering various farming techniques, with content dynamically loaded from a Firebase backend.">
 
     <!-- Google Fonts -->
@@ -16,32 +17,18 @@
 
     <!-- Firebase SDK Integration -->
     <script>
-        // IMPORTANT: Replace these with your actual Firebase project configuration credentials.
         const firebaseConfig = {
-            apiKey: "AIzaSyAru65x_Fgt8EY1inQ2irGaEjTCc23mFGM",
-            authDomain: "mordern-farm.firebaseapp.com",
-            databaseURL: "https://mordern-farm-default-rtdb.firebaseio.com",
-            projectId: "mordern-farm",
-            storageBucket: "mordern-farm.firebasestorage.app",
-            messagingSenderId: "43708737487",
-            appId: "1:43708737487:web:9409206d743d2c625454ba",
-            measurementId: "G-P5LSG9GCFS"
+            apiKey: "%%FIREBASE_API_KEY%%",
+            authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+            projectId: "%%FIREBASE_PROJECT_ID%%",
+            storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+            messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+            appId: "%%FIREBASE_APP_ID%%",
+            measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
         };
     </script>
-    <script type="module">
-        // Initialize Firebase and make Firestore functions available globally
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        try {
-            const app = initializeApp(firebaseConfig);
-            window.db = getFirestore(app); // Make Firestore instance globally available as 'db'
-            window.doc = doc;             // Make 'doc' function available
-            window.getDoc = getDoc;           // Make 'getDoc' function available
-            console.log("Firebase Initialized for Course Page.");
-        } catch (error) {
-            console.error("Firebase initialization failed:", error);
-        }
-    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <style>
         /* --- Core Design System Variables --- */
@@ -242,7 +229,7 @@
 <body>
 
     <header class="main-header">
-        <div class="logo">AlfaOctal Campus</div>
+        <div class="logo">Modern Farmer</div>
         <a href="index.html" class="back-link">← Back to Courses</a>
     </header>
 
@@ -272,160 +259,18 @@
 
                 <section id="notes-section" class="content-section">
                     <h2><i class="fa-solid fa-book-open"></i> Course Notes</h2>
-                    <ul id="notes-list-container" class="notes-list">
-                        <!-- Course notes will be dynamically inserted here -->
-                    </ul>
+                    <ul id="notes-list-container" class="notes-list"></ul>
                 </section>
 
                 <section id="videos-section" class="content-section">
                     <h2><i class="fa-solid fa-video"></i> Video Gallery</h2>
-                    <div id="videos-grid-container" class="grid-container">
-                        <!-- Video cards will be dynamically inserted here -->
-                    </div>
+                    <div id="videos-grid-container" class="grid-container"></div>
                 </section>
             </div>
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // DOM element references
-            const loader = document.getElementById('loader');
-            const errorContainer = document.getElementById('error-container');
-            const errorTitle = document.getElementById('error-title');
-            const errorMessage = document.getElementById('error-message');
-            const contentWrapper = document.getElementById('course-content-wrapper');
+    <script type="module" src="js/course-loader.js"></script>
 
-            // --- DATA FETCHING ---
-            async function fetchCourseData(courseId) {
-                if (!window.db) {
-                    console.error("Firestore is not initialized.");
-                    showError("Initialization Failed", "There was a problem connecting to the database.");
-                    return;
-                }
-
-                try {
-                    const courseDocRef = window.doc(window.db, "courses", courseId);
-                    const docSnap = await window.getDoc(courseDocRef);
-
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        document.title = `${data.title || 'Course'} | AlfaOctal Campus`;
-                        renderCourseData(data);
-                        showContent();
-                    } else {
-                        console.log("No such document!");
-                        showError("Content Not Found", `The requested course ('${courseId}') could not be found. Please check the URL and try again.`);
-                    }
-                } catch (error) {
-                    console.error("Error fetching course data:", error);
-                    showError("Loading Error", "An error occurred while trying to fetch the course content.");
-                }
-            }
-
-            // --- UI RENDERING ---
-            function renderCourseData(data) {
-                // Populate Hero Section
-                document.getElementById('course-title').textContent = data.title || 'Course Title Not Set';
-                document.getElementById('course-subtitle').textContent = data.subtitle || 'An engaging subtitle about the course.';
-
-                // Populate Description
-                document.getElementById('course-description').textContent = data.description || 'No description available.';
-                
-                // Populate Notes
-                const notesContainer = document.getElementById('notes-list-container');
-                notesContainer.innerHTML = ''; // Clear existing content
-                if (data.notes && data.notes.length > 0) {
-                    data.notes.forEach(note => {
-                        const noteEl = document.createElement('li');
-                        noteEl.className = 'note-item';
-                        noteEl.innerHTML = `
-                            <h3>${note.title || 'Note Section'}</h3>
-                            <p>${note.content || 'No content for this section.'}</p>
-                        `;
-                        notesContainer.appendChild(noteEl);
-                    });
-                } else {
-                    notesContainer.innerHTML = '<p>No notes have been added for this course yet.</p>';
-                }
-
-                // Populate Videos
-                const videosContainer = document.getElementById('videos-grid-container');
-                videosContainer.innerHTML = '';
-                if (data.videos && data.videos.length > 0) {
-                    data.videos.forEach(video => {
-                        const embedUrl = getYouTubeEmbedUrl(video.url);
-                        if (!embedUrl) return; // Skip if URL is invalid
-
-                        const videoEl = document.createElement('div');
-                        videoEl.className = 'video-card';
-                        videoEl.innerHTML = `
-                            <div class="video-thumbnail">
-                                <iframe src="${embedUrl}" title="${video.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                            <div class="video-card-info">
-                                <h3>${video.title || 'Untitled Video'}</h3>
-                            </div>`;
-                        videosContainer.appendChild(videoEl);
-                    });
-                } else {
-                    videosContainer.innerHTML = '<p>No videos have been added for this course yet.</p>';
-                }
-            }
-            
-            // --- UTILITY FUNCTION ---
-            function getYouTubeEmbedUrl(url) {
-                if (!url) return null;
-                let videoId = null;
-                try {
-                    const urlObj = new URL(url);
-                    if (urlObj.hostname === 'youtu.be') {
-                        videoId = urlObj.pathname.slice(1);
-                    } else if (urlObj.hostname.includes('youtube.com')) {
-                        videoId = urlObj.searchParams.get('v');
-                    }
-                    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-                } catch (error) {
-                    console.error("Invalid video URL:", url);
-                    return null;
-                }
-            }
-
-            // --- UI STATE MANAGEMENT ---
-            function showLoader() {
-                loader.style.display = 'flex';
-                errorContainer.style.display = 'none';
-                contentWrapper.style.display = 'none';
-            }
-            function showError(title, message) {
-                errorTitle.textContent = title;
-                errorMessage.textContent = message;
-                loader.style.display = 'none';
-                errorContainer.style.display = 'block';
-                contentWrapper.style.display = 'none';
-            }
-            function showContent() {
-                loader.style.display = 'none';
-                errorContainer.style.display = 'none';
-                contentWrapper.style.display = 'block';
-            }
-
-            // --- INITIALIZE ---
-            function init() {
-                showLoader();
-                const urlParams = new URLSearchParams(window.location.search);
-                const courseId = urlParams.get('id');
-
-                if (courseId) {
-
-                    setTimeout(() => fetchCourseData(courseId), 200);
-                } else {
-                    showError("No Course Specified", "Please provide a course ID in the URL. Example: ?id=broiler-rearing");
-                }
-            }
-            
-            init();
-        });
-    </script>
 </body>
 </html>
