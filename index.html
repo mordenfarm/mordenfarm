@@ -1,43 +1,35 @@
 
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modern Farmer | Expert-Led Online Farming Courses</title>
-<meta name="description" content="Elevate your farming skills with expert-led online courses in broiler rearing, mushroom cultivation, fish farming, and more. Join Modern Farmer to increase your yield and profitability.">
-<meta name="keywords" content="farming courses, agriculture education, broiler chicken, road runner chicken, mushroom farming, fish farming, maize farming, modern agriculture, online learning">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Farmer | Expert-Led Online Farming Courses</title>
+    <meta name="description" content="Elevate your farming skills with expert-led online courses in broiler rearing, mushroom cultivation, fish farming, and more.">
+    <meta name="keywords" content="farming courses, agriculture education, modern agriculture, online learning">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script>
+        const firebaseConfig = {
+            apiKey: "%%FIREBASE_API_KEY%%",
+            authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+            projectId: "%%FIREBASE_PROJECT_ID%%",
+            storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+            messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+            appId: "%%FIREBASE_APP_ID%%",
+            measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
+        };
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
-<!-- In a real-world scenario, these keys would be managed by a secure build process. -->
-<!-- For this project, they are placeholders to be replaced by the build script. -->
-<script>
-  const firebaseConfig = {
-    apiKey: "%%FIREBASE_API_KEY%%",
-    authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
-    projectId: "%%FIREBASE_PROJECT_ID%%",
-    storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
-    messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
-    appId: "%%FIREBASE_APP_ID%%",
-    measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
-  };
-</script>
+    <script type="module" src="js/main.js"></script>
 
-<!-- Firebase Libraries -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-
-<!-- Main Application Logic -->
-<script type="module" src="js/main.js"></script>
-
-
-<style>
+    <style>
     :root {
         --color-primary: #e53935; --color-primary-dark: #c62828;
         --color-secondary: #43a047; --color-secondary-dark: #2e7d32;
@@ -80,7 +72,7 @@
     .search-results.active { opacity: 1; visibility: visible; transform: translateY(0); }
     .search-result-item { padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); cursor: pointer; transition: background-color 0.2s; }
     .search-result-item:last-child { border-bottom: none; }
-    .search-result-item:hover { background-color: rgba(229, 57, 53, 0.1); color: var(--text-primary); }
+    .search-result-item:hover { background-color: rgba(229, 57, 53, 0.1); }
     .no-results-message { padding: 1.5rem; text-align: center; color: var(--text-secondary); }
     .search-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 998; }
     .search-backdrop.active { display: block; }
@@ -138,6 +130,24 @@
         .mobile-nav .dropdown-content.show { max-height: 500px; }
     }
 
+    /* HERO SLIDER */
+    .hero-slider-container { width: 100%; height: calc(100vh - 80px); position: relative; overflow: hidden; }
+    .hero-slider-container .slide { position: relative; width: 100%; height: 100%; }
+    .hero-slider-container .slide .item { width: 200px; height: 300px; position: absolute; top: 50%; transform: translate(0, -50%); border-radius: 20px; box-shadow: 0 30px 50px #000; background-position: center; background-size: cover; display: inline-block; transition: 0.5s; }
+    .slide .item:nth-child(1), .slide .item:nth-child(2) { top: 0; left: 0; transform: none; border-radius: 0; width: 100%; height: 100%; }
+    .slide .item:nth-child(2)::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.2)); z-index: 1; }
+    .item .content { position: absolute; top: 50%; left: 100px; width: 90%; max-width: 500px; text-align: left; color: #eee; transform: translateY(-50%); font-family: var(--font-primary); display: none; z-index: 2; }
+    .slide .item:nth-child(2) .content { display: block; }
+    .content .name { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); text-transform: uppercase; font-weight: bold; opacity: 0; animation: animate 1s ease-in-out 1 forwards; }
+    .content .des { margin: 1rem 0 2rem; opacity: 0; font-size: 1.2rem; animation: animate 1s ease-in-out 0.3s 1 forwards; }
+    .content .cta-button { padding: 12px 24px; border: none; cursor: pointer; opacity: 0; border-radius: var(--border-radius-sm); background-color: var(--color-primary); color: white; font-weight: 600; text-transform: uppercase; font-size: 1rem; transition: var(--transition); animation: animate 1s ease-in-out 0.6s 1 forwards; }
+    .content .cta-button:hover { background-color: var(--color-primary-dark); transform: scale(1.05); }
+    @keyframes animate { from { opacity: 0; transform: translateY(100px); filter: blur(20px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+    .slider-button { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; z-index: 10; }
+    .slider-button button { width: 50px; height: 50px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.7); cursor: pointer; background: rgba(0,0,0,0.5); color: #fff; font-size: 1.2rem; font-weight: bold; transition: 0.3s; }
+    .slider-button button:hover { background: var(--color-primary); border-color: var(--color-primary); transform: scale(1.1); }
+    @media (max-width: 768px) { .item .content { left: 2rem; } .content .name { font-size: 2.5rem; } }
+
     /* SECTIONS & COURSE GRID */
     .section-header { text-align: center; margin-bottom: 3rem; }
     .section-header .subtitle { color: var(--color-primary); font-weight: 600; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -150,6 +160,19 @@
     .card-info h3 { font-size: 1.3rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem; }
     .card-info h3 svg { width: 24px; height: 24px; color: var(--color-primary); flex-shrink: 0; }
     .card-info p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+    /* VIEW MANAGEMENT */
+    .view-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+    .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* TESTIMONIALS & CONTACT */
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+    .testimonial-card { background: var(--bg-card); border-radius: var(--border-radius-md); padding: 2rem; border: 1px solid var(--border-color); }
+    .testimonial-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+    .stars { color: var(--color-gold); margin-top: 1rem; }
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; }
 
     /* FOOTER */
     .footer { background: var(--bg-light); border-top: 1px solid var(--border-color); padding: 4rem 0 2rem; margin-top: 4rem; }
@@ -182,17 +205,16 @@
       color: var(--text-primary);
       font-size: 1rem;
       transition: border-color 0.3s, box-shadow 0.3s;
-  }
-  .form-input:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
-  }
+    }
+    .form-input:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.2);
+    }
 </style>
 </head>
 <body>
-<h1 class="visually-hidden">AlfaOctal Campus: Online Agriculture Courses</h1>
-
+<h1 class="visually-hidden">Modern Farmer: Online Agriculture Courses</h1>
 
 <div class="auth-modal" id="authModal">
     <div class="auth-container">
@@ -214,7 +236,7 @@
 
 <header class="header">
     <a href="index.html" class="logo">
-        <img src="images/logo.png" alt="AlfaOctal Campus Logo">
+        <img src="images/logo.png" alt="Modern Farmer Logo">
     </a>
     <div class="header-center" id="headerCenter">
         <div class="search-container"><input type="search" class="search-input" id="searchInput" placeholder="Search courses..."><div class="search-results" id="searchResults"></div></div>
@@ -227,6 +249,8 @@
                     <a href="#courses-section">COURSES &#9662;</a>
                     <div class="dropdown-content" id="desktopCoursesDropdown"></div>
                 </li>
+                <li><a href="#testimonials-section">TESTIMONIALS</a></li>
+                <li><a href="#contact-section">CONTACT</a></li>
             </ul>
         </nav>
          <button class="search-icon-mobile" id="searchIconMobile" aria-label="Open Search"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg></button>
@@ -251,19 +275,25 @@
             <a href="#" id="mobileCoursesToggle">COURSES &#9662;</a>
             <div class="dropdown-content" id="mobileCoursesDropdown"></div>
         </li>
+        <li><a href="#testimonials-section">TESTIMONIALS</a></li>
+        <li><a href="#contact-section">CONTACT</a></li>
     </ul>
 </nav>
 
 <main>
-    <section id="courses-section" class="container">
-        <div class="section-header">
-            <p class="subtitle">Our Catalog</p>
-            <h2>Featured Courses</h2>
-        </div>
-        <div class="course-grid">
-            <!-- Course cards will be dynamically inserted here by js/main.js -->
-        </div>
-    </section>
+    <div id="home-view" class="view-section active">
+        <section class="hero-slider-container">
+            <div class="slide">
+            </div>
+            <div class="slider-button">
+                <button class="prev" aria-label="Previous Slide">◁</button>
+                <button class="next" aria-label="Next Slide">▷</button>
+            </div>
+        </section>
+        <section id="courses-section" class="container"><div class="section-header"><p class="subtitle">Our Catalog</p><h2>Featured Courses</h2></div><div class="course-grid"></div></section>
+        <section id="testimonials-section" class="container"><div class="section-header"><p class="subtitle">Success Stories</p><h2>What Our Students Say</h2></div><div class="testimonials-grid"></div></section>
+        <section id="contact-section" class="container"><div class="section-header"><p class="subtitle">Get In Touch</p><h2>Contact Us</h2></div><div class="contact-grid"></div></section>
+    </div>
 </main>
 
 <footer class="footer">
@@ -282,6 +312,5 @@
         </div>
     </div>
 </footer>
-
 </body>
 </html>
