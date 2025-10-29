@@ -414,13 +414,13 @@
             function init() {
                 showLoader();
                 const urlParams = new URLSearchParams(window.location.search);
-                const courseId = urlParams.get('course'); // e.g., ?course=broilerRearing
+                const courseId = urlParams.get('id');
 
                 if (courseId) {
-                    // Delay fetching slightly to ensure Firebase SDK is ready
+
                     setTimeout(() => fetchCourseData(courseId), 200);
                 } else {
-                    showError("No Course Specified", "Please provide a course ID in the URL. Example: ?course=broilerRearing");
+                    showError("No Course Specified", "Please provide a course ID in the URL. Example: ?id=broiler-rearing");
                 }
             }
             

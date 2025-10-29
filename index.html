@@ -31,14 +31,14 @@
 <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     try {
         const app = initializeApp(firebaseConfig);
         window.firebase = {
             app, auth: getAuth(app), db: getFirestore(app), googleProvider: new GoogleAuthProvider(),
             signInWithEmailAndPassword, createUserWithEmailAndPassword,
             signInWithPopup, signOut, onAuthStateChanged, updateProfile,
-            doc, setDoc, getDoc, updateDoc
+            doc, setDoc, getDoc, updateDoc, collection, getDocs, writeBatch
         };
         console.log("Firebase initialized successfully.");
     } catch (error)
@@ -338,15 +338,29 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- STATE & DATA ---
     let currentUser = null, isSubscribed = false, currentAuthMode = 'signin', currentCourseId = null;
-    const courses = [
-        { id: 'broiler-course-page', title: 'Broiler Chicken Rearing', image: 'images/broiler-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', price: '9.99', description: 'We teach you how to finish a flock in just 7 weeks, showing you the secrets to maximizing profitability, managing feed costs, and keeping your birds safe and healthy.', modules: [{ title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }] },
-        { id: 'roadrunner-course-page', title: 'Indigenous Poultry Management', image: 'images/roadrunner-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Specialized management to raise premium Road Runner chickens.', price: '9.99', description: 'Move beyond basic poultry. Learn specialized, indigenous poultry management techniques to raise premium-quality Road Runner chickens for a profitable niche market.', modules: [{ title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }] },
-        { id: 'mushroom-course-page', title: 'Commercial Mushroom Cultivation', image: 'images/mushroom-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>', shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', price: '9.99', description: 'Learn the three essential steps: perfect substrate preparation, sterile spawning to prevent contamination, and simple climate control to guarantee a successful harvest.', modules: [{ title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }] },
-        { id: 'fish-course-page', title: 'Sustainable Fish Farming', image: 'images/fish-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5c0-4.4-3.6-8-8-8s-8 3.6-8 8c0 2.5 1.2 4.8 3.1 6.2.2.2.4.3.7.3h8.4c.3 0 .5-.1.7-.3 1.9-1.4 3.1-3.7 3.1-6.2z"/><path d="M5.5 12.5c.3-1 .8-1.8 1.5-2.5"/></svg>', shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', price: '9.99', description: 'Get the aquaculture basics right, with a special focus on managing Dissolved Oxygen (DO) levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', modules: [{ title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }] },
-        { id: 'maize-course-page', title: 'High-Performance Maize Farming', image: 'images/maize-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', price: '9.99', description: 'Discover the best techniques for timing your fertilizer, how to protect your crops during drought, and simple steps to maximize your yield every season.', modules: [{ title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }] },
-        { id: 'sorghum-course-page', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99', description: 'Master growing this tough, drought-resistant grain. We show you simple, effective pest control strategies and management techniques to ensure a reliable harvest.', modules: [{ title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }] },
-        { id: 'tobacco-course-page', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99', description: 'Focus on the high-value side of this crop. Learn the art of professional curing techniques and effective sucker control to produce premium, market-ready leaves.', modules: [{ title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }] }
+    let courses = [];
+    const initialCourses = [
+        { id: 'broiler-rearing', title: 'Broiler Chicken Rearing', image: 'images/broiler-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Master the 7-week profit cycle with secrets to maximizing profitability.', price: '9.99', description: 'We teach you how to finish a flock in just 7 weeks, showing you the secrets to maximizing profitability, managing feed costs, and keeping your birds safe and healthy.', modules: [{ title: 'Week 1-2: Brooding Fundamentals', desc: 'Temperature control and early nutrition.' }, { title: 'Week 3-4: Growth Optimization', desc: 'Feed conversion ratio mastery.' }, { title: 'Week 5-6: Health Management', desc: 'Disease prevention and biosecurity.' }, { title: 'Week 7: Market Preparation', desc: 'Final feed strategies and marketing.' }] },
+        { id: 'roadrunner-rearing', title: 'Indigenous Poultry Management', image: 'images/roadrunner-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.88 12.42a2.3 2.3 0 0 1 2.12-3.42h.02a2.3 2.3 0 0 1 2.1 3.44 6.8 6.8 0 0 1-2.02 5.56c-1.35 1.46-3.1 3-5.08 3-1.9 0-3.6-1.5-5-3-2-2.13-2.14-5.3-.3-7.5 1.5-1.8 4.3-2.5 6.3-2.5 1.8 0 3.4.6 4.7 1.8a2.3 2.3 0 0 1-1.9 3.9zM12 11.5a2.5 2.5 0 0 1-5 0c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5z"/><path d="M12.5 12.5a2 2 0 0 1-2-2"/><path d="M12 18c-2.5 0-4.5-2-4.5-4.5 0-2.5 2-4.5 4.5-4.5"/></svg>', shortDesc: 'Specialized management to raise premium Road Runner chickens.', price: '9.99', description: 'Move beyond basic poultry. Learn specialized, indigenous poultry management techniques to raise premium-quality Road Runner chickens for a profitable niche market.', modules: [{ title: 'Housing & Predator Proofing', desc: 'Building secure, low-cost housing.' }, { title: 'Natural Foraging & Feed', desc: 'Supplementing natural diets effectively.' }, { title: 'Disease Resistance & Health', desc: 'Leveraging natural hardiness.' }, { title: 'Marketing Premium Birds', desc: 'Finding and selling to niche markets.' }] },
+        { id: 'mushroom-cultivation', title: 'Commercial Mushroom Cultivation', image: 'images/mushroom-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a9 9 0 0 0-9 9c0 4.97 4.03 9 9 9s9-4.03 9-9a9 9 0 0 0-9-9z"/><path d="M12 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>', shortDesc: 'Perfect substrate prep, sterile spawning, and climate control mastery.', price: '9.99', description: 'Learn the three essential steps: perfect substrate preparation, sterile spawning to prevent contamination, and simple climate control to guarantee a successful harvest.', modules: [{ title: 'Substrate & Sterilization', desc: 'Preparing the perfect growth medium.' }, { title: 'Inoculation & Incubation', desc: 'The science of spawning.' }, { title: 'Fruiting & Climate Control', desc: 'Inducing and managing mushroom growth.' }, { title: 'Harvesting & Post-Harvest', desc: 'Packing and storing for freshness.' }] },
+        { id: 'fish-farming', title: 'Sustainable Fish Farming', image: 'images/fish-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5c0-4.4-3.6-8-8-8s-8 3.6-8 8c0 2.5 1.2 4.8 3.1 6.2.2.2.4.3.7.3h8.4c.3 0 .5-.1.7-.3 1.9-1.4 3.1-3.7 3.1-6.2z"/><path d="M5.5 12.5c.3-1 .8-1.8 1.5-2.5"/></svg>', shortDesc: 'Get the aquaculture basics right, focusing on Dissolved Oxygen (DO).', price: '9.99', description: 'Get the aquaculture basics right, with a special focus on managing Dissolved Oxygen (DO) levels—the single most important factor for healthy, fast-growing Tilapia and Catfish.', modules: [{ title: 'Pond & System Design', desc: 'Building an efficient aquaculture system.' }, { title: 'Water Quality Mastery', desc: 'Managing pH, ammonia, and oxygen.' }, { title: 'Feeding & Growth', desc: 'Optimizing feed for fast growth.' }, { title: 'Disease Prevention', desc: 'Keeping your stock healthy.' }] },
+        { id: 'maize-farming', title: 'High-Performance Maize Farming', image: 'images/maize-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Discover techniques for fertilizer timing, drought protection, and maximizing yield.', price: '9.99', description: 'Discover the best techniques for timing your fertilizer, how to protect your crops during drought, and simple steps to maximize your yield every season.', modules: [{ title: 'Soil Health & Preparation', desc: 'The foundation of a great harvest.' }, { title: 'Advanced Fertilizer Strategy', desc: 'Timing applications for max uptake.' }, { title: 'Water Conservation', desc: 'Techniques for drought resistance.' }, { title: 'Pest & Disease Control', desc: 'Integrated pest management.' }] },
+        { id: 'sorghum-farming', title: 'Resilient Sorghum Farming', image: 'images/sorghum-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>', shortDesc: 'Master growing this tough, drought-resistant grain with proven pest control.', price: '9.99', description: 'Master growing this tough, drought-resistant grain. We show you simple, effective pest control strategies and management techniques to ensure a reliable harvest.', modules: [{ title: 'Variety Selection', desc: 'Choosing the right seeds for your climate.' }, { title: 'Planting & Establishment', desc: 'Best practices for a strong start.' }, { title: 'Weed & Pest Management', desc: 'Controlling threats effectively.' }, { title: 'Harvesting & Storage', desc: 'Maximizing your final product.' }] },
+        { id: 'tobacco-farming', title: 'High-Value Tobacco Farming', image: 'images/tobbaco-card.png', icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V4l-8 4-8-4v8c0 6 8 10 8 10z"/></svg>', shortDesc: 'Professional curing techniques for premium, market-ready leaves.', price: '9.99', description: 'Focus on the high-value side of this crop. Learn the art of professional curing techniques and effective sucker control to produce premium, market-ready leaves.', modules: [{ title: 'Seedbed to Transplanting', desc: 'Nurturing healthy seedlings.' }, { title: 'Field Management', desc: 'Topping, suckering, and nutrition.' }, { title: 'The Art of Curing', desc: 'Techniques for a perfect cure.' }, { title: 'Grading & Marketing', desc: 'Getting the best price for your leaf.' }] }
     ];
+
+    async function fetchCourses() {
+        const { db, collection, getDocs } = window.firebase;
+        const coursesCollectionRef = collection(db, 'courses');
+        try {
+            const querySnapshot = await getDocs(coursesCollectionRef);
+            courses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return courses;
+        } catch (error) {
+            console.error("Error fetching courses:", error);
+            return []; // Return an empty array on error
+        }
+    }
 
     // --- DOM ELEMENTS ---
     const elements = {
@@ -375,13 +389,37 @@ document.addEventListener('DOMContentLoaded', () => {
     let searchDebounceTimer;
 
     // --- INITIALIZATION ---
-    function init() {
+    async function init() {
         if (!window.firebase || !window.firebase.auth) { console.error("Firebase not configured."); return; }
+        await seedDatabaseIfNeeded();
+        courses = await fetchCourses();
         populateStaticContent();
         generateCoursePages();
         initializeEventListeners();
         firebase.onAuthStateChanged(firebase.auth, handleAuthStateChange);
         switchAuthMode(currentAuthMode, true);
+    }
+
+    async function seedDatabaseIfNeeded() {
+        const { db, collection, getDocs, writeBatch, doc } = window.firebase;
+        const coursesCollectionRef = collection(db, 'courses');
+        try {
+            const querySnapshot = await getDocs(coursesCollectionRef);
+            if (querySnapshot.empty) {
+                console.log("Courses collection is empty. Seeding database...");
+                const batch = writeBatch(db);
+                initialCourses.forEach(course => {
+                    const courseDocRef = doc(db, 'courses', course.id);
+                    batch.set(courseDocRef, course);
+                });
+                await batch.commit();
+                console.log("Database seeded successfully with initial course data.");
+            } else {
+                console.log("Courses collection already exists. No seeding needed.");
+            }
+        } catch (error) {
+            console.error("Error checking or seeding courses collection:", error);
+        }
     }
 
     // --- DYNAMIC CONTENT POPULATION ---
@@ -526,13 +564,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function redirectToCoursePage(courseId) {
         // Map course IDs to their actual HTML pages
         const coursePages = {
-            'broiler-course-page': 'broiler-rearing.html',
-            'roadrunner-course-page': 'roadrunner-rearing.html',
-            'mushroom-course-page': 'mushroom-cultivation.html',
-            'fish-course-page': 'fish-farming.html',
-            'maize-course-page': 'maize-farming.html',
-            'sorghum-course-page': 'sorghum-farming.html',
-            'tobacco-course-page': 'tobacco-farming.html'
+            'broiler-rearing': 'broiler-rearing.html',
+            'roadrunner-rearing': 'roadrunner-rearing.html',
+            'mushroom-cultivation': 'mushroom-cultivation.html',
+            'fish-farming': 'fish-farming.html',
+            'maize-farming': 'maize-farming.html',
+            'sorghum-farming': 'sorghum-farming.html',
+            'tobacco-farming': 'tobacco-farming.html'
         };
         
         const targetPage = coursePages[courseId];
