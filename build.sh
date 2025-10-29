@@ -2,7 +2,7 @@
 
 # Define the files to process. I've added admin.html and the new course-view.html
 # as they now also use the secure placeholder variables.
-FILES=("index.html", "payment.html", "admin.html", "course-view.html")
+FILES=( "payment.html", "admin.html" "course-view.html")
 
 # Loop through each file and replace the placeholders
 for FILE in "${FILES[@]}"; do
