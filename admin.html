@@ -30,7 +30,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
         try {
@@ -41,8 +41,7 @@
                 db: getFirestore(app),
                 storage: getStorage(app),
                 onAuthStateChanged, signInWithEmailAndPassword, signOut,
-                doc, getDoc, setDoc,
-                ref, uploadBytes, getDownloadURL, deleteObject
+                doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc
             };
             console.log("Firebase Initialized for Admin Panel.");
         } catch (error) {
@@ -147,6 +146,9 @@
         #mobile-menu-btn { display: none; }
 
         .content-wrapper { padding: 2rem; }
+        .page-view { display: none; }
+        .page-view.active { display: block; }
+
         .content-section {
             background: var(--bg-card); padding: 1.5rem;
             border-radius: var(--border-radius); margin-bottom: 2rem;
@@ -251,13 +253,8 @@
                 <img src="images/logo.png" alt="Logo">
             </div>
             <ul class="sidebar-nav" id="sidebar-nav">
-                 <li><a href="#" class="active" data-page="broiler-course-page"><i class="fa-solid fa-drumstick-bite"></i> <span>Broiler Rearing</span></a></li>
-                 <li><a href="#" data-page="roadrunner-course-page"><i class="fa-solid fa-feather-pointed"></i> <span>Roadrunner Rearing</span></a></li>
-                 <li><a href="#" data-page="mushroom-course-page"><i class="fa-solid fa-staff-aesculapius"></i> <span>Mushroom Cultivation</span></a></li>
-                 <li><a href="#" data-page="fish-course-page"><i class="fa-solid fa-fish-fins"></i> <span>Fish Farming</span></a></li>
-                 <li><a href="#" data-page="maize-course-page"><i class="fa-solid fa-seedling"></i> <span>Maize Farming</span></a></li>
-                 <li><a href="#" data-page="sorghum-course-page"><i class="fa-solid fa-wheat-awn"></i> <span>Sorghum Farming</span></a></li>
-                 <li><a href="#" data-page="tobacco-course-page"><i class="fa-solid fa-smoking"></i> <span>Tobacco Farming</span></a></li>
+                <li><a href="#" data-page="manage-courses"><i class="fa-solid fa-tasks"></i> <span>Manage Courses</span></a></li>
+                <!-- Course links will be dynamically added here -->
             </ul>
         </aside>
 
@@ -265,59 +262,98 @@
             <header class="main-header">
                 <div style="display: flex; align-items: center;">
                     <button id="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
-                    <h1 id="main-content-title">Edit: Broiler Rearing</h1>
+                    <h1 id="main-content-title">Manage Courses</h1>
                 </div>
                 <div class="header-actions">
-                     <button id="save-all-changes" class="btn btn-primary btn-save">Save All Changes</button>
+                     <button id="save-all-changes" class="btn btn-primary btn-save" style="display: none;">Save All Changes</button>
                      <button id="logout-button" class="btn-logout">Logout</button>
                 </div>
             </header>
             
             <div class="content-wrapper">
-                <!-- Section 1: General Information -->
-                <section class="content-section">
-                    <h2>General Information</h2>
-                    <div class="form-group">
-                        <label for="course-title" class="form-label">Course Title</label>
-                        <input type="text" id="course-title" class="form-input" placeholder="e.g., Ultimate Broiler Rearing Masterclass">
-                    </div>
-                    <div class="form-group">
-                        <label for="course-subtitle" class="form-label">Course Subtitle</label>
-                        <input type="text" id="course-subtitle" class="form-input" placeholder="e.g., From Chick to Profit in 7 Weeks">
-                    </div>
-                    <div class="form-group">
-                        <label for="course-description" class="form-label">Course Description</label>
-                        <textarea id="course-description" class="form-input" placeholder="Detailed description of the course. You can use <br> for line breaks."></textarea>
-                    </div>
-                </section>
+                <!-- Page View: Manage Courses -->
+                <div id="manage-courses-page" class="page-view active">
+                    <section class="content-section">
+                        <h2>Add New Course</h2>
+                        <form id="add-course-form">
+                            <div class="form-group">
+                                <label for="new-course-title" class="form-label">Course Title</label>
+                                <input type="text" id="new-course-title" class="form-input" placeholder="e.g., Broiler Chicken Rearing" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-course-short-desc" class="form-label">Short Description</label>
+                                <input type="text" id="new-course-short-desc" class="form-input" placeholder="A brief summary of the course" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-course-price" class="form-label">Price</label>
+                                <input type="number" id="new-course-price" class="form-input" value="9.99" required>
+                            </div>
+                             <div class="form-group">
+                                <label for="new-course-image" class="form-label">Image URL</label>
+                                <input type="text" id="new-course-image" class="form-input" placeholder="e.g., images/broiler-card.png" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: auto;">Add Course</button>
+                        </form>
+                    </section>
+                    <section class="content-section">
+                        <h2>Existing Courses</h2>
+                        <ul id="existing-courses-list" class="item-list">
+                            <!-- Existing courses will be listed here -->
+                        </ul>
+                    </section>
+                </div>
 
-                <!-- Section 2: Course Notes -->
-                <section class="content-section">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                         <h2>Course Notes</h2>
-                         <button id="add-note-card-btn" class="btn btn-primary" style="width: auto; padding: 0.6rem 1rem;">+ Add Note Section</button>
-                    </div>
-                    <div id="notes-container">
-                        <!-- Note cards will be dynamically added here -->
-                    </div>
-                </section>
-
-                <!-- Section 3: Video Gallery -->
-                <section class="content-section">
-                    <h2>Video Gallery</h2>
-                    <form id="add-video-form">
+                <!-- Page View: Edit Course Details -->
+                <div id="edit-course-page" class="page-view">
+                    <!-- Section 1: General Information -->
+                    <section class="content-section">
+                        <h2>General Information</h2>
                         <div class="form-group">
-                            <input type="text" id="video-title" class="form-input" placeholder="Video Title" required>
+                            <label for="course-title" class="form-label">Course Title</label>
+                            <input type="text" id="course-title" class="form-input" placeholder="e.g., Ultimate Broiler Rearing Masterclass">
                         </div>
                         <div class="form-group">
-                            <input type="url" id="video-url" class="form-input" placeholder="Full YouTube URL (e.g., https://www.youtube.com/watch?v=...)" required>
+                            <label for="course-subtitle" class="form-label">Course Subtitle</label>
+                            <input type="text" id="course-subtitle" class="form-input" placeholder="e.g., From Chick to Profit in 7 Weeks">
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width: auto;">+ Add Video</button>
-                    </form>
-                     <ul id="videos-list" class="item-list">
-                        <!-- Videos will be dynamically listed here -->
-                    </ul>
-                </section>
+                        <div class="form-group">
+                            <label for="course-short-desc" class="form-label">Short Description</label>
+                            <input type="text" id="course-short-desc" class="form-input" placeholder="A brief summary of the course">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-price" class="form-label">Price</label>
+                            <input type="number" id="course-price" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-description" class="form-label">Course Description</label>
+                            <textarea id="course-description" class="form-input" placeholder="Detailed description of the course. You can use <br> for line breaks."></textarea>
+                        </div>
+                    </section>
+
+                    <!-- Section 2: Course Notes -->
+                    <section class="content-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                             <h2>Course Notes</h2>
+                             <button id="add-note-card-btn" class="btn btn-primary" style="width: auto; padding: 0.6rem 1rem;">+ Add Note Section</button>
+                        </div>
+                        <div id="notes-container"></div>
+                    </section>
+
+                    <!-- Section 3: Video Gallery -->
+                    <section class="content-section">
+                        <h2>Video Gallery</h2>
+                        <form id="add-video-form">
+                            <div class="form-group">
+                                <input type="text" id="video-title" class="form-input" placeholder="Video Title" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="url" id="video-url" class="form-input" placeholder="Full YouTube URL (e.g., https://www.youtube.com/watch?v=...)" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: auto;">+ Add Video</button>
+                        </form>
+                         <ul id="videos-list" class="item-list"></ul>
+                    </section>
+                </div>
             </div>
         </main>
     </div>
@@ -328,15 +364,6 @@
     document.addEventListener('DOMContentLoaded', () => {
         // --- CONFIGURATION ---
         const ADMIN_EMAILS = ["admin@alfaoctal.com", "admin2@alfaoctal.com"];
-        const PAGES = {
-            'broiler-course-page': { id: 'broilerRearing', title: 'Broiler Rearing'},
-            'roadrunner-course-page': { id: 'roadrunnerRearing', title: 'Roadrunner Rearing'},
-            'mushroom-course-page': { id: 'mushroomCultivation', title: 'Mushroom Cultivation'},
-            'fish-course-page': { id: 'fishFarming', title: 'Fish Farming'},
-            'maize-course-page': { id: 'maizeFarming', title: 'Maize Farming'},
-            'sorghum-course-page': { id: 'sorghumFarming', title: 'Sorghum Farming'},
-            'tobacco-course-page': { id: 'tobaccoFarming', title: 'Tobacco Farming'}
-        };
 
         // --- DOM ELEMENTS ---
         const elements = {
@@ -351,6 +378,12 @@
             sidebarNav: document.getElementById('sidebar-nav'),
             mobileMenuBtn: document.getElementById('mobile-menu-btn'),
             mainContentTitle: document.getElementById('main-content-title'),
+
+            manageCoursesPage: document.getElementById('manage-courses-page'),
+            addCourseForm: document.getElementById('add-course-form'),
+            existingCoursesList: document.getElementById('existing-courses-list'),
+
+            editCoursePage: document.getElementById('edit-course-page'),
             courseTitle: document.getElementById('course-title'),
             courseSubtitle: document.getElementById('course-subtitle'),
             courseDescription: document.getElementById('course-description'),
@@ -361,22 +394,22 @@
         };
 
         // --- LOCAL STATE ---
-        let courseData = {};
-        let currentCourseId = 'broilerRearing'; // Default
-        let courseDocRef;
+        let currentCourseData = {};
+        let currentCourseId = null;
+        let courseDocRef = null;
 
         // --- INITIALIZATION & AUTHENTICATION ---
         function init() {
             if (!window.firebase || !window.firebase.auth) {
-                setTimeout(init, 100);
-                return;
+                setTimeout(init, 100); return;
             }
 
             window.firebase.onAuthStateChanged(window.firebase.auth, user => {
                 if (user && ADMIN_EMAILS.includes(user.email)) {
                     elements.loginOverlay.style.display = 'none';
                     elements.adminPanel.style.display = 'flex';
-                    switchCourse(PAGES['broiler-course-page'].id, PAGES['broiler-course-page'].title);
+                    fetchAllCourses();
+                    switchPage('manage-courses');
                 } else {
                     elements.loginOverlay.style.display = 'flex';
                     elements.adminPanel.style.display = 'none';
@@ -393,6 +426,10 @@
             elements.saveAllButton.addEventListener('click', saveAllChanges);
             elements.sidebarNav.addEventListener('click', handleNavClick);
             elements.mobileMenuBtn.addEventListener('click', () => elements.sidebar.classList.toggle('is-open'));
+
+            elements.addCourseForm.addEventListener('submit', handleAddCourse);
+            elements.existingCoursesList.addEventListener('click', handleDeleteCourse);
+
             elements.addNoteCardBtn.addEventListener('click', () => createNoteCard());
             elements.notesContainer.addEventListener('click', handleNoteCardActions);
             elements.addVideoForm.addEventListener('submit', addVideo);
@@ -418,13 +455,19 @@
             e.preventDefault();
             const link = e.target.closest('a');
             if (!link) return;
-            
-            document.querySelector('.sidebar-nav a.active').classList.remove('active');
+
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
             link.classList.add('active');
             
-            const pageKey = link.dataset.page;
-            const pageInfo = PAGES[pageKey];
-            switchCourse(pageInfo.id, pageInfo.title);
+            const page = link.dataset.page;
+            const courseId = link.dataset.courseId;
+            const courseTitle = link.dataset.courseTitle;
+
+            if (page === 'edit-course') {
+                switchPage('edit-course', { courseId, courseTitle });
+            } else {
+                switchPage('manage-courses');
+            }
             
             if (window.innerWidth <= 768) {
                 elements.sidebar.classList.remove('is-open');
@@ -432,24 +475,91 @@
         }
         
         // --- PAGE & DATA MANAGEMENT ---
-        function switchCourse(courseId, courseTitle) {
-            currentCourseId = courseId;
-            elements.mainContentTitle.textContent = `Edit: ${courseTitle}`;
-            courseDocRef = window.firebase.doc(window.firebase.db, "courses", currentCourseId);
-            loadCourseData();
+        function switchPage(page, context = {}) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.getElementById(`${page}-page`).classList.add('active');
+
+            if (page === 'edit-course') {
+                elements.mainContentTitle.textContent = `Edit: ${context.courseTitle}`;
+                elements.saveAllButton.style.display = 'inline-block';
+                currentCourseId = context.courseId;
+                courseDocRef = window.firebase.doc(window.firebase.db, "courses", currentCourseId);
+                loadCourseData();
+            } else {
+                elements.mainContentTitle.textContent = 'Manage Courses';
+                elements.saveAllButton.style.display = 'none';
+                currentCourseId = null;
+                courseDocRef = null;
+            }
         }
 
+        async function fetchAllCourses() {
+            try {
+                const querySnapshot = await window.firebase.getDocs(window.firebase.collection(window.firebase.db, "courses"));
+                const courses = [];
+                querySnapshot.forEach(doc => {
+                    courses.push({ id: doc.id, ...doc.data() });
+                });
+                renderSidebar(courses);
+                renderExistingCourses(courses);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
+        }
+
+        async function handleAddCourse(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('new-course-title');
+            const shortDescInput = document.getElementById('new-course-short-desc');
+            const priceInput = document.getElementById('new-course-price');
+            const imageInput = document.getElementById('new-course-image');
+            const newCourse = {
+                title: titleInput.value.trim(),
+                shortDesc: shortDescInput.value.trim(),
+                price: parseFloat(priceInput.value),
+                image: imageInput.value.trim(),
+                subtitle: "",
+                description: "",
+                notes: [],
+                videos: []
+            };
+
+            try {
+                await window.firebase.addDoc(window.firebase.collection(window.firebase.db, "courses"), newCourse);
+                showSaveStatus("Course added successfully!", "success");
+                titleInput.value = '';
+                shortDescInput.value = '';
+                priceInput.value = '9.99';
+                imageInput.value = '';
+                fetchAllCourses(); // Refresh the lists
+            } catch (error) {
+                console.error("Error adding course:", error);
+                showSaveStatus("Error adding course.", "error");
+            }
+        }
+
+        async function handleDeleteCourse(e) {
+            if (!e.target.matches('.btn-delete-course')) return;
+            const courseId = e.target.dataset.id;
+            if (confirm(`Are you sure you want to delete this course? This action cannot be undone.`)) {
+                try {
+                    await window.firebase.deleteDoc(window.firebase.doc(window.firebase.db, "courses", courseId));
+                    showSaveStatus("Course deleted successfully!", "success");
+                    fetchAllCourses(); // Refresh the lists
+                } catch (error) {
+                    console.error("Error deleting course:", error);
+                    showSaveStatus("Error deleting course.", "error");
+                }
+            }
+        }
+
+
         async function loadCourseData() {
+            if (!courseDocRef) return;
             try {
                 const docSnap = await window.firebase.getDoc(courseDocRef);
-                if (docSnap.exists()) {
-                    courseData = docSnap.data();
-                } else {
-                    console.log("No document found for this course. Creating an initial document...");
-                    courseData = { title: "", subtitle: "", description: "", notes: [], videos: [] };
-                    await window.firebase.setDoc(courseDocRef, courseData);
-                }
-                renderAdminPanel();
+                currentCourseData = docSnap.exists() ? docSnap.data() : { title: "", subtitle: "", description: "", notes: [], videos: [] };
+                renderEditCoursePage();
             } catch (error) {
                 console.error("Error loading course data:", error);
                 showSaveStatus("Error loading data.", "error");
@@ -457,32 +567,28 @@
         }
 
         async function saveAllChanges() {
+            if (!courseDocRef) return;
             showSaveStatus("Saving...", "saving");
             
-            // Create a fresh data object from the DOM to ensure consistency
             const dataToSave = {
-                title: elements.courseTitle.value,
-                subtitle: elements.courseSubtitle.value,
+                ...currentCourseData, // Preserve existing fields like image
+                title: document.getElementById('course-title').value,
+                subtitle: document.getElementById('course-subtitle').value,
+                shortDesc: document.getElementById('course-short-desc').value,
+                price: parseFloat(document.getElementById('course-price').value),
                 description: elements.courseDescription.value,
-                notes: [],
-                videos: courseData.videos || [] // Start with the videos from the current state
+                notes: Array.from(elements.notesContainer.querySelectorAll('.note-card')).map(card => ({
+                    title: card.querySelector('.note-title-input').value,
+                    content: card.querySelector('.note-content-textarea').value
+                })).filter(n => n.title || n.content),
+                videos: currentCourseData.videos || []
             };
-            
-            const noteCards = elements.notesContainer.querySelectorAll('.note-card');
-            noteCards.forEach(card => {
-                const title = card.querySelector('.note-title-input').value;
-                const content = card.querySelector('.note-content-textarea').value;
-                if (title || content) { // Only save if there's some content
-                    dataToSave.notes.push({ title, content });
-                }
-            });
 
             try {
-                // Save the complete, updated object to Firestore
-                await window.firebase.setDoc(courseDocRef, dataToSave);
-                // Update the local state to match what was just saved
-                courseData = dataToSave;
+                await window.firebase.setDoc(courseDocRef, dataToSave, { merge: true });
+                currentCourseData = dataToSave;
                 showSaveStatus("Changes saved successfully!", "success");
+                fetchAllCourses(); // Refresh sidebar in case title changed
             } catch (error) {
                 console.error("Error saving data:", error);
                 showSaveStatus("Error saving changes.", "error");
@@ -490,10 +596,40 @@
         }
 
         // --- UI RENDERING ---
-        function renderAdminPanel() {
-            elements.courseTitle.value = courseData.title || '';
-            elements.courseSubtitle.value = courseData.subtitle || '';
-            elements.courseDescription.value = courseData.description || '';
+        function renderSidebar(courses) {
+            const courseLinks = courses
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .map(course => `<li><a href="#" data-page="edit-course" data-course-id="${course.id}" data-course-title="${course.title}"><i class="fa-solid fa-graduation-cap"></i> <span>${course.title}</span></a></li>`)
+                .join('');
+
+            const manageLink = `<li><a href="#" data-page="manage-courses" class="active"><i class="fa-solid fa-tasks"></i> <span>Manage Courses</span></a></li>`;
+            elements.sidebarNav.innerHTML = manageLink + courseLinks;
+        }
+
+        function renderExistingCourses(courses) {
+            if (courses.length === 0) {
+                elements.existingCoursesList.innerHTML = '<p>No courses found. Add one above.</p>';
+                return;
+            }
+            elements.existingCoursesList.innerHTML = courses
+                .sort((a, b) => a.title.localeCompare(b.title))
+                .map(course => `
+                <li class="item-card">
+                    <div class="item-info">
+                        <strong>${course.title}</strong>
+                        <span>ID: ${course.id}</span>
+                    </div>
+                    <button class="btn-delete btn-delete-course" data-id="${course.id}">Delete</button>
+                </li>
+            `).join('');
+        }
+
+        function renderEditCoursePage() {
+            document.getElementById('course-title').value = currentCourseData.title || '';
+            document.getElementById('course-subtitle').value = currentCourseData.subtitle || '';
+            document.getElementById('course-short-desc').value = currentCourseData.shortDesc || '';
+            document.getElementById('course-price').value = currentCourseData.price || '9.99';
+            elements.courseDescription.value = currentCourseData.description || '';
             renderNotes();
             renderList('videos');
         }
@@ -501,8 +637,8 @@
         // --- NOTES MANAGEMENT ---
         function renderNotes() {
             elements.notesContainer.innerHTML = '';
-            if (!courseData.notes) courseData.notes = [];
-            courseData.notes.forEach(note => createNoteCard(note.title, note.content));
+            if (!currentCourseData.notes) currentCourseData.notes = [];
+            currentCourseData.notes.forEach(note => createNoteCard(note.title, note.content));
         }
         
         function createNoteCard(title = '', content = '') {
@@ -546,14 +682,14 @@
             e.preventDefault();
             const titleInput = document.getElementById('video-title');
             const urlInput = document.getElementById('video-url');
-            if (!courseData.videos) courseData.videos = [];
+            if (!currentCourseData.videos) currentCourseData.videos = [];
 
             const newVideo = {
                 id: Date.now().toString(),
                 title: titleInput.value,
                 url: urlInput.value
             };
-            courseData.videos.push(newVideo);
+            currentCourseData.videos.push(newVideo);
             renderList('videos');
             e.target.reset();
         }
@@ -562,9 +698,9 @@
             const listElement = elements[`${type}List`];
             if (!listElement) return;
             listElement.innerHTML = ''; 
-            if (!courseData[type]) courseData[type] = [];
+            if (!currentCourseData[type]) currentCourseData[type] = [];
 
-            courseData[type].forEach(item => {
+            currentCourseData[type].forEach(item => {
                 const card = document.createElement('li');
                 card.className = 'item-card';
                 card.innerHTML = `
@@ -586,7 +722,7 @@
             const idToDelete = target.dataset.id;
             
             if (confirm("Are you sure you want to delete this item?")) {
-                courseData[listType] = courseData[listType].filter(item => item.id !== idToDelete);
+                currentCourseData[listType] = currentCourseData[listType].filter(item => item.id !== idToDelete);
                 renderList(listType);
             }
         }
