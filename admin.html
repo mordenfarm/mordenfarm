@@ -17,15 +17,15 @@
     <script>
         // Secure Firebase configuration using placeholders
         const firebaseConfig = {
-            apiKey: "AIzaSyAru65x_Fgt8EY1inQ2irGaEjTCc23mFGM",
-  authDomain: "mordern-farm.firebaseapp.com",
-  databaseURL: "https://mordern-farm-default-rtdb.firebaseio.com",
-  projectId: "mordern-farm",
-  storageBucket: "mordern-farm.firebasestorage.app",
-  messagingSenderId: "43708737487",
-  appId: "1:43708737487:web:9409206d743d2c625454ba",
-  measurementId: "G-P5LSG9GCFS"
- };
+            apiKey: "%%FIREBASE_API_KEY%%",
+            authDomain: "%%FIREBASE_AUTH_DOMAIN%%",
+            databaseURL: "https://mordern-farm-default-rtdb.firebaseio.com",
+            projectId: "%%FIREBASE_PROJECT_ID%%",
+            storageBucket: "%%FIREBASE_STORAGE_BUCKET%%",
+            messagingSenderId: "%%FIREBASE_MESSAGING_SENDER_ID%%",
+            appId: "%%FIREBASE_APP_ID%%",
+            measurementId: "%%FIREBASE_MEASUREMENT_ID%%"
+        };
     </script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -280,6 +280,14 @@
                                 <label for="new-course-title" class="form-label">Course Title</label>
                                 <input type="text" id="new-course-title" class="form-input" placeholder="e.g., Broiler Chicken Rearing" required>
                             </div>
+                            <div class="form-group">
+                                <label for="new-course-short-desc" class="form-label">Short Description</label>
+                                <input type="text" id="new-course-short-desc" class="form-input" placeholder="A brief summary of the course" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-course-price" class="form-label">Price</label>
+                                <input type="number" id="new-course-price" class="form-input" value="9.99" required>
+                            </div>
                              <div class="form-group">
                                 <label for="new-course-image" class="form-label">Image URL</label>
                                 <input type="text" id="new-course-image" class="form-input" placeholder="e.g., images/broiler-card.png" required>
@@ -307,6 +315,14 @@
                         <div class="form-group">
                             <label for="course-subtitle" class="form-label">Course Subtitle</label>
                             <input type="text" id="course-subtitle" class="form-input" placeholder="e.g., From Chick to Profit in 7 Weeks">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-short-desc" class="form-label">Short Description</label>
+                            <input type="text" id="course-short-desc" class="form-input" placeholder="A brief summary of the course">
+                        </div>
+                        <div class="form-group">
+                            <label for="course-price" class="form-label">Price</label>
+                            <input type="number" id="course-price" class="form-input">
                         </div>
                         <div class="form-group">
                             <label for="course-description" class="form-label">Course Description</label>
@@ -494,9 +510,13 @@
         async function handleAddCourse(e) {
             e.preventDefault();
             const titleInput = document.getElementById('new-course-title');
+            const shortDescInput = document.getElementById('new-course-short-desc');
+            const priceInput = document.getElementById('new-course-price');
             const imageInput = document.getElementById('new-course-image');
             const newCourse = {
                 title: titleInput.value.trim(),
+                shortDesc: shortDescInput.value.trim(),
+                price: parseFloat(priceInput.value),
                 image: imageInput.value.trim(),
                 subtitle: "",
                 description: "",
@@ -508,6 +528,8 @@
                 await window.firebase.addDoc(window.firebase.collection(window.firebase.db, "courses"), newCourse);
                 showSaveStatus("Course added successfully!", "success");
                 titleInput.value = '';
+                shortDescInput.value = '';
+                priceInput.value = '9.99';
                 imageInput.value = '';
                 fetchAllCourses(); // Refresh the lists
             } catch (error) {
@@ -550,8 +572,10 @@
             
             const dataToSave = {
                 ...currentCourseData, // Preserve existing fields like image
-                title: elements.courseTitle.value,
-                subtitle: elements.courseSubtitle.value,
+                title: document.getElementById('course-title').value,
+                subtitle: document.getElementById('course-subtitle').value,
+                shortDesc: document.getElementById('course-short-desc').value,
+                price: parseFloat(document.getElementById('course-price').value),
                 description: elements.courseDescription.value,
                 notes: Array.from(elements.notesContainer.querySelectorAll('.note-card')).map(card => ({
                     title: card.querySelector('.note-title-input').value,
@@ -601,8 +625,10 @@
         }
 
         function renderEditCoursePage() {
-            elements.courseTitle.value = currentCourseData.title || '';
-            elements.courseSubtitle.value = currentCourseData.subtitle || '';
+            document.getElementById('course-title').value = currentCourseData.title || '';
+            document.getElementById('course-subtitle').value = currentCourseData.subtitle || '';
+            document.getElementById('course-short-desc').value = currentCourseData.shortDesc || '';
+            document.getElementById('course-price').value = currentCourseData.price || '9.99';
             elements.courseDescription.value = currentCourseData.description || '';
             renderNotes();
             renderList('videos');
