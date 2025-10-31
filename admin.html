@@ -41,7 +41,8 @@
                 db: getFirestore(app),
                 storage: getStorage(app),
                 onAuthStateChanged, signInWithEmailAndPassword, signOut,
-                doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc
+                doc, getDoc, setDoc, collection, getDocs, addDoc, deleteDoc,
+                ref, uploadBytes, getDownloadURL, deleteObject
             };
             console.log("Firebase Initialized for Admin Panel.");
         } catch (error) {
@@ -328,6 +329,12 @@
                             <label for="course-description" class="form-label">Course Description</label>
                             <textarea id="course-description" class="form-input" placeholder="Detailed description of the course. You can use <br> for line breaks."></textarea>
                         </div>
+                        <div class="form-group">
+                            <label for="course-image-upload" class="form-label">Course Image</label>
+                            <input type="file" id="course-image-upload" class="form-input" accept="image/*">
+                            <img id="course-image-preview" src="" alt="Image Preview" style="max-width: 200px; margin-top: 10px; display: none;">
+                            <input type="hidden" id="current-course-image">
+                        </div>
                     </section>
 
                     <!-- Section 2: Course Notes -->
@@ -428,12 +435,24 @@
             elements.mobileMenuBtn.addEventListener('click', () => elements.sidebar.classList.toggle('is-open'));
 
             elements.addCourseForm.addEventListener('submit', handleAddCourse);
-            elements.existingCoursesList.addEventListener('click', handleDeleteCourse);
+            elements.existingCoursesList.addEventListener('click', handleCourseListClick);
 
             elements.addNoteCardBtn.addEventListener('click', () => createNoteCard());
             elements.notesContainer.addEventListener('click', handleNoteCardActions);
             elements.addVideoForm.addEventListener('submit', addVideo);
             elements.videosList.addEventListener('click', e => handleDeletion(e, 'videos'));
+
+            document.getElementById('course-image-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        document.getElementById('course-image-preview').src = event.target.result;
+                        document.getElementById('course-image-preview').style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
         }
 
         async function handleLogin(e) {
@@ -538,9 +557,19 @@
             }
         }
 
-        async function handleDeleteCourse(e) {
-            if (!e.target.matches('.btn-delete-course')) return;
-            const courseId = e.target.dataset.id;
+        function handleCourseListClick(e) {
+            const target = e.target;
+            const courseId = target.dataset.id;
+
+            if (target.matches('.btn-edit-course')) {
+                const courseTitle = target.dataset.courseTitle;
+                switchPage('edit-course', { courseId, courseTitle });
+            } else if (target.matches('.btn-delete-course')) {
+                handleDeleteCourse(courseId);
+            }
+        }
+
+        async function handleDeleteCourse(courseId) {
             if (confirm(`Are you sure you want to delete this course? This action cannot be undone.`)) {
                 try {
                     await window.firebase.deleteDoc(window.firebase.doc(window.firebase.db, "courses", courseId));
@@ -569,26 +598,50 @@
         async function saveAllChanges() {
             if (!courseDocRef) return;
             showSaveStatus("Saving...", "saving");
-            
-            const dataToSave = {
-                ...currentCourseData, // Preserve existing fields like image
-                title: document.getElementById('course-title').value,
-                subtitle: document.getElementById('course-subtitle').value,
-                shortDesc: document.getElementById('course-short-desc').value,
-                price: parseFloat(document.getElementById('course-price').value),
-                description: elements.courseDescription.value,
-                notes: Array.from(elements.notesContainer.querySelectorAll('.note-card')).map(card => ({
-                    title: card.querySelector('.note-title-input').value,
-                    content: card.querySelector('.note-content-textarea').value
-                })).filter(n => n.title || n.content),
-                videos: currentCourseData.videos || []
-            };
+
+            const imageUpload = document.getElementById('course-image-upload');
+            const newImageFile = imageUpload.files[0];
+            let imageUrl = document.getElementById('current-course-image').value;
 
             try {
+                // Handle image upload if a new image is selected
+                if (newImageFile) {
+                    // Delete the old image if it exists
+                    if (imageUrl) {
+                        try {
+                            const oldImageRef = window.firebase.ref(window.firebase.storage, imageUrl);
+                            await window.firebase.deleteObject(oldImageRef);
+                        } catch (storageError) {
+                            // It's okay if the old image doesn't exist, log it and continue.
+                            console.warn("Could not delete old image, it might not exist:", storageError);
+                        }
+                    }
+                    // Upload the new image
+                    const newImageRef = window.firebase.ref(window.firebase.storage, `course-images/${currentCourseId}/${newImageFile.name}`);
+                    const uploadResult = await window.firebase.uploadBytes(newImageRef, newImageFile);
+                    imageUrl = await window.firebase.getDownloadURL(uploadResult.ref);
+                }
+
+                const dataToSave = {
+                    ...currentCourseData,
+                    title: document.getElementById('course-title').value,
+                    subtitle: document.getElementById('course-subtitle').value,
+                    shortDesc: document.getElementById('course-short-desc').value,
+                    price: parseFloat(document.getElementById('course-price').value),
+                    description: elements.courseDescription.value,
+                    image: imageUrl,
+                    notes: Array.from(elements.notesContainer.querySelectorAll('.note-card')).map(card => ({
+                        title: card.querySelector('.note-title-input').value,
+                        content: card.querySelector('.note-content-textarea').value
+                    })).filter(n => n.title || n.content),
+                    videos: currentCourseData.videos || []
+                };
+
                 await window.firebase.setDoc(courseDocRef, dataToSave, { merge: true });
                 currentCourseData = dataToSave;
+                document.getElementById('current-course-image').value = imageUrl; // Update hidden input
                 showSaveStatus("Changes saved successfully!", "success");
-                fetchAllCourses(); // Refresh sidebar in case title changed
+                fetchAllCourses();
             } catch (error) {
                 console.error("Error saving data:", error);
                 showSaveStatus("Error saving changes.", "error");
@@ -619,6 +672,7 @@
                         <strong>${course.title}</strong>
                         <span>ID: ${course.id}</span>
                     </div>
+                    <button class="btn-edit-course" data-id="${course.id}" data-course-title="${course.title}" style="padding: 0.5rem 0.8rem; background-color: var(--color-success); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin-right: 0.5rem;">Edit</button>
                     <button class="btn-delete btn-delete-course" data-id="${course.id}">Delete</button>
                 </li>
             `).join('');
@@ -630,6 +684,21 @@
             document.getElementById('course-short-desc').value = currentCourseData.shortDesc || '';
             document.getElementById('course-price').value = currentCourseData.price || '9.99';
             elements.courseDescription.value = currentCourseData.description || '';
+
+            const imagePreview = document.getElementById('course-image-preview');
+            const currentImageInput = document.getElementById('current-course-image');
+            const imageUpload = document.getElementById('course-image-upload');
+
+            if (currentCourseData.image) {
+                imagePreview.src = currentCourseData.image;
+                imagePreview.style.display = 'block';
+                currentImageInput.value = currentCourseData.image;
+            } else {
+                imagePreview.style.display = 'none';
+            }
+
+            imageUpload.value = ''; // Reset file input
+
             renderNotes();
             renderList('videos');
         }
