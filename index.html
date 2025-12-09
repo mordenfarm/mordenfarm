@@ -524,7 +524,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const querySnapshot = await firebase.getDocs(firebase.collection(firebase.db, "courses"));
             courses = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-            elements.courseGrid.innerHTML = courses.map(course => `<a href="#" class="course-card" data-course-id="${course.id}"><div class="card-thumbnail" style="background-image: url('${course.image}');"></div><div class="card-info"><h3>${course.icon || ''}<span>${course.title}</span></h3><p>${course.shortDesc}</p></div></a>`).join('');
+            elements.courseGrid.innerHTML = courses.map(course => `<a href="#" class="course-card" data-course-id="${course.id}"><div class="card-thumbnail" style="background-image: url('${course.image || "images/broiler-card.png"}');"></div><div class="card-info"><h3>${course.icon || ''}<span>${course.title}</span></h3><p>${course.shortDesc}</p></div></a>`).join('');
 
             const dropdownHTML = courses.map(course => `<a href="#" class="nav-link" data-view="${course.id}">${course.title}</a>`).join('');
             elements.desktopCoursesDropdown.innerHTML = dropdownHTML;
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             elements.footerCourseLinks.innerHTML = courses.map(c => `<li><a href="#" class="nav-link" data-view="${c.id}">${c.title}</a></li>`).join('');
 
-            elements.slider.innerHTML = courses.map(c => `<div class="item" style="background-image: url('${c.image}');"><div class="content"><div class="name">${c.title}</div><div class="des">${c.shortDesc}</div><button class="cta-button" data-course-id="${c.id}">Learn More</button></div></div>`).join('');
+            elements.slider.innerHTML = courses.map(c => `<div class="item" style="background-image: url('${c.image || "images/broiler-card.png"}');"><div class="content"><div class="name">${c.title}</div><div class="des">${c.shortDesc}</div><button class="cta-button" data-course-id="${c.id}">Learn More</button></div></div>`).join('');
 
             elements.coursePagesContainer.innerHTML = courses.map(course => `
                 <div id="${course.id}" class="view-section course-page-preview">
